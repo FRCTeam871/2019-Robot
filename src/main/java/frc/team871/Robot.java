@@ -15,6 +15,8 @@ import com.team871.hid.joystick.XBoxButtons;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import frc.team871.control.IControlScheme;
+import frc.team871.control.InitialControlScheme;
 
 import java.util.Arrays;
 
@@ -27,7 +29,7 @@ import java.util.Arrays;
  */
 public class Robot extends TimedRobot {
     private MecanumDrive driveTrain;
-    private GenericJoystick<XBoxButtons, XBoxAxes> controller;
+    private IControlScheme controlScheme;
 
     /**
       * This function is run when the robot is first started up and should be used
@@ -36,6 +38,8 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
 
+        this.controlScheme = InitialControlScheme.DEFAULT;
+
         SpeedController fl = new WPI_VictorSPX(2);
         SpeedController rl = new WPI_VictorSPX(3);
         SpeedController fr = new WPI_VictorSPX(4);
@@ -43,8 +47,7 @@ public class Robot extends TimedRobot {
 
         driveTrain = new MecanumDrive(fl, rl, fr, rr);
 
-        controller = new GenericJoystick<>(0, Arrays.asList(XBoxButtons.values()), Arrays.asList(XBoxAxes.values()));
-        Arrays.asList(XBoxAxes.values()).stream().forEach(a -> controller.getAxis(a).setDeadband(0.1));
+
 
     }
 
@@ -65,7 +68,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
-        driveTrain.driveCartesian(controller.getAxis(XBoxAxes.LEFTX).getValue(), controller.getAxis(XBoxAxes.LEFTY).getValue(), controller.getAxis(XBoxAxes.RIGHTX).getValue());
+        driveTrain.driveCartesian(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
     }
 
     @Override
