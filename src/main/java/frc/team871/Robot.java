@@ -8,21 +8,11 @@
 package frc.team871;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-
-import com.kauailabs.navx.frc.AHRS;
-import com.team871.hid.GenericJoystick;
-import com.team871.hid.joystick.XBoxAxes;
-import com.team871.hid.joystick.XBoxButtons;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.drive.MecanumDrive;
-
+import frc.robot.subsystems.DriveTrain;
 import frc.team871.control.IControlScheme;
 import frc.team871.control.InitialControlScheme;
-
-import frc.robot.subsystems.DriveTrain;
-
-import java.util.Arrays;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -35,7 +25,7 @@ public class Robot extends TimedRobot {
 
     private IControlScheme controlScheme;
     private DriveTrain driveTrain;
-    
+
     /**
       * This function is run when the robot is first started up and should be used
       * for any initialization code.

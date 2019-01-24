@@ -6,7 +6,6 @@ import com.team871.hid.HIDAxis;
 import com.team871.hid.HIDButton;
 import com.team871.hid.joystick.XBoxAxes;
 import com.team871.hid.joystick.XBoxButtons;
-import com.team871.navigation.Coordinate;
 
 import java.util.Arrays;
 
