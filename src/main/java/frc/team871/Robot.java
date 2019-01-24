@@ -32,15 +32,7 @@ public class Robot extends TimedRobot {
       */
     @Override
     public void robotInit() {
-
         this.controlScheme = InitialControlScheme.DEFAULT;
-
-        SpeedController fl = new WPI_VictorSPX(2);
-        SpeedController rl = new WPI_VictorSPX(3);
-        SpeedController fr = new WPI_VictorSPX(4);
-        SpeedController rr = new WPI_VictorSPX(5);
-
-
 
 
 
