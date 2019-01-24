@@ -9,14 +9,18 @@ package frc.team871;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
+import com.kauailabs.navx.frc.AHRS;
 import com.team871.hid.GenericJoystick;
 import com.team871.hid.joystick.XBoxAxes;
 import com.team871.hid.joystick.XBoxButtons;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
+
 import frc.team871.control.IControlScheme;
 import frc.team871.control.InitialControlScheme;
+
+import frc.robot.subsystems.DriveTrain;
 
 import java.util.Arrays;
 
@@ -28,9 +32,10 @@ import java.util.Arrays;
  * project.
  */
 public class Robot extends TimedRobot {
-    private MecanumDrive driveTrain;
-    private IControlScheme controlScheme;
 
+    private IControlScheme controlScheme;
+    private DriveTrain driveTrain;
+    
     /**
       * This function is run when the robot is first started up and should be used
       * for any initialization code.
@@ -45,7 +50,7 @@ public class Robot extends TimedRobot {
         SpeedController fr = new WPI_VictorSPX(4);
         SpeedController rr = new WPI_VictorSPX(5);
 
-        driveTrain = new MecanumDrive(fl, rl, fr, rr);
+
 
 
 

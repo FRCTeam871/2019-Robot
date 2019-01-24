@@ -21,10 +21,9 @@ public enum InitialControlScheme implements IControlScheme{
         systemsController.getButton(XBoxButtons.Y).setMode(ButtonTypes.TOGGLE);
         systemsController.getButton(XBoxButtons.BACK).setMode(ButtonTypes.TOGGLE);
         systemsController.getAxis(XBoxAxes.TRIGGER).setDeadband(0.2);
-        //TODO set up the arm axis
-        //driveController.getAxis();
-        //driveController.getAxis();
-        driveController.getButton(XBoxButtons.B).setMode(ButtonTypes.MOMENTARY);
+        systemsController.getAxis(XBoxAxes.LEFTY).setDeadband(0.1);
+        systemsController.getAxis(XBoxAxes.RIGHTY).setDeadband(0.1);
+        driveController.getButton(XBoxButtons.LBUMPER).setMode(ButtonTypes.MOMENTARY);
         driveController.getButton(XBoxButtons.START).setMode(ButtonTypes.RISING);
         driveController.getButton(XBoxButtons.BACK).setMode(ButtonTypes.TOGGLE);
         driveController.getAxis(XBoxAxes.LEFTX).setDeadband(0.2);
@@ -49,19 +48,17 @@ public enum InitialControlScheme implements IControlScheme{
 
     @Override
     public HIDAxis getUpperArmAxis() {
-        //TODO set up axis
-        return null;
+        return systemsController.getAxis(XBoxAxes.LEFTY);
     }
 
     @Override
     public HIDAxis getLowerArmAxis() {
-        //TODO set up axis
-        return null;
+        return systemsController.getAxis(XBoxAxes.RIGHTY);
     }
 
     @Override
     public HIDButton getHeadingHoldButton() {
-        return driveController.getButton(XBoxButtons.B);
+        return driveController.getButton(XBoxButtons.LBUMPER);
     }
 
     @Override
