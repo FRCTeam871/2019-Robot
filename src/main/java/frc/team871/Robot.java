@@ -7,10 +7,11 @@
 
 package frc.team871;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import edu.wpi.first.wpilibj.SpeedController;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.subsystems.DriveTrain;
+import frc.team871.config.IRowBoatConfig;
+import frc.team871.config.RowBoatConfig;
 import frc.team871.control.IControlScheme;
 import frc.team871.control.InitialControlScheme;
 
@@ -24,6 +25,7 @@ import frc.team871.control.InitialControlScheme;
 public class Robot extends TimedRobot {
 
     private IControlScheme controlScheme;
+    private IRowBoatConfig config;
     private DriveTrain driveTrain;
 
     /**
@@ -33,7 +35,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         this.controlScheme = InitialControlScheme.DEFAULT;
-
+        this.config = RowBoatConfig.DEFAULT;
 
 
     }
