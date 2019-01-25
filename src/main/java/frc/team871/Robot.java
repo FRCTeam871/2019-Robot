@@ -14,6 +14,7 @@ import frc.team871.config.IRowBoatConfig;
 import frc.team871.config.RowBoatConfig;
 import frc.team871.control.IControlScheme;
 import frc.team871.control.InitialControlScheme;
+import frc.team871.subsystems.Vacuum;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -27,6 +28,7 @@ public class Robot extends TimedRobot {
     private IControlScheme controlScheme;
     private IRowBoatConfig config;
     private DriveTrain driveTrain;
+    private Vacuum vacuum;
 
     /**
       * This function is run when the robot is first started up and should be used
@@ -36,6 +38,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         this.controlScheme = InitialControlScheme.DEFAULT;
         this.config = RowBoatConfig.DEFAULT;
+        this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor());
 
 
     }
@@ -58,6 +61,10 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         driveTrain.driveCartesian(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
+
+        if (controlScheme.getVacuumToggleButton().getValue()) {
+            vacuum.toggleState();
+        }
     }
 
     @Override

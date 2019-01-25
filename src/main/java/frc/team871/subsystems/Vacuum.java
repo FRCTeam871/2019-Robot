@@ -1,11 +1,11 @@
 package frc.team871.subsystems;
 
-import com.team871.io.sensor.DigitalSensor;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.SpeedController;
 
 public class Vacuum {
     private SpeedController pump;
-    private DigitalSensor grabSensor;
+    private DigitalInput grabSensor;
     private VacuumState state;
 
     public enum VacuumState{
@@ -13,12 +13,12 @@ public class Vacuum {
         DISABLED
     }
 
-    public Vacuum(SpeedController pump, DigitalSensor grabSensor){
+    public Vacuum(SpeedController pump, DigitalInput grabSensor){
         this.pump = pump;
         this.grabSensor = grabSensor;
     }
 
-    private void setState(VacuumState newState){
+    public void setState(VacuumState newState){
          switch(newState){
              case ENABLED:
                  pump.set(1.);
@@ -28,6 +28,10 @@ public class Vacuum {
                  break;
          }
          state = newState;
+    }
+
+    public void toggleState(){
+        setState((state == VacuumState.ENABLED) ? VacuumState.DISABLED : VacuumState.ENABLED);
     }
 
     public VacuumState getState(){
