@@ -7,16 +7,14 @@
 
 package frc.team871;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
-import com.team871.hid.GenericJoystick;
-import com.team871.hid.joystick.XBoxAxes;
-import com.team871.hid.joystick.XBoxButtons;
-import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.drive.MecanumDrive;
-
-import java.util.Arrays;
+import frc.robot.subsystems.DriveTrain;
+import frc.team871.config.IRowBoatConfig;
+import frc.team871.config.RowBoatConfig;
+import frc.team871.control.IControlScheme;
+import frc.team871.control.InitialControlScheme;
+import frc.team871.subsystems.Vacuum;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -26,8 +24,11 @@ import java.util.Arrays;
  * project.
  */
 public class Robot extends TimedRobot {
-    private MecanumDrive driveTrain;
-    private GenericJoystick<XBoxButtons, XBoxAxes> controller;
+
+    private IControlScheme controlScheme;
+    private IRowBoatConfig config;
+    private DriveTrain driveTrain;
+    private Vacuum vacuum;
 
     /**
       * This function is run when the robot is first started up and should be used
@@ -35,16 +36,10 @@ public class Robot extends TimedRobot {
       */
     @Override
     public void robotInit() {
-
-        SpeedController fl = new WPI_VictorSPX(2);
-        SpeedController rl = new WPI_VictorSPX(3);
-        SpeedController fr = new WPI_VictorSPX(4);
-        SpeedController rr = new WPI_VictorSPX(5);
-
-        driveTrain = new MecanumDrive(fl, rl, fr, rr);
-
-        controller = new GenericJoystick<>(0, Arrays.asList(XBoxButtons.values()), Arrays.asList(XBoxAxes.values()));
-        Arrays.asList(XBoxAxes.values()).stream().forEach(a -> controller.getAxis(a).setDeadband(0.1));
+        this.controlScheme = InitialControlScheme.DEFAULT;
+        this.config = RowBoatConfig.DEFAULT;
+        this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor());
+        this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro());
 
     }
 
@@ -65,7 +60,23 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
-        driveTrain.driveCartesian(controller.getAxis(XBoxAxes.LEFTX).getValue(), controller.getAxis(XBoxAxes.LEFTY).getValue(), controller.getAxis(XBoxAxes.RIGHTX).getValue());
+
+        if(driveTrain.getDriveMode() == DriveTrain.DriveMode.ROBOT){
+            driveTrain.driveRobotOriented(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
+        } else {
+            driveTrain.driveFieldOriented(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
+        }
+        if(controlScheme.getRobotOrientationToggleButton().getValue()){
+            driveTrain.toggleFieldDriveMode();
+        }
+        driveTrain.setHeadingHoldEnabled(controlScheme.getHeadingHoldButton().getValue());
+        if(controlScheme.getResetGyroButton().getValue()) {
+            driveTrain.resetGyro();
+        }
+
+        if(controlScheme.getVacuumToggleButton().getValue()) {
+            vacuum.toggleState();
+        }
     }
 
     @Override
