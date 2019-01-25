@@ -39,7 +39,7 @@ public class Robot extends TimedRobot {
         this.controlScheme = InitialControlScheme.DEFAULT;
         this.config = RowBoatConfig.DEFAULT;
         this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor());
-
+        this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro());
 
     }
 
@@ -60,9 +60,21 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
-        driveTrain.driveCartesian(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
 
-        if (controlScheme.getVacuumToggleButton().getValue()) {
+        if(driveTrain.getDriveMode() == DriveTrain.DriveMode.ROBOT){
+            driveTrain.driveRobotOriented(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
+        } else {
+            driveTrain.driveFieldOriented(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
+        }
+        if(controlScheme.getRobotOrientationToggleButton().getValue()){
+            driveTrain.toggleFieldDriveMode();
+        }
+        driveTrain.setHeadingHoldEnabled(controlScheme.getHeadingHoldButton().getValue());
+        if(controlScheme.getResetGyroButton().getValue()) {
+            driveTrain.resetGyro();
+        }
+
+        if(controlScheme.getVacuumToggleButton().getValue()) {
             vacuum.toggleState();
         }
     }

@@ -11,12 +11,19 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput {
 
     private AHRS gyro;
     private PIDController headingPID;
-
+    private DriveMode currentDriveMode;
     private double pidRotation;
+
+
+    public enum DriveMode {
+        ROBOT,
+        FIELD;
+    }
 
     public DriveTrain(SpeedController frontLeft, SpeedController rearLeft, SpeedController frontRight, SpeedController rearRight, AHRS gyro){
         super(frontLeft, rearLeft, frontRight, rearRight);
         this.gyro = gyro;
+        this.currentDriveMode = DriveMode.ROBOT;
         headingPID = new PIDController(0.03, 0, 0.03, gyro, this); //values from last year's robor
         headingPID.setInputRange(-180, 180);
         headingPID.setOutputRange(-0.5, 0.5);
@@ -28,6 +35,7 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput {
     public void driveFieldOriented(double x, double y, double r) {
         driveCartesian(y, x, r + (headingPID.isEnabled() ? pidRotation : 0), gyro.getAngle());
     }
+
 
     @Override
     public void drivePolar(double magnitude, double angle, double r) {
@@ -43,6 +51,11 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput {
     @Override
     public void setHeadingHoldEnabled(boolean enabled) {
         headingPID.setEnabled(enabled);
+    }
+
+    @Override
+    public boolean getHeadingHoldEnabled() {
+        return headingPID.isEnabled();
     }
 
     @Override
@@ -74,5 +87,17 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput {
     @Override
     public void pidWrite(double output) {
         pidRotation = output;
+    }
+
+    public void toggleFieldDriveMode(){
+        currentDriveMode = (currentDriveMode == DriveMode.ROBOT)? DriveMode.FIELD : DriveMode.ROBOT;
+    }
+
+    public DriveMode getDriveMode(){
+        return currentDriveMode;
+    }
+
+    public void resetGyro(){
+        gyro.zeroYaw();
     }
 }
