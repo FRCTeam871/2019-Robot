@@ -88,8 +88,7 @@ public class Robot extends TimedRobot {
         }
 
         if(arm.getCurrentArmMode() == Arm.ArmMode.INVERSE_KINEMATICS) {
-            // TODO: Make whatever this garbage is
-            // arm.goTo(controlScheme.);
+            arm.goTo(controlScheme.getArmTargetXAxis().getValue(), controlScheme.getArmTargetYAxis().getValue());
         } else {
             arm.setAngles(controlScheme.getUpperArmAxis().getValue(), controlScheme.getLowerArmAxis().getValue());
         }
