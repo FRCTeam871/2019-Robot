@@ -2,7 +2,7 @@ package frc.team871.control;
 
 import com.team871.hid.ButtonTypes;
 import com.team871.hid.GenericJoystick;
-import com.team871.hid.HIDAxis;
+import com.team871.hid.IAxis;
 import com.team871.hid.HIDButton;
 import com.team871.hid.joystick.XBoxAxes;
 import com.team871.hid.joystick.XBoxButtons;
@@ -44,17 +44,17 @@ public enum NunchuckControlScheme implements IControlScheme{
     }
 
     @Override
-    public HIDAxis getWristAxis() {
+    public IAxis getWristAxis() {
         return nunchuck.getAxis(NunchuckAxes.Y);
     }
 
     @Override
-    public HIDAxis getUpperArmAxis() {
+    public IAxis getUpperArmAxis() {
         return xbox.getAxis(XBoxAxes.LTRIGGER);
     }
 
     @Override
-    public HIDAxis getLowerArmAxis() {
+    public IAxis getLowerArmAxis() {
         return xbox.getAxis(XBoxAxes.RTRIGGER);
     }
 
@@ -74,17 +74,17 @@ public enum NunchuckControlScheme implements IControlScheme{
     }
 
     @Override
-    public HIDAxis getMecDriveXAxis() {
+    public IAxis getMecDriveXAxis() {
         return xbox.getAxis(XBoxAxes.LEFTX);
     }
 
     @Override
-    public HIDAxis getMecDriveYAxis() {
+    public IAxis getMecDriveYAxis() {
         return xbox.getAxis(XBoxAxes.LEFTY);
     }
 
     @Override
-    public HIDAxis getMecDriveRotationAxis() {
+    public IAxis getMecDriveRotationAxis() {
         return xbox.getAxis(XBoxAxes.RIGHTX);
     }
 }

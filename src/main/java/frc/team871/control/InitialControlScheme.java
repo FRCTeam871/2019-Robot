@@ -2,11 +2,10 @@ package frc.team871.control;
 
 import com.team871.hid.ButtonTypes;
 import com.team871.hid.GenericJoystick;
-import com.team871.hid.HIDAxis;
+import com.team871.hid.IAxis;
 import com.team871.hid.HIDButton;
 import com.team871.hid.joystick.XBoxAxes;
 import com.team871.hid.joystick.XBoxButtons;
-import com.team871.navigation.Coordinate;
 
 import java.util.Arrays;
 
@@ -42,17 +41,17 @@ public enum InitialControlScheme implements IControlScheme{
     }
 
     @Override
-    public HIDAxis getWristAxis() {
+    public IAxis getWristAxis() {
         return systemsController.getAxis(XBoxAxes.TRIGGER);
     }
 
     @Override
-    public HIDAxis getUpperArmAxis() {
+    public IAxis getUpperArmAxis() {
         return systemsController.getAxis(XBoxAxes.LEFTY);
     }
 
     @Override
-    public HIDAxis getLowerArmAxis() {
+    public IAxis getLowerArmAxis() {
         return systemsController.getAxis(XBoxAxes.RIGHTY);
     }
 
@@ -72,17 +71,17 @@ public enum InitialControlScheme implements IControlScheme{
     }
 
     @Override
-    public HIDAxis getMecDriveXAxis() {
+    public IAxis getMecDriveXAxis() {
         return driveController.getAxis(XBoxAxes.LEFTX);
     }
 
     @Override
-    public HIDAxis getMecDriveYAxis() {
+    public IAxis getMecDriveYAxis() {
         return driveController.getAxis(XBoxAxes.LEFTY);
     }
 
     @Override
-    public HIDAxis getMecDriveRotationAxis() {
+    public IAxis getMecDriveRotationAxis() {
         return driveController.getAxis(XBoxAxes.RIGHTX);
     }
 }

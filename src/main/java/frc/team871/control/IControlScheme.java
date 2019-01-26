@@ -1,6 +1,6 @@
 package frc.team871.control;
 
-import com.team871.hid.HIDAxis;
+import com.team871.hid.IAxis;
 import com.team871.hid.HIDButton;
 
 public interface IControlScheme {
@@ -9,11 +9,11 @@ public interface IControlScheme {
 
     HIDButton getInverseKinimaticsToggleButton();
 
-    HIDAxis getWristAxis();
+    IAxis getWristAxis();
 
-    HIDAxis getUpperArmAxis();
+    IAxis getUpperArmAxis();
 
-    HIDAxis getLowerArmAxis();
+    IAxis getLowerArmAxis();
 
     HIDButton getHeadingHoldButton();
 
@@ -21,9 +21,15 @@ public interface IControlScheme {
 
     HIDButton getRobotOrientationToggleButton();
 
-    HIDAxis getMecDriveXAxis();
+    IAxis getMecDriveXAxis();
 
-    HIDAxis getMecDriveYAxis();
+    IAxis getMecDriveYAxis();
 
-    HIDAxis getMecDriveRotationAxis();
+    IAxis getMecDriveRotationAxis();
+
+    IAxis getArmTargetXAxis();
+
+    IAxis getArmTargetYAxis();
+
+
 }
