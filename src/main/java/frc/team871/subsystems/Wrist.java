@@ -11,6 +11,11 @@ public class Wrist {
     private PIDController pid;
     private AnalogInput pot;
 
+    public Wrist(SpeedController motor, AnalogInput pot) {
+        this.motor = motor;
+        this.pot = pot;
+    }
+
     public void enablePID(){
         pid.enable();
     }

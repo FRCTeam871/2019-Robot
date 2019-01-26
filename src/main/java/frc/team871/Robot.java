@@ -8,13 +8,17 @@
 package frc.team871;
 
 
+import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.subsystems.DriveTrain;
 import frc.team871.config.IRowBoatConfig;
 import frc.team871.config.RowBoatConfig;
 import frc.team871.control.IControlScheme;
 import frc.team871.control.InitialControlScheme;
+import frc.team871.subsystems.Arm;
+import frc.team871.subsystems.ArmSegment;
 import frc.team871.subsystems.Vacuum;
+import frc.team871.subsystems.Wrist;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -29,6 +33,8 @@ public class Robot extends TimedRobot {
     private IRowBoatConfig config;
     private DriveTrain driveTrain;
     private Vacuum vacuum;
+    private Arm arm;
+    private Wrist wrist;
 
     /**
       * This function is run when the robot is first started up and should be used
@@ -40,7 +46,11 @@ public class Robot extends TimedRobot {
         this.config = RowBoatConfig.DEFAULT;
         this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor());
         this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro());
-
+        // TODO: Get actually lengths of the arm segments
+        ArmSegment upperSegment = new ArmSegment(config.getUpperArmMotor(), config.getUpperArmPot(), 34289027);
+        ArmSegment lowerSegment = new ArmSegment(config.getLowerArmMotor(), config.getLowerArmPot(),18);
+        this.wrist = new Wrist(config.getWristMotor(), config.getWristPot());
+        this.arm = new Arm(upperSegment, lowerSegment, wrist);
     }
 
     @Override
@@ -77,6 +87,18 @@ public class Robot extends TimedRobot {
         if(controlScheme.getVacuumToggleButton().getValue()) {
             vacuum.toggleState();
         }
+
+        if(arm.getCurrentArmMode() == Arm.ArmMode.INVERSE_KINEMATICS) {
+            // TODO: Make whatever this garbage is
+            // arm.goTo(controlScheme.);
+        } else {
+            arm.setAngles(controlScheme.getUpperArmAxis().getValue(), controlScheme.getLowerArmAxis().getValue());
+        }
+        if(controlScheme.getInverseKinimaticsToggleButton().getValue()) {
+            arm.toggleInverseKinematicsMode();
+        }
+
+        wrist.setOrientation(controlScheme.getWristAxis().getValue());
     }
 
     @Override

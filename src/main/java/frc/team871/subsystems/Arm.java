@@ -5,8 +5,14 @@ public class Arm {
     private ArmSegment upperSegment;
     private ArmSegment lowerSegment;
     private Wrist wrist;
+    private ArmMode currentArmMode;
     private double x;
     private double y;
+
+    public enum ArmMode {
+        DIRECT,
+        INVERSE_KINEMATICS
+    }
 
     public Arm(ArmSegment upperSegment, ArmSegment lowerSegment, Wrist wrist){
         this.upperSegment = upperSegment;
@@ -36,4 +42,13 @@ public class Arm {
     public void setWristOrientation(double angle){
         wrist.setOrientation(angle);
     }
+
+    public void toggleInverseKinematicsMode() {
+        currentArmMode = (currentArmMode == ArmMode.INVERSE_KINEMATICS)? ArmMode.DIRECT : ArmMode.INVERSE_KINEMATICS;
+    }
+
+    public ArmMode getCurrentArmMode() {
+        return currentArmMode;
+    }
+
 }

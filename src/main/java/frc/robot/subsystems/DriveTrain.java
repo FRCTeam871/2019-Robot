@@ -17,7 +17,7 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput {
 
     public enum DriveMode {
         ROBOT,
-        FIELD;
+        FIELD
     }
 
     public DriveTrain(SpeedController frontLeft, SpeedController rearLeft, SpeedController frontRight, SpeedController rearRight, AHRS gyro){
