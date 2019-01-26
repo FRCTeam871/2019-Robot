@@ -1,9 +1,10 @@
 package frc.team871.control;
 
 import com.team871.hid.ButtonTypes;
+import com.team871.hid.ConstantAxis;
 import com.team871.hid.GenericJoystick;
 import com.team871.hid.IAxis;
-import com.team871.hid.HIDButton;
+import com.team871.hid.IButton;
 import com.team871.hid.joystick.XBoxAxes;
 import com.team871.hid.joystick.XBoxButtons;
 
@@ -13,12 +14,14 @@ public enum InitialControlScheme implements IControlScheme{
     DEFAULT;
 
     private GenericJoystick<XBoxButtons, XBoxAxes> systemsController, driveController;
+    private ConstantAxis unusedAxis;
 
     InitialControlScheme(){
         systemsController = new GenericJoystick<>(0, Arrays.asList(XBoxButtons.values()), Arrays.asList(XBoxAxes.values()));
         driveController = new GenericJoystick<>(1, Arrays.asList(XBoxButtons.values()), Arrays.asList(XBoxAxes.values()));
         systemsController.getButton(XBoxButtons.Y).setMode(ButtonTypes.TOGGLE);
         systemsController.getButton(XBoxButtons.BACK).setMode(ButtonTypes.TOGGLE);
+        systemsController.getButton(XBoxButtons.A).setMode(ButtonTypes.TOGGLE);
         systemsController.getAxis(XBoxAxes.TRIGGER).setDeadband(0.2);
         systemsController.getAxis(XBoxAxes.LEFTY).setDeadband(0.1);
         systemsController.getAxis(XBoxAxes.RIGHTY).setDeadband(0.1);
@@ -28,17 +31,22 @@ public enum InitialControlScheme implements IControlScheme{
         driveController.getAxis(XBoxAxes.LEFTX).setDeadband(0.2);
         driveController.getAxis(XBoxAxes.LEFTY).setDeadband(0.2);
         driveController.getAxis(XBoxAxes.RIGHTX).setDeadband(0.2);
+
+        unusedAxis = new ConstantAxis(0);
     }
 
     @Override
-    public HIDButton getVacuumToggleButton() {
+    public IButton getVacuumToggleButton() {
         return systemsController.getButton(XBoxButtons.Y);
     }
 
     @Override
-    public HIDButton getInverseKinimaticsToggleButton() {
+    public IButton getInverseKinimaticsToggleButton() {
         return systemsController.getButton(XBoxButtons.BACK);
     }
+
+    @Override
+    public IButton getWristToggleButton() { return systemsController.getButton(XBoxButtons.A); }
 
     @Override
     public IAxis getWristAxis() {
@@ -56,17 +64,17 @@ public enum InitialControlScheme implements IControlScheme{
     }
 
     @Override
-    public HIDButton getHeadingHoldButton() {
+    public IButton getHeadingHoldButton() {
         return driveController.getButton(XBoxButtons.LBUMPER);
     }
 
     @Override
-    public HIDButton getResetGyroButton() {
+    public IButton getResetGyroButton() {
         return driveController.getButton(XBoxButtons.START);
     }
 
     @Override
-    public HIDButton getRobotOrientationToggleButton() {
+    public IButton getRobotOrientationToggleButton() {
         return driveController.getButton(XBoxButtons.BACK);
     }
 
@@ -83,5 +91,15 @@ public enum InitialControlScheme implements IControlScheme{
     @Override
     public IAxis getMecDriveRotationAxis() {
         return driveController.getAxis(XBoxAxes.RIGHTX);
+    }
+
+    @Override
+    public IAxis getArmTargetXAxis() {
+        return unusedAxis;
+    }
+
+    @Override
+    public IAxis getArmTargetYAxis() {
+        return unusedAxis;
     }
 }
