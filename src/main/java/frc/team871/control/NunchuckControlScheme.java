@@ -87,4 +87,14 @@ public enum NunchuckControlScheme implements IControlScheme{
     public IAxis getMecDriveRotationAxis() {
         return xbox.getAxis(XBoxAxes.RIGHTX);
     }
+
+    @Override
+    public IAxis getArmTargetXAxis() {
+        return null;
+    }
+
+    @Override
+    public IAxis getArmTargetYAxis() {
+        return null;
+    }
 }

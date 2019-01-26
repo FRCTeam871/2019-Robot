@@ -20,8 +20,9 @@ public enum InitialControlScheme implements IControlScheme{
         systemsController.getButton(XBoxButtons.Y).setMode(ButtonTypes.TOGGLE);
         systemsController.getButton(XBoxButtons.BACK).setMode(ButtonTypes.TOGGLE);
         systemsController.getAxis(XBoxAxes.TRIGGER).setDeadband(0.2);
-        systemsController.getAxis(XBoxAxes.LEFTY).setDeadband(0.1);
-        systemsController.getAxis(XBoxAxes.RIGHTY).setDeadband(0.1);
+        systemsController.getAxis(XBoxAxes.LEFTY).setDeadband(0.2);
+        systemsController.getAxis(XBoxAxes.RIGHTY).setDeadband(0.2);
+        systemsController.getAxis(XBoxAxes.RIGHTX).setDeadband(0.2);
         driveController.getButton(XBoxButtons.LBUMPER).setMode(ButtonTypes.MOMENTARY);
         driveController.getButton(XBoxButtons.START).setMode(ButtonTypes.RISING);
         driveController.getButton(XBoxButtons.BACK).setMode(ButtonTypes.TOGGLE);
@@ -83,5 +84,15 @@ public enum InitialControlScheme implements IControlScheme{
     @Override
     public IAxis getMecDriveRotationAxis() {
         return driveController.getAxis(XBoxAxes.RIGHTX);
+    }
+
+    @Override
+    public IAxis getArmTargetXAxis() {
+        return systemsController.getAxis(XBoxAxes.RIGHTX);
+    }
+
+    @Override
+    public IAxis getArmTargetYAxis() {
+        return systemsController.getAxis(XBoxAxes.RIGHTY);
     }
 }
