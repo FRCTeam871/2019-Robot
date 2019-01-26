@@ -8,7 +8,6 @@
 package frc.team871;
 
 
-import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.subsystems.DriveTrain;
 import frc.team871.config.IRowBoatConfig;
