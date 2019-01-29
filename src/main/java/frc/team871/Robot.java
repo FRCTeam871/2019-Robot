@@ -45,9 +45,8 @@ public class Robot extends TimedRobot {
         this.config = RowBoatConfig.DEFAULT;
         this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor());
         this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro());
-        // TODO: Get actually lengths of the arm segments
-        ArmSegment upperSegment = new ArmSegment(config.getUpperArmMotor(), config.getUpperArmPot(), 34289027);
-        ArmSegment lowerSegment = new ArmSegment(config.getLowerArmMotor(), config.getLowerArmPot(),18);
+        ArmSegment upperSegment = new ArmSegment(config.getUpperArmMotor(), config.getUpperArmPot(), 20.5);
+        ArmSegment lowerSegment = new ArmSegment(config.getLowerArmMotor(), config.getLowerArmPot(),22);
         this.wrist = new Wrist(config.getWristMotor(), config.getWristPot());
         this.arm = new Arm(upperSegment, lowerSegment, wrist);
     }
@@ -93,7 +92,7 @@ public class Robot extends TimedRobot {
         } else {
             arm.setAngles(controlScheme.getUpperArmAxis().getValue(), controlScheme.getLowerArmAxis().getValue());
         }
-        if(controlScheme.getInverseKinimaticsToggleButton().getValue()) {
+        if(controlScheme.getInverseKinematicsToggleButton().getValue()) {
             arm.toggleInverseKinematicsMode();
         }
 

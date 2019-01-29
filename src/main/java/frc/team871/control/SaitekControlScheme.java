@@ -37,7 +37,7 @@ public enum SaitekControlScheme implements IControlScheme{
     }
 
     @Override
-    public IButton getInverseKinimaticsToggleButton() {
+    public IButton getInverseKinematicsToggleButton() {
         return unusedButton;
     }
 
