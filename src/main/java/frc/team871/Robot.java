@@ -92,7 +92,7 @@ public class Robot extends TimedRobot {
         } else {
             arm.setAngles(controlScheme.getUpperArmAxis().getValue(), controlScheme.getLowerArmAxis().getValue());
         }
-        if(controlScheme.getInverseKinimaticsToggleButton().getValue()) {
+        if(controlScheme.getInverseKinematicsToggleButton().getValue()) {
             arm.toggleInverseKinematicsMode();
         }
 

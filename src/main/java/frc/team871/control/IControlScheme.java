@@ -7,7 +7,7 @@ public interface IControlScheme {
 
     IButton getVacuumToggleButton();
 
-    IButton getInverseKinimaticsToggleButton();
+    IButton getInverseKinematicsToggleButton();
 
     IButton getWristToggleButton();
 

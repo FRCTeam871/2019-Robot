@@ -41,7 +41,7 @@ public enum InitialControlScheme implements IControlScheme{
     }
 
     @Override
-    public IButton getInverseKinimaticsToggleButton() {
+    public IButton getInverseKinematicsToggleButton() {
         return systemsController.getButton(XBoxButtons.BACK);
     }
 
