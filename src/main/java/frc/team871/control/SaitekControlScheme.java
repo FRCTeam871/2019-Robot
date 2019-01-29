@@ -22,7 +22,7 @@ public enum SaitekControlScheme implements IControlScheme{
     SaitekControlScheme() {
         saitekStickJoy = new GenericJoystick<>(0, Arrays.asList(SaitekButtons.values()), Arrays.asList(SaitekAxes.values()));
         saitekStickJoy.getButton(SaitekButtons.HAT_LEFT).setMode(ButtonTypes.TOGGLE);
-        saitekStickJoy.getButton(SaitekButtons.I).setMode(ButtonTypes.RISING);
+        saitekStickJoy.getButton(SaitekButtons.I).setMode(ButtonTypes.TOGGLE);
         saitekStickJoy.getButton(SaitekButtons.C).setMode(ButtonTypes.RISING);
         saitekStickJoy.getButton(SaitekButtons.B).setMode(ButtonTypes.MOMENTARY);
         saitekStickJoy.getButton(SaitekButtons.A).setMode(ButtonTypes.RISING);

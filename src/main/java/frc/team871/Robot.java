@@ -96,7 +96,7 @@ public class Robot extends TimedRobot {
             arm.toggleInverseKinematicsMode();
         }
 
-        wrist.setOrientation(controlScheme.getWristAxis().getValue());
+        wrist.handleInputs(controlScheme.getWristAxis(), controlScheme.getWristToggleButton());
     }
 
     @Override
