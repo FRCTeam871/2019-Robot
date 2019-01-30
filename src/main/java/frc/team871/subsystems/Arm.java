@@ -39,6 +39,14 @@ public class Arm {
         setAngles(calcUpperAngle(), calcLowerAngle());
     }
 
+    public void goToRelative(double x, double y){
+        goTo(getRadius() * x, getRadius() * y);
+    }
+
+    private double getRadius(){
+        return lowerSegment.getLength() + upperSegment.getLength();
+    }
+
     public void setWristOrientation(double angle){
         wrist.setOrientation(angle);
     }
@@ -50,5 +58,4 @@ public class Arm {
     public ArmMode getCurrentArmMode() {
         return currentArmMode;
     }
-
 }
