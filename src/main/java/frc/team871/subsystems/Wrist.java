@@ -5,6 +5,7 @@ import com.team871.hid.HIDButton;
 import com.team871.hid.IAxis;
 import com.team871.hid.IButton;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.SpeedController;
 
@@ -13,11 +14,11 @@ public class Wrist {
     private SpeedController motor;
     //TODO: orientation sensor
     private PIDController pid;
-    private AnalogInput pot;
+    private AnalogPotentiometer pot;
     private double oldAxis;
     private boolean oldButton;
 
-    public Wrist(SpeedController motor, AnalogInput pot) {
+    public Wrist(SpeedController motor, AnalogPotentiometer pot) {
         this.motor = motor;
         this.pot = pot;
     }
@@ -35,7 +36,7 @@ public class Wrist {
     }
 
     public double getAngle(){
-        return pot.getValue() / 1.1; //approx. conversion from ADC to degrees
+        return pot.get() / 1.1; //approx. conversion from ADC to degrees
     }
 
     /**
