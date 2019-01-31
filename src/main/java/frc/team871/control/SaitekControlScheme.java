@@ -18,6 +18,7 @@ public enum SaitekControlScheme implements IControlScheme{
     private GenericJoystick<SaitekButtons, SaitekAxes> saitekStickJoy;
     private ConstantAxis unusedAxis;
     private ConstantButton unusedButton;
+    private DependentAxis dependentAxis;
 
     SaitekControlScheme() {
         saitekStickJoy = new GenericJoystick<>(0, Arrays.asList(SaitekButtons.values()), Arrays.asList(SaitekAxes.values()));
@@ -29,6 +30,8 @@ public enum SaitekControlScheme implements IControlScheme{
 
         unusedAxis = new ConstantAxis(0);
         unusedButton = new ConstantButton(false);
+
+        dependentAxis = new DependentAxis(saitekStickJoy.getAxis(SaitekAxes.I_AXIS), saitekStickJoy.getAxis(SaitekAxes.THROTTLE));
     }
 
     @Override
@@ -96,7 +99,7 @@ public enum SaitekControlScheme implements IControlScheme{
 
     @Override
     public IAxis getArmTargetXAxis() {
-        return saitekStickJoy.getAxis(SaitekAxes.THROTTLE);
+        return dependentAxis;
     }
 
     @Override
