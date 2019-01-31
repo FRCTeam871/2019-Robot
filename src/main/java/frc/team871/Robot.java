@@ -48,7 +48,7 @@ public class Robot extends TimedRobot {
         // TODO: Get actually lengths of the arm segments
         ArmSegment upperSegment = new ArmSegment(config.getUpperArmMotor(), config.getUpperArmPot(), 20.5);
         ArmSegment lowerSegment = new ArmSegment(config.getLowerArmMotor(), config.getLowerArmPot(),22.);
-        this.wrist = new Wrist(config.getWristMotor(), config.getWristPot());
+        this.wrist = new Wrist(config.getWristMotor(), config.getWristPotAxis());
         this.arm = new Arm(upperSegment, lowerSegment, wrist);
     }
 
