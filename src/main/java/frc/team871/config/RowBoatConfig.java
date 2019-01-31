@@ -1,11 +1,15 @@
 package frc.team871.config;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
+import com.team871.io.actuator.CombinedSpeedController;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.SpeedController;
+import java.util.Arrays;
+import java.util.Collection;
 
 public enum RowBoatConfig implements IRowBoatConfig{
     DEFAULT;
@@ -31,7 +35,7 @@ public enum RowBoatConfig implements IRowBoatConfig{
          this.rearRightMotor = new WPI_VictorSPX(5);
          //TODO find motor type and port numbers
 //         this.lowerArmMotor = new ______________();
-//         this.upperArmMotor = new ______________();
+         this.upperArmMotor = new CombinedSpeedController(Arrays.asList(new WPI_TalonSRX(-11), new WPI_TalonSRX(-22)));
 //         this.wristMotor = new _________________();
 //         this.vacuumMotor = new ________________();
          this.gyro = new AHRS(SerialPort.Port.kMXP);
