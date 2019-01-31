@@ -29,20 +29,20 @@ public enum RowBoatConfig implements IRowBoatConfig{
     DigitalInput grabSensor;
 
     RowBoatConfig(){
-         this.frontLeftMotor = new WPI_VictorSPX(2);
-         this.rearLeftMotor = new WPI_VictorSPX(3);
-         this.frontRightMotor = new WPI_VictorSPX(4);
-         this.rearRightMotor = new WPI_VictorSPX(5);
+         this.frontLeftMotor = new WPI_VictorSPX(0);
+         this.rearLeftMotor = new WPI_VictorSPX(1);
+         this.frontRightMotor = new WPI_VictorSPX(2);
+         this.rearRightMotor = new WPI_VictorSPX(3);
          //TODO find motor type and port numbers
-//         this.lowerArmMotor = new ______________();
-         this.upperArmMotor = new CombinedSpeedController(Arrays.asList(new WPI_TalonSRX(-11), new WPI_TalonSRX(-22)));
-//         this.wristMotor = new _________________();
-//         this.vacuumMotor = new ________________();
+         this.lowerArmMotor = new WPI_TalonSRX(4);
+         this.upperArmMotor = new CombinedSpeedController(Arrays.asList(new WPI_TalonSRX(5), new WPI_TalonSRX(6)));
+         this.wristMotor = new WPI_TalonSRX(7);
+         this.vacuumMotor = new WPI_TalonSRX(8);
          this.gyro = new AHRS(SerialPort.Port.kMXP);
-//         this.lowerArmPot = new ________________();
-//         this.upperArmPot = new ________________();
-//         this.wristPot = new ___________________();
-//         this.grabSensor = new _________________();
+//         this.lowerArmPot = new AnalogInput(-1);
+//         this.upperArmPot = new AnalogInput(-1);
+//         this.wristPot = new AnalogInput(-1);
+//         this.grabSensor = new DigitalInput(-1);
     }
 
     @Override
