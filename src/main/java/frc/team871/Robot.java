@@ -9,6 +9,8 @@ package frc.team871;
 
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import frc.team871.config.RowBoatConfigHack;
+import frc.team871.control.InitialControlSchemeHack;
 import frc.team871.subsystems.DriveTrain;
 import frc.team871.config.IRowBoatConfig;
 import frc.team871.config.RowBoatConfig;
@@ -41,8 +43,8 @@ public class Robot extends TimedRobot {
       */
     @Override
     public void robotInit() {
-        this.controlScheme = InitialControlScheme.DEFAULT;
-        this.config = RowBoatConfig.DEFAULT;
+        this.controlScheme = InitialControlSchemeHack.DEFAULT;
+        this.config = RowBoatConfigHack.DEFAULT;
         this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor());
         this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro());
         // TODO: Get actually lengths of the arm segments
@@ -70,33 +72,35 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
 
-        if(driveTrain.getDriveMode() == DriveTrain.DriveMode.ROBOT){
-            driveTrain.driveRobotOriented(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
-        } else {
-            driveTrain.driveFieldOriented(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
-        }
-        if(controlScheme.getRobotOrientationToggleButton().getValue()){
-            driveTrain.toggleFieldDriveMode();
-        }
-        driveTrain.setHeadingHoldEnabled(controlScheme.getHeadingHoldButton().getValue());
-        if(controlScheme.getResetGyroButton().getValue()) {
-            driveTrain.resetGyro();
-        }
+//        if(driveTrain.getDriveMode() == DriveTrain.DriveMode.ROBOT){
+//            driveTrain.driveRobotOriented(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
+//        } else {
+//            driveTrain.driveFieldOriented(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
+//        }
+//        if(controlScheme.getRobotOrientationToggleButton().getValue()){
+//            driveTrain.toggleFieldDriveMode();
+//        }
+//        driveTrain.setHeadingHoldEnabled(controlScheme.getHeadingHoldButton().getValue());
+//        if(controlScheme.getResetGyroButton().getValue()) {
+//            driveTrain.resetGyro();
+//        }
+//
+//        if(controlScheme.getVacuumToggleButton().getValue()) {
+//            vacuum.toggleState();
+//        }
 
-        if(controlScheme.getVacuumToggleButton().getValue()) {
-            vacuum.toggleState();
-        }
+        arm.upperSegment.rotate(controlScheme.getUpperArmAxis().getValue() * -1.0);
+        arm.lowerSegment.rotate(controlScheme.getLowerArmAxis().getValue() * 1.0);
+        arm.wrist.setOrientation(controlScheme.getWristAxis().getValue() * 0.5);
 
-        if(arm.getCurrentArmMode() == Arm.ArmMode.INVERSE_KINEMATICS) {
-            arm.goToRelative(controlScheme.getArmTargetXAxis().getValue(), controlScheme.getArmTargetYAxis().getValue());
-        } else {
-            arm.setAngles(controlScheme.getUpperArmAxis().getValue(), controlScheme.getLowerArmAxis().getValue());
-        }
-        if(controlScheme.getInverseKinematicsToggleButton().getValue()) {
-            arm.toggleInverseKinematicsMode();
-        }
+//        if(arm.getCurrentArmMode() == Arm.ArmMode.INVERSE_KINEMATICS) {
+//            arm.goToRelative(controlScheme.getArmTargetXAxis().getValue(), controlScheme.getArmTargetYAxis().getValue());
+//        } else {
+//            arm.setAngles(controlScheme.getUpperArmAxis().getValue(), controlScheme.getLowerArmAxis().getValue());
+//        }
+//        arm.handleInverseKinematicsMode(controlScheme.getInverseKinematicsToggleButton());
 
-        wrist.handleInputs(controlScheme.getWristAxis(), controlScheme.getWristToggleButton());
+        //wrist.handleInputs(controlScheme.getWristAxis(), controlScheme.getWristToggleButton());
     }
 
     @Override

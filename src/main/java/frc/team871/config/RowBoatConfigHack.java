@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.SpeedController;
 import java.util.Arrays;
 
-public enum RowBoatConfig implements IRowBoatConfig{
+public enum RowBoatConfigHack implements IRowBoatConfig{
     DEFAULT;
 
     SpeedController frontLeftMotor;
@@ -23,36 +23,22 @@ public enum RowBoatConfig implements IRowBoatConfig{
     SpeedController wristMotor;
     SpeedController vacuumMotor;
     AHRS gyro;
-    AnalogInput lowerArmPotAxis;
-    AnalogInput upperArmPotAxis;
-    AnalogInput wristPotAxis;
-    AnalogPotentiometer lowerArmPot;
-    AnalogPotentiometer upperArmPot;
-    AnalogPotentiometer wristPot;
-    DigitalInput grabSensor;
 
-    RowBoatConfig(){
-         this.frontLeftMotor = new WPI_VictorSPX(0);
-         this.rearLeftMotor = new WPI_VictorSPX(1);
+    RowBoatConfigHack(){
+          this.frontLeftMotor = new WPI_VictorSPX(0);
+           this.rearLeftMotor = new WPI_VictorSPX(1);
          this.frontRightMotor = new WPI_VictorSPX(2);
-         this.rearRightMotor = new WPI_VictorSPX(3);
+          this.rearRightMotor = new WPI_VictorSPX(3);
 
 
-         this.wristMotor = new WPI_TalonSRX(4);
+            this.wristMotor = new WPI_TalonSRX(4);
          this.upperArmMotor = new CombinedSpeedController(Arrays.asList(new WPI_TalonSRX(5), new WPI_TalonSRX(6)));
          this.lowerArmMotor = new WPI_TalonSRX(7);
-         this.vacuumMotor = new WPI_TalonSRX(8);
+           this.vacuumMotor = new WPI_TalonSRX(8);
 
          this.gyro = new AHRS(SerialPort.Port.kMXP);
 
          //TODO find sensor channels
-         this.lowerArmPotAxis = new AnalogInput(-1);
-         this.lowerArmPot = new AnalogPotentiometer(lowerArmPotAxis, 1);
-         this.upperArmPotAxis = new AnalogInput(-1);
-         this.lowerArmPot = new AnalogPotentiometer(upperArmPotAxis, 1);
-         this.wristPotAxis = new AnalogInput(-1);
-         this.lowerArmPot = new AnalogPotentiometer(wristPotAxis, 1);
-         this.grabSensor = new DigitalInput(-1);
     }
 
     @Override
@@ -102,36 +88,36 @@ public enum RowBoatConfig implements IRowBoatConfig{
 
     @Override
     public AnalogInput getLowerArmAxisSensor() {
-        return lowerArmPotAxis;
+        return null;
     }
 
     @Override
     public AnalogInput getUpperArmAxisSensor() {
-        return upperArmPotAxis;
+        return null;
     }
 
     @Override
     public AnalogInput getWristAxisSensor() {
-        return wristPotAxis;
+        return null;
     }
 
     @Override
     public AnalogPotentiometer getLowerArmPot() {
-        return lowerArmPot;
+        return null;
     }
 
     @Override
     public AnalogPotentiometer getUpperArmPot() {
-        return upperArmPot;
+        return null;
     }
 
     @Override
     public AnalogPotentiometer getWristPotAxis() {
-        return wristPot;
+        return null;
     }
 
     @Override
     public DigitalInput getGrabSensor() {
-        return grabSensor;
+        return null;
     }
 }

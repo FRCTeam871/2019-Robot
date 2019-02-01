@@ -1,10 +1,7 @@
 package frc.team871.subsystems;
 
-import com.team871.hid.HIDAxis;
-import com.team871.hid.HIDButton;
 import com.team871.hid.IAxis;
 import com.team871.hid.IButton;
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.SpeedController;
@@ -24,18 +21,22 @@ public class Wrist {
     }
 
     public void enablePID(){
-        pid.enable();
+        if(pid != null) pid.enable();
     }
 
     public void disablePID(){
-        pid.disable();
+        if(pid != null) pid.disable();
     }
 
     public void setOrientation(double angle){
-        pid.setSetpoint(angle);
+        if(pid != null) pid.setSetpoint(angle);
+        else {
+            motor.set(angle);
+        }
     }
 
     public double getAngle(){
+        if(pid == null) return 0;
         return pot.get() / 1.1; //approx. conversion from ADC to degrees
     }
 
@@ -49,7 +50,7 @@ public class Wrist {
         if(oldAxis != axis.getValue()){
             setOrientation(axis.getValue());
         }else if(oldButton != button.getValue()){
-            setOrientation(button.getValue() ? 90 : 0);
+            //setOrientation(button.getValue() ? 90 : 0);
         }
         oldAxis = axis.getValue();
         oldButton = button.getValue();

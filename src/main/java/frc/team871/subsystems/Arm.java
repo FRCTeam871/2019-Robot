@@ -1,10 +1,13 @@
 package frc.team871.subsystems;
 
+import com.team871.hid.IAxis;
+import com.team871.hid.IButton;
+
 public class Arm {
 
-    private ArmSegment upperSegment;
-    private ArmSegment lowerSegment;
-    private Wrist wrist;
+    public ArmSegment upperSegment;
+    public ArmSegment lowerSegment;
+    public Wrist wrist;
     private ArmMode currentArmMode;
     private double x;
     private double y;
@@ -51,11 +54,20 @@ public class Arm {
         wrist.setOrientation(angle);
     }
 
-    public void toggleInverseKinematicsMode() {
-        currentArmMode = (currentArmMode == ArmMode.INVERSE_KINEMATICS)? ArmMode.DIRECT : ArmMode.INVERSE_KINEMATICS;
+    public void handleInverseKinematicsMode(IButton button) {
+        currentArmMode = (button.getValue())? ArmMode.DIRECT : ArmMode.INVERSE_KINEMATICS;
+        // currentArmMode = (currentArmMode == ArmMode.INVERSE_KINEMATICS)? ArmMode.DIRECT : ArmMode.INVERSE_KINEMATICS;
     }
 
     public ArmMode getCurrentArmMode() {
         return currentArmMode;
+    }
+
+    public void handleArmAxes(IAxis upperAxis, IAxis lowerAxis, IAxis xAxis, IAxis yAxis){
+        if(currentArmMode == ArmMode.INVERSE_KINEMATICS) {
+            goToRelative(xAxis.getValue(),yAxis.getValue());
+        } else {
+            setAngles(upperAxis.getValue(), lowerAxis.getValue());
+        } //arm.setAngles(controlScheme.getUpperArmAxis().getValue(), controlScheme.getLowerArmAxis().getValue());
     }
 }
