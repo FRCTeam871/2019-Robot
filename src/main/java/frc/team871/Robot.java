@@ -8,8 +8,10 @@
 package frc.team871;
 
 
-import com.team871.hid.IButton;
+import com.team871.navigation.Coordinate;
+import com.team871.navigation.Navigation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import frc.team871.auto.DockingWaypointProvider;
 import frc.team871.subsystems.DriveTrain;
 import frc.team871.config.IRowBoatConfig;
 import frc.team871.config.RowBoatConfig;
@@ -35,6 +37,8 @@ public class Robot extends TimedRobot {
     private Vacuum vacuum;
     private Arm arm;
     private Wrist wrist;
+    private Navigation nav;
+    private DockingWaypointProvider waypointProvider;
 
     /**
       * This function is run when the robot is first started up and should be used
@@ -51,6 +55,8 @@ public class Robot extends TimedRobot {
         ArmSegment lowerSegment = new ArmSegment(config.getLowerArmMotor(), config.getLowerArmPot(),22.);
         this.wrist = new Wrist(config.getWristMotor(), config.getWristPotAxis());
         this.arm = new Arm(upperSegment, lowerSegment, wrist);
+
+
     }
 
     @Override
@@ -60,7 +66,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousPeriodic() {
-
+        teleopPeriodic();
     }
 
     @Override
@@ -83,6 +89,7 @@ public class Robot extends TimedRobot {
         if(controlScheme.getResetGyroButton().getValue()) {
             driveTrain.resetGyro();
         }
+
 
         vacuum.setState(controlScheme.getVacuumToggleButton());
 

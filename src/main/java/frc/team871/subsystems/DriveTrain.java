@@ -4,16 +4,17 @@ import com.kauailabs.navx.frc.AHRS;
 import com.team871.io.sensor.IDisplacementSensor;
 import com.team871.navigation.Coordinate;
 import com.team871.navigation.DistanceUnit;
+import com.team871.navigation.Navigation;
+import com.team871.navigation.Waypoint;
 import com.team871.subsystem.IDriveTrain;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.drive.Vector2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team871.auto.DockingWaypointProvider;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -32,6 +33,8 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput, 
     private PIDController headingPID;
     private DriveMode currentDriveMode;
     private double pidRotation;
+
+    private Navigation nav;
 
     private final List<VelocityHolder> velDataPoints = new ArrayList<>(); //TODO: consider using a map
 
@@ -179,8 +182,16 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput, 
 
         positionIntegrator = new Timer();
         positionIntegrator.schedule(new IntegrationTask(), 0, integrationRate);
+
+        //Guaranteed to break lots of things
+        DockingWaypointProvider<Waypoint> waypointProvider = new DockingWaypointProvider<>(null);
+
+        this.nav = new Navigation(this, this, waypointProvider, new Coordinate(0,0));
     }
 
+    public void autoDock(){
+
+    }
 
     public void driveFieldOriented(double x, double y, double r) {
         lastXInput = x;
