@@ -8,6 +8,7 @@
 package frc.team871;
 
 
+import com.team871.hid.IButton;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.team871.subsystems.DriveTrain;
 import frc.team871.config.IRowBoatConfig;
@@ -83,18 +84,10 @@ public class Robot extends TimedRobot {
             driveTrain.resetGyro();
         }
 
-        if(controlScheme.getVacuumToggleButton().getValue()) {
-            vacuum.toggleState();
-        }
+        vacuum.setState(controlScheme.getVacuumToggleButton());
 
-        if(arm.getCurrentArmMode() == Arm.ArmMode.INVERSE_KINEMATICS) {
-            arm.goToRelative(controlScheme.getArmTargetXAxis().getValue(), controlScheme.getArmTargetYAxis().getValue());
-        } else {
-            arm.setAngles(controlScheme.getUpperArmAxis().getValue(), controlScheme.getLowerArmAxis().getValue());
-        }
-        if(controlScheme.getInverseKinematicsToggleButton().getValue()) {
-            arm.toggleInverseKinematicsMode();
-        }
+        arm.handleArmAxes(controlScheme.getUpperArmAxis(), controlScheme.getLowerArmAxis(), controlScheme.getArmTargetXAxis(), controlScheme.getMecDriveYAxis());
+        arm.handleInverseKinematicsMode(controlScheme.getInverseKinematicsToggleButton());
 
         wrist.handleInputs(controlScheme.getWristAxis(), controlScheme.getWristToggleButton());
     }

@@ -1,6 +1,7 @@
 package frc.team871.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.team871.hid.IButton;
 import com.team871.subsystem.IDriveTrain;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
@@ -47,10 +48,9 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput {
         driveCartesian(y, x, r + (headingPID.isEnabled() ? pidRotation : 0));
     }
 
-
     @Override
-    public void setHeadingHoldEnabled(boolean enabled) {
-        headingPID.setEnabled(enabled);
+    public void setHeadingHoldEnabled(boolean value){
+        headingPID.setEnabled(value);
     }
 
     @Override

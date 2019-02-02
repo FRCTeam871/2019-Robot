@@ -1,5 +1,8 @@
 package frc.team871.subsystems;
 
+import com.team871.hid.IAxis;
+import com.team871.hid.IButton;
+
 public class Arm {
 
     private ArmSegment upperSegment;
@@ -9,7 +12,7 @@ public class Arm {
     private double x;
     private double y;
 
-    public enum ArmMode {
+    private enum ArmMode {
         DIRECT,
         INVERSE_KINEMATICS
     }
@@ -51,11 +54,23 @@ public class Arm {
         wrist.setOrientation(angle);
     }
 
-    public void toggleInverseKinematicsMode() {
-        currentArmMode = (currentArmMode == ArmMode.INVERSE_KINEMATICS)? ArmMode.DIRECT : ArmMode.INVERSE_KINEMATICS;
+    public void handleInverseKinematicsMode(IButton button) {
+        currentArmMode = (button.getValue())? ArmMode.DIRECT : ArmMode.INVERSE_KINEMATICS;
+        // currentArmMode = (currentArmMode == ArmMode.INVERSE_KINEMATICS)? ArmMode.DIRECT : ArmMode.INVERSE_KINEMATICS;
     }
 
-    public ArmMode getCurrentArmMode() {
-        return currentArmMode;
+    /**
+     * Controls the arm by selecting which axes to use based on the current ArmMode.
+     * @param upperAxis used in DIRECT control to set the angle of the upper arm segment
+     * @param lowerAxis used in DIRECT control to set the angle of the lower arm segment
+     * @param xAxis used in INVERSE_KINEMATICS control to set the x-position of the target
+     * @param yAxis used in INVERSE_KINEMATICS control to set the y-position of the target
+     */
+    public void handleArmAxes(IAxis upperAxis, IAxis lowerAxis, IAxis xAxis, IAxis yAxis){
+        if(currentArmMode == ArmMode.INVERSE_KINEMATICS) {
+            goToRelative(xAxis.getValue(),yAxis.getValue());
+        } else {
+            setAngles(upperAxis.getValue(), lowerAxis.getValue());
+        }
     }
 }
