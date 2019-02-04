@@ -24,11 +24,12 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput {
         super(frontLeft, rearLeft, frontRight, rearRight);
         this.gyro = gyro;
         this.currentDriveMode = DriveMode.ROBOT;
-        headingPID = new PIDController(0.03, 0, 0.03, gyro, this); //values from last year's robor
+        headingPID = new PIDController(0.00, 0, 0.00, gyro, this); //values from last year's robor
         headingPID.setInputRange(-180, 180);
         headingPID.setOutputRange(-0.5, 0.5);
         headingPID.setContinuous();
         headingPID.setAbsoluteTolerance(5);
+        headingPID.setEnabled(false);
     }
 
 

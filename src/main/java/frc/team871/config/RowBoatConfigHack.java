@@ -25,10 +25,12 @@ public enum RowBoatConfigHack implements IRowBoatConfig{
     AHRS gyro;
 
     RowBoatConfigHack(){
-          this.frontLeftMotor = new WPI_VictorSPX(0);
-           this.rearLeftMotor = new WPI_VictorSPX(1);
-         this.frontRightMotor = new WPI_VictorSPX(2);
-          this.rearRightMotor = new WPI_VictorSPX(3);
+          this.frontLeftMotor = new WPI_VictorSPX(3);
+          this.frontLeftMotor.setInverted(true);
+           this.rearLeftMotor = new WPI_VictorSPX(2);
+         this.frontRightMotor = new WPI_VictorSPX(0);
+          this.rearRightMotor = new WPI_VictorSPX(1);
+          this.rearRightMotor.setInverted(true);
 
 
             this.wristMotor = new WPI_TalonSRX(4);

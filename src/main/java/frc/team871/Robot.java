@@ -45,7 +45,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         this.controlScheme = InitialControlSchemeHack.DEFAULT;
         this.config = RowBoatConfigHack.DEFAULT;
-        this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor());
+//        this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor());
         this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro());
         // TODO: Get actually lengths of the arm segments
         ArmSegment upperSegment = new ArmSegment(config.getUpperArmMotor(), config.getUpperArmPot(), 20.5);
@@ -72,18 +72,20 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
 
-//        if(driveTrain.getDriveMode() == DriveTrain.DriveMode.ROBOT){
-//            driveTrain.driveRobotOriented(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
-//        } else {
-//            driveTrain.driveFieldOriented(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
-//        }
-//        if(controlScheme.getRobotOrientationToggleButton().getValue()){
-//            driveTrain.toggleFieldDriveMode();
-//        }
+        if(driveTrain.getDriveMode() == DriveTrain.DriveMode.ROBOT){
+            System.out.println(controlScheme.getMecDriveXAxis() + " " + controlScheme.getMecDriveYAxis());
+            System.out.println(controlScheme.getMecDriveXAxis().getValue() + " " + controlScheme.getMecDriveYAxis().getValue());
+            driveTrain.driveRobotOriented(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
+        } else {
+            driveTrain.driveFieldOriented(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
+        }
+        if(controlScheme.getRobotOrientationToggleButton().getValue()){
+            driveTrain.toggleFieldDriveMode();
+        }
 //        driveTrain.setHeadingHoldEnabled(controlScheme.getHeadingHoldButton().getValue());
-//        if(controlScheme.getResetGyroButton().getValue()) {
-//            driveTrain.resetGyro();
-//        }
+        if(controlScheme.getResetGyroButton().getValue()) {
+            driveTrain.resetGyro();
+        }
 //
 //        if(controlScheme.getVacuumToggleButton().getValue()) {
 //            vacuum.toggleState();
