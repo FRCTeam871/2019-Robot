@@ -12,7 +12,9 @@ import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.drive.Vector2d;
+import frc.team871.SettablePIDSource;
 import frc.team871.auto.DockingWaypointProvider;
+import frc.team871.auto.LineSensor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -37,6 +39,150 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput, 
     private Navigation nav;
 
     private final List<VelocityHolder> velDataPoints = new ArrayList<>(); //TODO: consider using a map
+    private PIDController lineXController;
+    private SettablePIDSource lineXSource;
+
+    public DriveTrain(SpeedController frontLeft, SpeedController rearLeft, SpeedController frontRight, SpeedController rearRight, AHRS gyro){
+        super(frontLeft, rearLeft, frontRight, rearRight);
+        this.gyro = gyro;
+        this.currentDriveMode = DriveMode.ROBOT;
+        headingPID = new PIDController(0.03, 0, 0.03, gyro, this); //values from last year's robor
+        headingPID.setInputRange(-180, 180);
+        headingPID.setOutputRange(-0.5, 0.5);
+        headingPID.setContinuous();
+        headingPID.setAbsoluteTolerance(5);
+
+        this.prevDisplacement = new Coordinate (0,0);
+
+        //TODO these values will change for this year's row boat
+        velDataPoints.add(new VelocityHolder(0,  0));
+        velDataPoints.add(new VelocityHolder(.1, 0));
+        velDataPoints.add(new VelocityHolder(.2, 15.8));
+        velDataPoints.add(new VelocityHolder(.3, 28.2));
+        velDataPoints.add(new VelocityHolder(.4, 40.95));
+        velDataPoints.add(new VelocityHolder(.5, 53.95));
+        velDataPoints.add(new VelocityHolder(.6, 64.7));
+        velDataPoints.add(new VelocityHolder(.7, 72.33));
+        velDataPoints.add(new VelocityHolder(.8, 82.34));
+        velDataPoints.add(new VelocityHolder(.9, 92.167));
+        velDataPoints.add(new VelocityHolder(1,  100));
+
+        positionIntegrator = new Timer();
+        positionIntegrator.schedule(new IntegrationTask(), 0, integrationRate);
+
+        //Guaranteed to break lots of things
+        DockingWaypointProvider<Waypoint> waypointProvider = new DockingWaypointProvider<>(null);
+
+        this.nav = new Navigation(this, this, waypointProvider, new Coordinate(0,0));
+
+        lineXSource = new SettablePIDSource(0);
+        lineXController = new PIDController(0, 0, 0, lineXSource, o -> {}); //TODO: PID values
+
+    }
+
+    public void autoDock(LineSensor line){
+        if(line.hasLine()) {
+            lineXSource.setValue(line.getCenter());
+            lineXController.setEnabled(true);
+            setHeadingHold(gyro.getYaw() + line.getAngle());
+            setHeadingHoldEnabled(true);
+            driveRobotOriented(lineXController.get(), .1, 0);
+        }else{
+            lineXController.setEnabled(false);
+            setHeadingHoldEnabled(false);
+        }
+    }
+
+    public void driveFieldOriented(double x, double y, double r) {
+        lastXInput = x;
+        lastYInput = y;
+        driveCartesian(y, x, r + (headingPID.isEnabled() ? pidRotation : 0), gyro.getAngle());
+    }
+
+
+    @Override
+    public void drivePolar(double magnitude, double angle, double r) {
+        lastXInput = Math.cos(angle) * magnitude;
+        lastYInput = Math.sin(angle) * magnitude;
+        super.drivePolar(magnitude, angle, r + (headingPID.isEnabled() ? pidRotation : 0));
+    }
+
+
+    public void driveRobotOriented(double x, double y, double r) {
+        lastXInput = x;
+        lastYInput = y;
+        driveCartesian(y, x, r + (headingPID.isEnabled() ? pidRotation : 0));
+    }
+
+    @Override
+    public void setHeadingHoldEnabled(boolean value){
+        headingPID.setEnabled(value);
+    }
+
+    @Override
+    public boolean getHeadingHoldEnabled() {
+        return headingPID.isEnabled();
+    }
+
+    @Override
+    public void setHeadingHold(double heading) {
+        headingPID.setSetpoint(heading);
+        headingPID.enable();
+    }
+
+    @Override
+    public void setHeadingTolerance(double tolerance) {
+        headingPID.setAbsoluteTolerance(tolerance);
+    }
+
+    @Override
+    public boolean isAtHeading() {
+        return headingPID.onTarget();
+    }
+
+    @Override
+    public void drive(double speed, double heading) {
+        driveRobotOriented(speed * Math.cos(heading), speed * Math.sin(heading), 0);
+    }
+
+    @Override
+    public void stop() {
+        driveRobotOriented(0, 0, 0); //TODO: break mode
+    }
+
+    @Override
+    public void pidWrite(double output) {
+        pidRotation = output;
+    }
+
+    public void toggleFieldDriveMode(){
+        currentDriveMode = (currentDriveMode == DriveMode.ROBOT)? DriveMode.FIELD : DriveMode.ROBOT;
+    }
+
+    public DriveMode getDriveMode(){
+        return currentDriveMode;
+    }
+
+    public void resetGyro(){
+        gyro.zeroYaw();
+    }
+
+    @Override
+    public Coordinate getDisplacement(DistanceUnit distanceUnit) {
+        return displacement;
+    }
+
+    @Override
+    public Coordinate getVelocity(DistanceUnit distanceUnit) {
+        return new Coordinate(displacement.getX() - prevDisplacement.getX(), displacement.getY() - prevDisplacement.getY());
+    }
+
+    @Override
+    public void resetSensor() {
+        enableIntegration = false;
+        displacement = new Coordinate(0,0);
+        enableIntegration = true;
+    }
 
     //TODO: copied from the previous year, optimize
     private class IntegrationTask extends TimerTask {
@@ -155,132 +301,4 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput, 
         FIELD
     }
 
-    public DriveTrain(SpeedController frontLeft, SpeedController rearLeft, SpeedController frontRight, SpeedController rearRight, AHRS gyro){
-        super(frontLeft, rearLeft, frontRight, rearRight);
-        this.gyro = gyro;
-        this.currentDriveMode = DriveMode.ROBOT;
-        headingPID = new PIDController(0.03, 0, 0.03, gyro, this); //values from last year's robor
-        headingPID.setInputRange(-180, 180);
-        headingPID.setOutputRange(-0.5, 0.5);
-        headingPID.setContinuous();
-        headingPID.setAbsoluteTolerance(5);
-
-        this.prevDisplacement = new Coordinate (0,0);
-
-        //TODO these values will change for this year's row boat
-        velDataPoints.add(new VelocityHolder(0,  0));
-        velDataPoints.add(new VelocityHolder(.1, 0));
-        velDataPoints.add(new VelocityHolder(.2, 15.8));
-        velDataPoints.add(new VelocityHolder(.3, 28.2));
-        velDataPoints.add(new VelocityHolder(.4, 40.95));
-        velDataPoints.add(new VelocityHolder(.5, 53.95));
-        velDataPoints.add(new VelocityHolder(.6, 64.7));
-        velDataPoints.add(new VelocityHolder(.7, 72.33));
-        velDataPoints.add(new VelocityHolder(.8, 82.34));
-        velDataPoints.add(new VelocityHolder(.9, 92.167));
-        velDataPoints.add(new VelocityHolder(1,  100));
-
-        positionIntegrator = new Timer();
-        positionIntegrator.schedule(new IntegrationTask(), 0, integrationRate);
-
-        //Guaranteed to break lots of things
-        DockingWaypointProvider<Waypoint> waypointProvider = new DockingWaypointProvider<>(null);
-
-        this.nav = new Navigation(this, this, waypointProvider, new Coordinate(0,0));
-    }
-
-    public void autoDock(){
-
-    }
-
-    public void driveFieldOriented(double x, double y, double r) {
-        lastXInput = x;
-        lastYInput = y;
-        driveCartesian(y, x, r + (headingPID.isEnabled() ? pidRotation : 0), gyro.getAngle());
-    }
-
-
-    @Override
-    public void drivePolar(double magnitude, double angle, double r) {
-        lastXInput = Math.cos(angle) * magnitude;
-        lastYInput = Math.sin(angle) * magnitude;
-        super.drivePolar(magnitude, angle, r + (headingPID.isEnabled() ? pidRotation : 0));
-    }
-
-
-    public void driveRobotOriented(double x, double y, double r) {
-        lastXInput = x;
-        lastYInput = y;
-        driveCartesian(y, x, r + (headingPID.isEnabled() ? pidRotation : 0));
-    }
-
-    @Override
-    public void setHeadingHoldEnabled(boolean value){
-        headingPID.setEnabled(value);
-    }
-
-    @Override
-    public boolean getHeadingHoldEnabled() {
-        return headingPID.isEnabled();
-    }
-
-    @Override
-    public void setHeadingHold(double heading) {
-        headingPID.setSetpoint(heading);
-        headingPID.enable();
-    }
-
-    @Override
-    public void setHeadingTolerance(double tolerance) {
-        headingPID.setAbsoluteTolerance(tolerance);
-    }
-
-    @Override
-    public boolean isAtHeading() {
-        return headingPID.onTarget();
-    }
-
-    @Override
-    public void drive(double speed, double heading) {
-        driveRobotOriented(speed * Math.cos(heading), speed * Math.sin(heading), 0);
-    }
-
-    @Override
-    public void stop() {
-        driveRobotOriented(0, 0, 0); //TODO: break mode
-    }
-
-    @Override
-    public void pidWrite(double output) {
-        pidRotation = output;
-    }
-
-    public void toggleFieldDriveMode(){
-        currentDriveMode = (currentDriveMode == DriveMode.ROBOT)? DriveMode.FIELD : DriveMode.ROBOT;
-    }
-
-    public DriveMode getDriveMode(){
-        return currentDriveMode;
-    }
-
-    public void resetGyro(){
-        gyro.zeroYaw();
-    }
-
-    @Override
-    public Coordinate getDisplacement(DistanceUnit distanceUnit) {
-        return displacement;
-    }
-
-    @Override
-    public Coordinate getVelocity(DistanceUnit distanceUnit) {
-        return new Coordinate(displacement.getX() - prevDisplacement.getX(), displacement.getY() - prevDisplacement.getY());
-    }
-
-    @Override
-    public void resetSensor() {
-        enableIntegration = false;
-        displacement = new Coordinate(0,0);
-        enableIntegration = true;
-    }
 }
