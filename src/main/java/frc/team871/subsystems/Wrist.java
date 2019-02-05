@@ -29,8 +29,10 @@ public class Wrist {
     }
 
     public void setOrientation(double angle){
+        System.out.println(angle);
         if(pid != null) pid.setSetpoint(angle);
         else {
+            System.out.println("set");
             motor.set(angle);
         }
     }

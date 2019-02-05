@@ -45,7 +45,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         this.controlScheme = InitialControlSchemeHack.DEFAULT;
         this.config = RowBoatConfigHack.DEFAULT;
-//        this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor());
+        this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor());
         this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro());
         // TODO: Get actually lengths of the arm segments
         ArmSegment upperSegment = new ArmSegment(config.getUpperArmMotor(), config.getUpperArmPot(), 20.5);
@@ -86,6 +86,9 @@ public class Robot extends TimedRobot {
         if(controlScheme.getResetGyroButton().getValue()) {
             driveTrain.resetGyro();
         }
+
+        vacuum.setState(controlScheme.getVacuumToggleButton().getValue() ? Vacuum.VacuumState.ENABLED : Vacuum.VacuumState.DISABLED);
+
 //
 //        if(controlScheme.getVacuumToggleButton().getValue()) {
 //            vacuum.toggleState();
@@ -93,7 +96,8 @@ public class Robot extends TimedRobot {
 
         arm.upperSegment.rotate(controlScheme.getUpperArmAxis().getValue() * -1.0);
         arm.lowerSegment.rotate(controlScheme.getLowerArmAxis().getValue() * 1.0);
-        arm.wrist.setOrientation(controlScheme.getWristAxis().getValue() * 0.5);
+        InitialControlSchemeHack cs = (InitialControlSchemeHack)controlScheme;
+        arm.wrist.setOrientation((cs.getWristAxis().getValue() - cs.getWristAxis2().getValue()) * 1);
 
 //        if(arm.getCurrentArmMode() == Arm.ArmMode.INVERSE_KINEMATICS) {
 //            arm.goToRelative(controlScheme.getArmTargetXAxis().getValue(), controlScheme.getArmTargetYAxis().getValue());

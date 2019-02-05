@@ -49,7 +49,11 @@ public enum InitialControlSchemeHack implements IControlScheme{
 
     @Override
     public IAxis getWristAxis() {
-        return systemsController.getAxis(XBoxAxes.TRIGGER);
+        return systemsController.getAxis(XBoxAxes.LTRIGGER);
+    }
+
+    public IAxis getWristAxis2() {
+        return systemsController.getAxis(XBoxAxes.RTRIGGER);
     }
 
     @Override

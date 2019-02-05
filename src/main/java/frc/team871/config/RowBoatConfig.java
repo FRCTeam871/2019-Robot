@@ -43,6 +43,7 @@ public enum RowBoatConfig implements IRowBoatConfig{
          this.upperArmMotor = new CombinedSpeedController(Arrays.asList(new WPI_TalonSRX(5), new WPI_TalonSRX(6)));
          this.lowerArmMotor = new WPI_TalonSRX(7);
          this.vacuumMotor = new WPI_TalonSRX(8);
+        vacuumMotor.setInverted(true);
 
          this.gyro = new AHRS(SerialPort.Port.kMXP);
 

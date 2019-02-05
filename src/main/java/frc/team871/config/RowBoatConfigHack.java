@@ -33,10 +33,10 @@ public enum RowBoatConfigHack implements IRowBoatConfig{
           this.rearRightMotor.setInverted(true);
 
 
-            this.wristMotor = new WPI_TalonSRX(4);
+            this.wristMotor = new WPI_TalonSRX(8);
          this.upperArmMotor = new CombinedSpeedController(Arrays.asList(new WPI_TalonSRX(5), new WPI_TalonSRX(6)));
          this.lowerArmMotor = new WPI_TalonSRX(7);
-           this.vacuumMotor = new WPI_TalonSRX(8);
+           this.vacuumMotor = new WPI_TalonSRX(4);
 
          this.gyro = new AHRS(SerialPort.Port.kMXP);
 

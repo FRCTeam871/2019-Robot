@@ -21,10 +21,10 @@ public class Vacuum {
     public void setState(VacuumState newState){
          switch(newState){
              case ENABLED:
-                 pump.set(1.);
+                 pump.set(0.5);
                  break;
              case DISABLED:
-                 pump.set(0.);
+                 pump.set(0.0);
                  break;
          }
          state = newState;
