@@ -14,7 +14,8 @@ import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 import frc.team871.SettablePIDSource;
 import frc.team871.auto.DockingWaypointProvider;
-import frc.team871.auto.LineSensor;
+import frc.team871.auto.ILineSensor;
+import frc.team871.auto.ITarget;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -39,8 +40,8 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput, 
     private Navigation nav;
 
     private final List<VelocityHolder> velDataPoints = new ArrayList<>(); //TODO: consider using a map
-    private PIDController lineXController;
-    private SettablePIDSource lineXSource;
+    private PIDController autoDockXController;
+    private SettablePIDSource autoDockXSource;
 
     public DriveTrain(SpeedController frontLeft, SpeedController rearLeft, SpeedController frontRight, SpeedController rearRight, AHRS gyro){
         super(frontLeft, rearLeft, frontRight, rearRight);
@@ -75,21 +76,29 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput, 
 
         this.nav = new Navigation(this, this, waypointProvider, new Coordinate(0,0));
 
-        lineXSource = new SettablePIDSource(0);
-        lineXController = new PIDController(0, 0, 0, lineXSource, o -> {}); //TODO: PID values
+        autoDockXSource = new SettablePIDSource(0);
+        autoDockXController = new PIDController(0, 0, 0, autoDockXSource, o -> {}); //TODO: PID values
 
     }
 
-    public void autoDock(LineSensor line){
-        if(line.hasLine()) {
-            lineXSource.setValue(line.getCenter());
-            lineXController.setEnabled(true);
-            setHeadingHold(gyro.getYaw() + line.getAngle());
+    public void autoDock(ILineSensor line, ITarget target){
+        if(line.doesTargetExist()) {
+            autoDockXSource.setValue(line.getCenterX());
+            autoDockXController.setEnabled(true);
+            setHeadingHold(gyro.getYaw() + line.getLineAngle());
             setHeadingHoldEnabled(true);
-            driveRobotOriented(lineXController.get(), .1, 0);
+            driveRobotOriented(autoDockXController.get(), .3, 0);
         }else{
-            lineXController.setEnabled(false);
-            setHeadingHoldEnabled(false);
+            if(target.doesTargetExist()) {
+                setHeadingHold(gyro.getYaw());
+                autoDockXSource.setValue(target.getCenterX());
+                autoDockXController.setEnabled(true);
+                setHeadingHoldEnabled(true);
+                driveRobotOriented(autoDockXController.get(), .3, 0);
+            }else{
+                autoDockXController.setEnabled(false);
+                setHeadingHoldEnabled(false);
+            }
         }
     }
 
