@@ -71,9 +71,9 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {
 
         if(driveTrain.getDriveMode() == DriveTrain.DriveMode.ROBOT){
-            driveTrain.driveRobotOriented(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
+            driveTrain.driveRobotOriented(controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
         } else {
-            driveTrain.driveFieldOriented(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
+            driveTrain.driveFieldOriented(controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
         }
         if(controlScheme.getRobotOrientationToggleButton().getValue()){
             driveTrain.toggleFieldDriveMode();
