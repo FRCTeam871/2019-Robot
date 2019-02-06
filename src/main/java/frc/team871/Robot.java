@@ -71,21 +71,26 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
+//
+//        if(driveTrain.getDriveMode() == DriveTrain.DriveMode.ROBOT){
+//            System.out.println(controlScheme.getMecDriveXAxis() + " " + controlScheme.getMecDriveYAxis());
+//            System.out.println(controlScheme.getMecDriveXAxis().getValue() + " " + controlScheme.getMecDriveYAxis().getValue());
+//            driveTrain.driveRobotOriented(-controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
+//        } else {
+//            driveTrain.driveFieldOriented(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
+//        }
+//        if(controlScheme.getRobotOrientationToggleButton().getValue()){
+//            driveTrain.toggleFieldDriveMode();
+//        }
+////        driveTrain.setHeadingHoldEnabled(controlScheme.getHeadingHoldButton().getValue());
+//        if(controlScheme.getResetGyroButton().getValue()) {
+//            driveTrain.resetGyro();
+//        }
 
-        if(driveTrain.getDriveMode() == DriveTrain.DriveMode.ROBOT){
-            System.out.println(controlScheme.getMecDriveXAxis() + " " + controlScheme.getMecDriveYAxis());
-            System.out.println(controlScheme.getMecDriveXAxis().getValue() + " " + controlScheme.getMecDriveYAxis().getValue());
-            driveTrain.driveRobotOriented(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
-        } else {
-            driveTrain.driveFieldOriented(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
-        }
-        if(controlScheme.getRobotOrientationToggleButton().getValue()){
-            driveTrain.toggleFieldDriveMode();
-        }
-//        driveTrain.setHeadingHoldEnabled(controlScheme.getHeadingHoldButton().getValue());
-        if(controlScheme.getResetGyroButton().getValue()) {
-            driveTrain.resetGyro();
-        }
+//        config.getFrontLeftMotor().set(-0.15);
+//        config.getFrontRightMotor().set(-0.15);
+//        config.getRearLeftMotor().set(-0.15);
+//        config.getRearRightMotor().set(-0.15);
 
         vacuum.setState(controlScheme.getVacuumToggleButton().getValue() ? Vacuum.VacuumState.ENABLED : Vacuum.VacuumState.DISABLED);
 
