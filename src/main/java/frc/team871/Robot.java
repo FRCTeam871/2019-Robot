@@ -77,19 +77,7 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
 
-        if(driveTrain.getDriveMode() == DriveTrain.DriveMode.ROBOT){
-            driveTrain.driveRobotOriented(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
-        } else {
-            driveTrain.driveFieldOriented(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
-        }
-        if(controlScheme.getRobotOrientationToggleButton().getValue()){
-            driveTrain.toggleFieldDriveMode();
-        }
-        driveTrain.setHeadingHoldEnabled(controlScheme.getHeadingHoldButton().getValue());
-        if(controlScheme.getResetGyroButton().getValue()) {
-            driveTrain.resetGyro();
-        }
-
+        driveTrain.handleInputs(controlScheme.getMecDriveXAxis(), controlScheme.getMecDriveYAxis(), controlScheme.getMecDriveRotationAxis(), controlScheme.getRobotOrientationToggleButton(), controlScheme.getHeadingHoldButton(), controlScheme.getResetGyroButton(), config.getTargetProvider(), controlScheme.getAutoDockButton());
 
         vacuum.setState(controlScheme.getVacuumToggleButton());
 

@@ -1,6 +1,8 @@
 package frc.team871.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.team871.hid.IAxis;
+import com.team871.hid.IButton;
 import com.team871.io.sensor.IDisplacementSensor;
 import com.team871.navigation.Coordinate;
 import com.team871.navigation.DistanceUnit;
@@ -16,6 +18,7 @@ import frc.team871.SettablePIDSource;
 import frc.team871.auto.DockingWaypointProvider;
 import frc.team871.auto.ILineSensor;
 import frc.team871.auto.ITarget;
+import frc.team871.auto.ITargetProvider;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -36,6 +39,7 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput, 
     private PIDController headingPID;
     private DriveMode currentDriveMode;
     private double pidRotation;
+    private DockMode autoDoctorState;
 
     private Navigation nav;
 
@@ -79,6 +83,39 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput, 
         autoDockXSource = new SettablePIDSource(0);
         autoDockXController = new PIDController(0, 0, 0, autoDockXSource, o -> {}); //TODO: PID values
 
+    }
+
+    public void handleInputs(IAxis xAxis, IAxis yAxis, IAxis rotationAxis, IButton fieldDriveModeButton, IButton headingHoldButton, IButton resetGyroButton, ITargetProvider targetProvider, IButton autoDockButton) {
+        if (autoDoctorState == DockMode.PLAYER) {
+            if (getDriveMode() == DriveTrain.DriveMode.ROBOT) {
+                driveRobotOriented(xAxis.getValue(), yAxis.getValue(), rotationAxis.getValue());
+            } else {
+                driveFieldOriented(xAxis.getValue(), yAxis.getValue(), rotationAxis.getValue());
+            }
+            if (fieldDriveModeButton.getValue()) {
+                toggleFieldDriveMode();
+            }
+            setHeadingHoldEnabled(headingHoldButton.getValue());
+            if (resetGyroButton.getValue()) {
+                resetGyro();
+            }
+            if (autoDockButton.getValue()) {
+                autoDoctorState = DockMode.AUTODOCK;
+            }
+        } else if (autoDoctorState == DockMode.AUTODOCK) {
+            autoDock(targetProvider.getLine(), targetProvider.getTarget());
+
+            if (autoDockButton.getValue()) {
+                autoDoctorState = DockMode.PLAYER;
+            }
+            if (!targetProvider.getLine().doesTargetExist() && !targetProvider.getTarget().doesTargetExist()) {
+                autoDoctorState = DockMode.PLAYER;
+            }
+            //TODO: get the number
+            if (targetProvider.getTarget().doesTargetExist() && targetProvider.getTarget().getDistance() <= 20) {
+                autoDoctorState = DockMode.PLAYER;
+            }
+        }
     }
 
     public void autoDock(ILineSensor line, ITarget target){
@@ -310,4 +347,10 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput, 
         FIELD
     }
 
+
+
+    public enum DockMode {
+        AUTODOCK,
+        PLAYER
+    }
 }

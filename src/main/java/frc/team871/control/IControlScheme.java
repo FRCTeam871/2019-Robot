@@ -33,5 +33,5 @@ public interface IControlScheme {
 
     IAxis getArmTargetYAxis();
 
-
+    IButton getAutoDockButton();
 }

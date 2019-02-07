@@ -5,8 +5,9 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.SpeedController;
+import frc.team871.auto.ITargetProvider;
 
-public interface IRowBoatConfig {
+public interface IRowBoatConfig{
 
     SpeedController getFrontLeftMotor();
 
@@ -39,4 +40,6 @@ public interface IRowBoatConfig {
     AnalogPotentiometer getWristPotAxis();
 
     DigitalInput getGrabSensor();
+
+    ITargetProvider getTargetProvider();
 }

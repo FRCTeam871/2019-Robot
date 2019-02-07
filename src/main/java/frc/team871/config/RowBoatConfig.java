@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.SpeedController;
+import frc.team871.auto.ITargetProvider;
 import java.util.Arrays;
 
 public enum RowBoatConfig implements IRowBoatConfig{
@@ -132,5 +133,11 @@ public enum RowBoatConfig implements IRowBoatConfig{
     @Override
     public DigitalInput getGrabSensor() {
         return grabSensor;
+    }
+
+    //TODO: stop returning null
+    @Override
+    public ITargetProvider getTargetProvider() {
+        return null;
     }
 }
