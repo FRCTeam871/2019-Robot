@@ -104,4 +104,9 @@ public enum InfinityGauntletControlScheme implements IControlScheme{
         //This button will not be used in this configuration
         return unusedAxis;
     }
+
+    @Override
+    public IButton getAutoDockButton() {
+        return unusedButton;
+    }
 }

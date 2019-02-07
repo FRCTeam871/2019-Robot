@@ -2,6 +2,7 @@ package frc.team871.control;
 
 import com.team871.hid.ButtonTypes;
 import com.team871.hid.ConstantAxis;
+import com.team871.hid.ConstantButton;
 import com.team871.hid.GenericJoystick;
 import com.team871.hid.IAxis;
 import com.team871.hid.IButton;
@@ -15,6 +16,7 @@ public enum InitialControlScheme implements IControlScheme{
 
     private GenericJoystick<XBoxButtons, XBoxAxes> systemsController, driveController;
     private ConstantAxis unusedAxis;
+    private ConstantButton unusedButton;
 
     InitialControlScheme(){
         systemsController = new GenericJoystick<>(0, Arrays.asList(XBoxButtons.values()), Arrays.asList(XBoxAxes.values()));
@@ -101,5 +103,10 @@ public enum InitialControlScheme implements IControlScheme{
     @Override
     public IAxis getArmTargetYAxis() {
         return unusedAxis;
+    }
+
+    @Override
+    public IButton getAutoDockButton() {
+        return unusedButton;
     }
 }

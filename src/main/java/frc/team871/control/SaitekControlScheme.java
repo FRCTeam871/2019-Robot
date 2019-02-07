@@ -106,4 +106,9 @@ public enum SaitekControlScheme implements IControlScheme{
     public IAxis getArmTargetYAxis() {
         return saitekStickJoy.getAxis(SaitekAxes.I_AXIS);
     }
+
+    @Override
+    public IButton getAutoDockButton() {
+        return unusedButton;
+    }
 }
