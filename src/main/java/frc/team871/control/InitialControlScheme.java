@@ -27,12 +27,14 @@ public enum InitialControlScheme implements IControlScheme{
         systemsController.getAxis(XBoxAxes.TRIGGER).setDeadband(0.2);
         systemsController.getAxis(XBoxAxes.LEFTY).setDeadband(0.2);
         systemsController.getAxis(XBoxAxes.RIGHTY).setDeadband(0.2);
+        systemsController.getButton(XBoxButtons.START).setMode(ButtonTypes.TOGGLE);
         driveController.getButton(XBoxButtons.LBUMPER).setMode(ButtonTypes.MOMENTARY);
         driveController.getButton(XBoxButtons.START).setMode(ButtonTypes.RISING);
         driveController.getButton(XBoxButtons.BACK).setMode(ButtonTypes.TOGGLE);
         driveController.getAxis(XBoxAxes.LEFTX).setDeadband(0.2);
         driveController.getAxis(XBoxAxes.LEFTY).setDeadband(0.2);
         driveController.getAxis(XBoxAxes.RIGHTX).setDeadband(0.2);
+
 
         unusedAxis = new ConstantAxis(0);
     }
@@ -108,5 +110,10 @@ public enum InitialControlScheme implements IControlScheme{
     @Override
     public IButton getAutoDockButton() {
         return unusedButton;
+    }
+
+    @Override
+    public IButton getVacuumPrimaryButton() {
+        return systemsController.getButton(XBoxButtons.START);
     }
 }

@@ -103,12 +103,12 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput, 
                 autoDoctorState = DockMode.AUTODOCK;
             }
         } else if (autoDoctorState == DockMode.AUTODOCK) {
-            autoDock(targetProvider.getLine(), targetProvider.getTarget());
+            autoDock(targetProvider.getLineSensor(), targetProvider.getTarget());
 
             if (autoDockButton.getValue()) {
                 autoDoctorState = DockMode.PLAYER;
             }
-            if (!targetProvider.getLine().doesTargetExist() && !targetProvider.getTarget().doesTargetExist()) {
+            if (!targetProvider.getLineSensor().doesTargetExist() && !targetProvider.getTarget().doesTargetExist()) {
                 autoDoctorState = DockMode.PLAYER;
             }
             //TODO: get the number

@@ -10,8 +10,14 @@ package frc.team871;
 
 import com.team871.navigation.Coordinate;
 import com.team871.navigation.Navigation;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.team871.auto.DockingWaypointProvider;
+import frc.team871.auto.GripPipeline;
+import frc.team871.auto.ITargetProvider;
+import frc.team871.auto.RobotUSBTargetProvider;
 import frc.team871.subsystems.DriveTrain;
 import frc.team871.config.IRowBoatConfig;
 import frc.team871.config.RowBoatConfig;
@@ -21,6 +27,10 @@ import frc.team871.subsystems.Arm;
 import frc.team871.subsystems.ArmSegment;
 import frc.team871.subsystems.Vacuum;
 import frc.team871.subsystems.Wrist;
+import java.text.DecimalFormat;
+import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.RotatedRect;
+import org.opencv.imgproc.Imgproc;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -39,6 +49,9 @@ public class Robot extends TimedRobot {
     private Wrist wrist;
     private Navigation nav;
     private DockingWaypointProvider waypointProvider;
+    private ITargetProvider targetProvider;
+
+    boolean testBoard = true;
 
     /**
       * This function is run when the robot is first started up and should be used
@@ -46,15 +59,19 @@ public class Robot extends TimedRobot {
       */
     @Override
     public void robotInit() {
-        this.controlScheme = InitialControlScheme.DEFAULT;
-        this.config = RowBoatConfig.DEFAULT;
-        this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor());
-        this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro());
-        // TODO: Get actually lengths of the arm segments
-        ArmSegment upperSegment = new ArmSegment(config.getUpperArmMotor(), config.getUpperArmPot(), 20.5);
-        ArmSegment lowerSegment = new ArmSegment(config.getLowerArmMotor(), config.getLowerArmPot(),22.);
-        this.wrist = new Wrist(config.getWristMotor(), config.getWristPotAxis());
-        this.arm = new Arm(upperSegment, lowerSegment, wrist);
+        if(!testBoard) {
+            this.controlScheme = InitialControlScheme.DEFAULT;
+            this.config = RowBoatConfig.DEFAULT;
+            this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor());
+            this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro());
+            // TODO: Get actually lengths of the arm segments
+            ArmSegment upperSegment = new ArmSegment(config.getUpperArmMotor(), config.getUpperArmPot(), 20.5);
+            ArmSegment lowerSegment = new ArmSegment(config.getLowerArmMotor(), config.getLowerArmPot(), 22.);
+            this.wrist = new Wrist(config.getWristMotor(), config.getWristPotAxis());
+            this.arm = new Arm(upperSegment, lowerSegment, wrist);
+            this.targetProvider = new RobotUSBTargetProvider(config.getLineCam());
+        }
+
 
 
     }
@@ -77,9 +94,12 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
 
+        if(testBoard) return;
+
         driveTrain.handleInputs(controlScheme.getMecDriveXAxis(), controlScheme.getMecDriveYAxis(), controlScheme.getMecDriveRotationAxis(), controlScheme.getRobotOrientationToggleButton(), controlScheme.getHeadingHoldButton(), controlScheme.getResetGyroButton(), config.getTargetProvider(), controlScheme.getAutoDockButton());
 
         vacuum.setState(controlScheme.getVacuumToggleButton());
+        vacuum.setTogglePrimarySucc(controlScheme.getVacuumPrimaryButton());
 
         arm.handleArmAxes(controlScheme.getUpperArmAxis(), controlScheme.getLowerArmAxis(), controlScheme.getArmTargetXAxis(), controlScheme.getMecDriveYAxis());
         arm.handleInverseKinematicsMode(controlScheme.getInverseKinematicsToggleButton());

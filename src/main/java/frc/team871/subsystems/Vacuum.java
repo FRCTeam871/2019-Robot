@@ -2,12 +2,14 @@ package frc.team871.subsystems;
 
 import com.team871.hid.IButton;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
 
 public class Vacuum {
     private SpeedController pump;
     private DigitalInput grabSensor;
     private VacuumState state;
+    private Solenoid togglePrimarySucc;
 
     private enum VacuumState{
         ENABLED,
@@ -37,5 +39,9 @@ public class Vacuum {
 
     public boolean hasGamePiece(){
         return grabSensor.get();
+    }
+
+    public void setTogglePrimarySucc(IButton vacuumToggleButton){
+        togglePrimarySucc.set(vacuumToggleButton.getValue());
     }
 }

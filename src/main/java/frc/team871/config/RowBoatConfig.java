@@ -4,6 +4,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 import com.team871.io.actuator.CombinedSpeedController;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -31,28 +33,32 @@ public enum RowBoatConfig implements IRowBoatConfig{
     AnalogPotentiometer upperArmPot;
     AnalogPotentiometer wristPot;
     DigitalInput grabSensor;
+    UsbCamera lineCam;
 
     RowBoatConfig(){
-         this.frontLeftMotor = new WPI_VictorSPX(0);
-         this.rearLeftMotor = new WPI_VictorSPX(1);
+         this.frontLeftMotor  = new WPI_VictorSPX(0);
+         this.rearLeftMotor   = new WPI_VictorSPX(1);
          this.frontRightMotor = new WPI_VictorSPX(2);
-         this.rearRightMotor = new WPI_VictorSPX(3);
+         this.rearRightMotor  = new WPI_VictorSPX(3);
 
-         this.wristMotor = new WPI_TalonSRX(4);
+         this.wristMotor    = new WPI_TalonSRX(4);
          this.upperArmMotor = new CombinedSpeedController(Arrays.asList(new WPI_TalonSRX(5), new WPI_TalonSRX(6)));
          this.lowerArmMotor = new WPI_TalonSRX(7);
-         this.vacuumMotor = new WPI_TalonSRX(8);
+         this.vacuumMotor   = new WPI_TalonSRX(8);
 
          this.gyro = new AHRS(SerialPort.Port.kMXP);
 
          //TODO find sensor channels
          this.lowerArmPotAxis = new AnalogInput(-1);
-         this.lowerArmPot = new AnalogPotentiometer(lowerArmPotAxis, 1);
+         this.lowerArmPot     = new AnalogPotentiometer(lowerArmPotAxis, 1);
          this.upperArmPotAxis = new AnalogInput(-1);
-         this.lowerArmPot = new AnalogPotentiometer(upperArmPotAxis, 1);
-         this.wristPotAxis = new AnalogInput(-1);
-         this.lowerArmPot = new AnalogPotentiometer(wristPotAxis, 1);
-         this.grabSensor = new DigitalInput(-1);
+         this.lowerArmPot     = new AnalogPotentiometer(upperArmPotAxis, 1);
+         this.wristPotAxis    = new AnalogInput(-1);
+         this.lowerArmPot     = new AnalogPotentiometer(wristPotAxis, 1);
+         this.grabSensor      = new DigitalInput(-1);
+
+         this.lineCam = CameraServer.getInstance().startAutomaticCapture(0);
+         this.lineCam.setResolution(320, 240);
     }
 
     @Override
@@ -139,5 +145,10 @@ public enum RowBoatConfig implements IRowBoatConfig{
     @Override
     public ITargetProvider getTargetProvider() {
         return null;
+    }
+
+    @Override
+    public UsbCamera getLineCam() {
+        return lineCam;
     }
 }
