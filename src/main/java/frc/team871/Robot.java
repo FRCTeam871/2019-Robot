@@ -9,6 +9,7 @@ package frc.team871;
 
 
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.team871.config.RowBoatConfigHack;
 import frc.team871.control.InitialControlSchemeHack;
@@ -38,6 +39,9 @@ public class Robot extends TimedRobot {
     private Arm arm;
     private Wrist wrist;
 
+    Solenoid s1;
+    Solenoid s2;
+
     /**
       * This function is run when the robot is first started up and should be used
       * for any initialization code.
@@ -55,6 +59,9 @@ public class Robot extends TimedRobot {
         this.wrist = new Wrist(config.getWristMotor(), ((RowBoatConfigHack)config).getWristPot());
         this.arm = new Arm(upperSegment, lowerSegment, wrist);
         wrist.enablePID();
+
+        s1 = new Solenoid(0);
+        s2 = new Solenoid(1);
     }
 
     @Override
@@ -75,20 +82,20 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
 //
-//        if(driveTrain.getDriveMode() == DriveTrain.DriveMode.ROBOT){
-//            System.out.println(controlScheme.getMecDriveXAxis() + " " + controlScheme.getMecDriveYAxis());
-//            System.out.println(controlScheme.getMecDriveXAxis().getValue() + " " + controlScheme.getMecDriveYAxis().getValue());
-//            driveTrain.driveRobotOriented(-controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
-//        } else {
-//            driveTrain.driveFieldOriented(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
-//        }
-//        if(controlScheme.getRobotOrientationToggleButton().getValue()){
-//            driveTrain.toggleFieldDriveMode();
-//        }
-////        driveTrain.setHeadingHoldEnabled(controlScheme.getHeadingHoldButton().getValue());
-//        if(controlScheme.getResetGyroButton().getValue()) {
-//            driveTrain.resetGyro();
-//        }
+        if(driveTrain.getDriveMode() == DriveTrain.DriveMode.ROBOT){
+            System.out.println(controlScheme.getMecDriveXAxis() + " " + controlScheme.getMecDriveYAxis());
+            System.out.println(controlScheme.getMecDriveXAxis().getValue() + " " + controlScheme.getMecDriveYAxis().getValue());
+            driveTrain.driveRobotOriented(-controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
+        } else {
+            driveTrain.driveFieldOriented(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
+        }
+        if(controlScheme.getRobotOrientationToggleButton().getValue()){
+            driveTrain.toggleFieldDriveMode();
+        }
+//        driveTrain.setHeadingHoldEnabled(controlScheme.getHeadingHoldButton().getValue());
+        if(controlScheme.getResetGyroButton().getValue()) {
+            driveTrain.resetGyro();
+        }
 
 //        config.getFrontLeftMotor().set(-0.15);
 //        config.getFrontRightMotor().set(-0.15);
@@ -107,6 +114,9 @@ public class Robot extends TimedRobot {
         InitialControlSchemeHack cs = (InitialControlSchemeHack)controlScheme;
         arm.wrist.setOrientation((cs.getWristAxis().getValue() - cs.getWristAxis2().getValue()) * 90);
 
+        s1.set(controlScheme.getWristToggleButton().getValue());
+        s2.set(((InitialControlSchemeHack) controlScheme).getSol2().getValue());
+
 //        if(arm.getCurrentArmMode() == Arm.ArmMode.INVERSE_KINEMATICS) {
 //            arm.goToRelative(controlScheme.getArmTargetXAxis().getValue(), controlScheme.getArmTargetYAxis().getValue());
 //        } else {
@@ -115,9 +125,9 @@ public class Robot extends TimedRobot {
 //        arm.handleInverseKinematicsMode(controlScheme.getInverseKinematicsToggleButton());
 
 //        System.out.println("ANGLE = " + wrist.getAngle());
-        arm.lowerSegment.tickCalibration(((RowBoatConfigHack)config).getLowerPot(), controlScheme.getWristToggleButton());
+        //arm.lowerSegment.tickCalibration(((RowBoatConfigHack)config).getLowerPot(), controlScheme.getWristToggleButton());
 
-        System.out.println("ANGLE2 = " + ((RowBoatConfigHack)config).getLowerPot().getRaw());
+        //System.out.println("ANGLE2 = " + ((RowBoatConfigHack)config).getLowerPot().getRaw());
 //        System.out.println("pot = " + ((RowBoatConfigHack)config).getWristPot().getRaw());
 //        wrist.handleInputs(controlScheme.getWristAxis(), controlScheme.getWristToggleButton());
     }
