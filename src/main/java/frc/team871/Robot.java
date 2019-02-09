@@ -8,6 +8,7 @@
 package frc.team871;
 
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.team871.config.RowBoatConfigHack;
 import frc.team871.control.InitialControlSchemeHack;
@@ -43,6 +44,7 @@ public class Robot extends TimedRobot {
       */
     @Override
     public void robotInit() {
+        new Compressor(0).start();
         this.controlScheme = InitialControlSchemeHack.DEFAULT;
         this.config = RowBoatConfigHack.DEFAULT;
         this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor());

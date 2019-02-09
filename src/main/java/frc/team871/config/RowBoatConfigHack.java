@@ -84,24 +84,24 @@ public enum RowBoatConfigHack implements IRowBoatConfig{
             }
         };
 
-        TalonSRX ttt = (TalonSRX) upperArmMotor;
-
-        up = new IAxis() {
-            @Override
-            public double getRaw() {
-                return ttt.getSelectedSensorPosition();
-            }
-
-            @Override
-            public double getValue() {
-                return getRaw();
-            }
-
-            @Override
-            public void setMapping(double v, double v1) {
-
-            }
-        };
+//        TalonSRX ttt = (TalonSRX) upperArmMotor;
+//
+//        up = new IAxis() {
+//            @Override
+//            public double getRaw() {
+//                return ttt.getSelectedSensorPosition();
+//            }
+//
+//            @Override
+//            public double getValue() {
+//                return getRaw();
+//            }
+//
+//            @Override
+//            public void setMapping(double v, double v1) {
+//
+//            }
+//        };
          //TODO find sensor channels
     }
 
