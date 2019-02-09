@@ -1,8 +1,10 @@
 package frc.team871.config;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
+import com.team871.hid.IAxis;
 import com.team871.io.actuator.CombinedSpeedController;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
@@ -23,6 +25,10 @@ public enum RowBoatConfigHack implements IRowBoatConfig{
     SpeedController wristMotor;
     SpeedController vacuumMotor;
     AHRS gyro;
+    AnalogPotentiometer w;
+    IAxis wp;
+    IAxis lp;
+    IAxis up;
 
     RowBoatConfigHack(){
           this.frontLeftMotor = new WPI_VictorSPX(3);
@@ -40,6 +46,62 @@ public enum RowBoatConfigHack implements IRowBoatConfig{
 
          this.gyro = new AHRS(SerialPort.Port.kMXP);
 
+         TalonSRX t = (TalonSRX) wristMotor;
+
+        wp = new IAxis() {
+            @Override
+            public double getRaw() {
+                return t.getSelectedSensorPosition();
+            }
+
+            @Override
+            public double getValue() {
+                return getRaw();
+            }
+
+            @Override
+            public void setMapping(double v, double v1) {
+
+            }
+        };
+
+        TalonSRX tt = (TalonSRX) lowerArmMotor;
+
+        lp = new IAxis() {
+            @Override
+            public double getRaw() {
+                return tt.getSelectedSensorPosition();
+            }
+
+            @Override
+            public double getValue() {
+                return getRaw();
+            }
+
+            @Override
+            public void setMapping(double v, double v1) {
+
+            }
+        };
+
+        TalonSRX ttt = (TalonSRX) upperArmMotor;
+
+        up = new IAxis() {
+            @Override
+            public double getRaw() {
+                return ttt.getSelectedSensorPosition();
+            }
+
+            @Override
+            public double getValue() {
+                return getRaw();
+            }
+
+            @Override
+            public void setMapping(double v, double v1) {
+
+            }
+        };
          //TODO find sensor channels
     }
 
@@ -97,6 +159,10 @@ public enum RowBoatConfigHack implements IRowBoatConfig{
     public AnalogInput getUpperArmAxisSensor() {
         return null;
     }
+
+    public IAxis getWristPot(){return wp;}
+    public IAxis getLowerPot(){return lp;}
+    public IAxis getUpperPot(){return up;}
 
     @Override
     public AnalogInput getWristAxisSensor() {
