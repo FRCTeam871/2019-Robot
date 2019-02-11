@@ -54,8 +54,8 @@ public class Robot extends TimedRobot {
         this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor());
         this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro());
         // TODO: Get actually lengths of the arm segments
-        ArmSegment upperSegment = new ArmSegment(config.getUpperArmMotor(), null, 20.5);
-        ArmSegment lowerSegment = new ArmSegment(config.getLowerArmMotor(), ((RowBoatConfigHack)config).getLowerPot(),22.);
+        ArmSegment upperSegment = new ArmSegment(config.getUpperArmMotor(), null, 20.5, 0, 0);
+        ArmSegment lowerSegment = new ArmSegment(config.getLowerArmMotor(), ((RowBoatConfigHack)config).getLowerPot(),22., 0, 0);
         this.wrist = new Wrist(config.getWristMotor(), ((RowBoatConfigHack)config).getWristPot());
         this.arm = new Arm(upperSegment, lowerSegment, wrist);
         wrist.enablePID();
@@ -82,20 +82,20 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
 //
-        if(driveTrain.getDriveMode() == DriveTrain.DriveMode.ROBOT){
-            System.out.println(controlScheme.getMecDriveXAxis() + " " + controlScheme.getMecDriveYAxis());
-            System.out.println(controlScheme.getMecDriveXAxis().getValue() + " " + controlScheme.getMecDriveYAxis().getValue());
-            driveTrain.driveRobotOriented(-controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
-        } else {
-            driveTrain.driveFieldOriented(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
-        }
-        if(controlScheme.getRobotOrientationToggleButton().getValue()){
-            driveTrain.toggleFieldDriveMode();
-        }
-//        driveTrain.setHeadingHoldEnabled(controlScheme.getHeadingHoldButton().getValue());
-        if(controlScheme.getResetGyroButton().getValue()) {
-            driveTrain.resetGyro();
-        }
+//        if(driveTrain.getDriveMode() == DriveTrain.DriveMode.ROBOT){
+//            System.out.println(controlScheme.getMecDriveXAxis() + " " + controlScheme.getMecDriveYAxis());
+//            System.out.println(controlScheme.getMecDriveXAxis().getValue() + " " + controlScheme.getMecDriveYAxis().getValue());
+//            driveTrain.driveRobotOriented(-controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
+//        } else {
+//            driveTrain.driveFieldOriented(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
+//        }
+//        if(controlScheme.getRobotOrientationToggleButton().getValue()){
+//            driveTrain.toggleFieldDriveMode();
+//        }
+////        driveTrain.setHeadingHoldEnabled(controlScheme.getHeadingHoldButton().getValue());
+//        if(controlScheme.getResetGyroButton().getValue()) {
+//            driveTrain.resetGyro();
+//        }
 
 //        config.getFrontLeftMotor().set(-0.15);
 //        config.getFrontRightMotor().set(-0.15);
@@ -125,7 +125,7 @@ public class Robot extends TimedRobot {
 //        arm.handleInverseKinematicsMode(controlScheme.getInverseKinematicsToggleButton());
 
 //        System.out.println("ANGLE = " + wrist.getAngle());
-        //arm.lowerSegment.tickCalibration(((RowBoatConfigHack)config).getLowerPot(), controlScheme.getWristToggleButton());
+        arm.lowerSegment.tickCalibration(((RowBoatConfigHack)config).getLowerPot(), controlScheme.getWristToggleButton());
 
         //System.out.println("ANGLE2 = " + ((RowBoatConfigHack)config).getLowerPot().getRaw());
 //        System.out.println("pot = " + ((RowBoatConfigHack)config).getWristPot().getRaw());

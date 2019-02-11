@@ -21,33 +21,35 @@ public class ArmSegment {
     private double calMin = Double.POSITIVE_INFINITY;
     private double calMed = Double.NaN;
 
-    private double negative90 = -722;
-    private double positive90 = -645;
+    private double negative90;
+    private double positive90;
 
-    public ArmSegment(SpeedController rotateMotor, IAxis pot, double length){
+    public ArmSegment(SpeedController rotateMotor, IAxis pot, double length, double n90, double p90){
+        this.negative90 = n90;
+        this.positive90 = p90;
         this.rotateMotor = rotateMotor;
         this.pot = pot;
         this.length = length;
         //TODO: Add Apropreate Values
         if(pot != null) {
-            pid = new PIDController(0, 0, 0, new PIDSource() {
-                @Override
-                public void setPIDSourceType(PIDSourceType pidSource) {
-
-                }
-
-                @Override
-                public PIDSourceType getPIDSourceType() {
-                    return PIDSourceType.kDisplacement;
-                }
-
-                @Override
-                public double pidGet() {
-                    return getAngle();
-                }
-            }, rotateMotor);
-            pid.setInputRange(-60, 90);
-            pid.setOutputRange(-1, 1);
+//            pid = new PIDController(0, 0, 0, new PIDSource() {
+//                @Override
+//                public void setPIDSourceType(PIDSourceType pidSource) {
+//
+//                }
+//
+//                @Override
+//                public PIDSourceType getPIDSourceType() {
+//                    return PIDSourceType.kDisplacement;
+//                }
+//
+//                @Override
+//                public double pidGet() {
+//                    return getAngle();
+//                }
+//            }, rotateMotor);
+//            pid.setInputRange(-60, 90);
+//            pid.setOutputRange(-1, 1);
         }
         pid = null;
     }
