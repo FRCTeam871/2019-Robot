@@ -3,6 +3,8 @@ package frc.team871.subsystems;
 import com.team871.hid.IAxis;
 import com.team871.hid.IButton;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDSource;
+import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.SpeedController;
 
 public class ArmSegment {
@@ -28,26 +30,27 @@ public class ArmSegment {
         this.length = length;
         //TODO: Add Apropreate Values
         if(pot != null) {
-//            pid = new PIDController(0, 0, 0, new PIDSource() {
-//                @Override
-//                public void setPIDSourceType(PIDSourceType pidSource) {
-//
-//                }
-//
-//                @Override
-//                public PIDSourceType getPIDSourceType() {
-//                    return PIDSourceType.kDisplacement;
-//                }
-//
-//                @Override
-//                public double pidGet() {
-//                    return getAngle();
-//                }
-//            }, rotateMotor);
-//            pid.setInputRange(-60, 90);
-//            pid.setOutputRange(-1, 1);
+            pid = new PIDController(0.2, 0, 0, new PIDSource() {
+                @Override
+                public void setPIDSourceType(PIDSourceType pidSource) {
+
+                }
+
+                @Override
+                public PIDSourceType getPIDSourceType() {
+                    return PIDSourceType.kDisplacement;
+                }
+
+                @Override
+                public double pidGet() {
+                    return getAngle();
+                }
+            }, rotateMotor);
+            pid.setOutputRange(-0.5, 0.5);
+            pid.setAbsoluteTolerance(3);
+            pid.setSetpoint(0);
         }
-        pid = null;
+//        pid = null;
     }
 
     public void setAngle(double angle){

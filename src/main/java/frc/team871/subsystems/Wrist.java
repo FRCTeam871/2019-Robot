@@ -27,25 +27,24 @@ public class Wrist {
     public Wrist(SpeedController motor, IAxis pot) {
         this.motor = motor;
         this.pot   = pot;
-//        pid = new PIDController(-0.2, 0, 0, new PIDSource() {
-//            @Override
-//            public void setPIDSourceType(PIDSourceType pidSource) {
-//
-//            }
-//
-//            @Override
-//            public PIDSourceType getPIDSourceType() {
-//                return PIDSourceType.kDisplacement;
-//            }
-//
-//            @Override
-//            public double pidGet() {
-//                return getAngle();
-//            }
-//        }, motor);
-//        pid.setAbsoluteTolerance(3);
-//        pid.setSetpoint(0);
+        pid = new PIDController(0.2, 0, 0, new PIDSource() {
+            @Override
+            public void setPIDSourceType(PIDSourceType pidSource) {
 
+            }
+
+            @Override
+            public PIDSourceType getPIDSourceType() {
+                return PIDSourceType.kDisplacement;
+            }
+
+            @Override
+            public double pidGet() {
+                return getAngle();
+            }
+        }, motor);
+        pid.setAbsoluteTolerance(3);
+        pid.setSetpoint(0);
     }
 
     public void enablePID(){
