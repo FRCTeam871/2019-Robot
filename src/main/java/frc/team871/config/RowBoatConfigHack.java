@@ -39,8 +39,9 @@ public enum RowBoatConfigHack implements IRowBoatConfig{
           //this.rearRightMotor.setInverted(true);
 
 
+        WPI_TalonSRX combined1 = new WPI_TalonSRX(5);
             this.wristMotor = new WPI_TalonSRX(4);
-         this.upperArmMotor = new CombinedSpeedController(Arrays.asList(new WPI_TalonSRX(5), new WPI_TalonSRX(6)));
+         this.upperArmMotor = new CombinedSpeedController(Arrays.asList(combined1, new WPI_TalonSRX(6)));
          this.lowerArmMotor = new WPI_TalonSRX(7);
            this.vacuumMotor = new WPI_TalonSRX(8);
 
@@ -84,24 +85,24 @@ public enum RowBoatConfigHack implements IRowBoatConfig{
             }
         };
 
-//        TalonSRX ttt = (TalonSRX) upperArmMotor;
-//
-//        up = new IAxis() {
-//            @Override
-//            public double getRaw() {
-//                return ttt.getSelectedSensorPosition();
-//            }
-//
-//            @Override
-//            public double getValue() {
-//                return getRaw();
-//            }
-//
-//            @Override
-//            public void setMapping(double v, double v1) {
-//
-//            }
-//        };
+        TalonSRX ttt = combined1;
+
+        up = new IAxis() {
+            @Override
+            public double getRaw() {
+                return ttt.getSelectedSensorPosition();
+            }
+
+            @Override
+            public double getValue() {
+                return getRaw();
+            }
+
+            @Override
+            public void setMapping(double v, double v1) {
+
+            }
+        };
          //TODO find sensor channels
     }
 

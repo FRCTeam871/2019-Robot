@@ -2,11 +2,7 @@ package frc.team871.subsystems;
 
 import com.team871.hid.IAxis;
 import com.team871.hid.IButton;
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.PIDSource;
-import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.SpeedController;
 
 public class ArmSegment {
@@ -22,11 +18,11 @@ public class ArmSegment {
     private double calMed = Double.NaN;
 
     private double negative90;
-    private double positive90;
+    private double zero;
 
-    public ArmSegment(SpeedController rotateMotor, IAxis pot, double length, double n90, double p90){
+    public ArmSegment(SpeedController rotateMotor, IAxis pot, double length, double n90, double z0){
         this.negative90 = n90;
-        this.positive90 = p90;
+        this.zero = z0;
         this.rotateMotor = rotateMotor;
         this.pot = pot;
         this.length = length;
@@ -61,7 +57,7 @@ public class ArmSegment {
 
     public double getAngle(){
         if(pot == null) return 0;
-        return pot.getRaw(); //approx. conversion from ADC to degrees
+        return ((pot.getRaw() - negative90) / (zero - negative90) * 90) - 90; //approx. conversion from ADC to degrees
     }
 
     public void enablePID(){

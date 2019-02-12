@@ -21,8 +21,8 @@ public class Wrist {
     private double calMin = Double.POSITIVE_INFINITY;
     private double calMed = Double.NaN;
 
-    private double negative90 = -722;
-    private double positive90 = -645;
+    private double negative90 = 377;
+    private double positive90 = 301;
 
     public Wrist(SpeedController motor, IAxis pot) {
         this.motor = motor;
