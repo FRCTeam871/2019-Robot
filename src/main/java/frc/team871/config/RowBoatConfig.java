@@ -1,17 +1,18 @@
 package frc.team871.config;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
+import com.team871.hid.IAxis;
 import com.team871.io.actuator.CombinedSpeedController;
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
 import java.util.Arrays;
 
-public enum RowBoatConfig implements IRowBoatConfig{
+public enum RowBoatConfig implements IRowBoatConfig {
     DEFAULT;
 
     SpeedController frontLeftMotor;
@@ -23,35 +24,53 @@ public enum RowBoatConfig implements IRowBoatConfig{
     SpeedController wristMotor;
     SpeedController vacuumMotor;
     AHRS gyro;
-    AnalogInput lowerArmPotAxis;
-    AnalogInput upperArmPotAxis;
-    AnalogInput wristPotAxis;
-    AnalogPotentiometer lowerArmPot;
-    AnalogPotentiometer upperArmPot;
-    AnalogPotentiometer wristPot;
     DigitalInput grabSensor;
 
+    IAxis wristPot;
+    PIDConfiguration wristPIDConfig;
+    IAxis lowerPot;
+    PIDConfiguration lowerPIDConfig;
+    IAxis upperPot;
+    PIDConfiguration upperPIDConfig;
+
+    Solenoid innerValve;
+    Solenoid outerValve;
+
     RowBoatConfig(){
-         this.frontLeftMotor = new WPI_VictorSPX(0);
-         this.rearLeftMotor = new WPI_VictorSPX(1);
-         this.frontRightMotor = new WPI_VictorSPX(2);
-         this.rearRightMotor = new WPI_VictorSPX(3);
+        this.frontLeftMotor = new WPI_VictorSPX(0);
+        this.rearLeftMotor = new WPI_VictorSPX(1);
+        this.frontRightMotor = new WPI_VictorSPX(2);
+        this.rearRightMotor = new WPI_VictorSPX(3);
 
-         this.wristMotor = new WPI_TalonSRX(4);
-         this.upperArmMotor = new CombinedSpeedController(Arrays.asList(new WPI_TalonSRX(5), new WPI_TalonSRX(6)));
-         this.lowerArmMotor = new WPI_TalonSRX(7);
-         this.vacuumMotor = new WPI_TalonSRX(8);
+        this.lowerArmMotor = new WPI_TalonSRX(7);
+        this.upperArmMotor = new CombinedSpeedController(Arrays.asList(new WPI_TalonSRX(5), new WPI_TalonSRX(6)));
+        this.wristMotor = new WPI_TalonSRX(4);
+        this.vacuumMotor = new WPI_TalonSRX(8);
 
-         this.gyro = new AHRS(SerialPort.Port.kMXP);
+        this.gyro = new AHRS(SerialPort.Port.kMXP);
 
-         //TODO find sensor channels
-         this.lowerArmPotAxis = new AnalogInput(-1);
-         this.lowerArmPot = new AnalogPotentiometer(lowerArmPotAxis, 1);
-         this.upperArmPotAxis = new AnalogInput(-1);
-         this.lowerArmPot = new AnalogPotentiometer(upperArmPotAxis, 1);
-         this.wristPotAxis = new AnalogInput(-1);
-         this.lowerArmPot = new AnalogPotentiometer(wristPotAxis, 1);
-         this.grabSensor = new DigitalInput(-1);
+        //TODO: check values
+
+        // an angle of 0 on all segments is when the entire arm is pointed directly forward, parallel to the base of the robot
+        // positive angles are clockwise
+
+        double wristMaxSpeed = 1.0;
+        wristPot = new TalonAnalogAxis((TalonSRX)wristMotor, 301, 377);
+        wristPot.setMapping(90, -90);
+        wristPIDConfig = new PIDConfiguration(0.2, 0, 0, -90, 90, -wristMaxSpeed, wristMaxSpeed, 4);
+
+        double lowerMaxSpeed = 0.5;
+        lowerPot = new TalonAnalogAxis((TalonSRX)lowerArmMotor, -469, -242);
+        lowerPot.setMapping(0, -90);
+        lowerPIDConfig = new PIDConfiguration(0.2, 0, 0, -90, 60, -lowerMaxSpeed, lowerMaxSpeed, 4);
+
+        double upperMaxSpeed = 0.5;
+        upperPot = new TalonAnalogAxis((TalonSRX)upperArmMotor, -616, -514);
+        upperPot.setMapping(90, -90);
+        upperPIDConfig = new PIDConfiguration(0.2, 0, 0, -90, 90, -upperMaxSpeed, upperMaxSpeed, 4);
+
+        innerValve = new Solenoid(0);
+        outerValve = new Solenoid(1);
     }
 
     @Override
@@ -100,37 +119,47 @@ public enum RowBoatConfig implements IRowBoatConfig{
     }
 
     @Override
-    public AnalogInput getLowerArmAxisSensor() {
-        return lowerArmPotAxis;
+    public IAxis getLowerArmPot() {
+        return lowerPot;
     }
 
     @Override
-    public AnalogInput getUpperArmAxisSensor() {
-        return upperArmPotAxis;
+    public PIDConfiguration getLowerArmPIDConfig() {
+        return lowerPIDConfig;
     }
 
     @Override
-    public AnalogInput getWristAxisSensor() {
-        return wristPotAxis;
+    public IAxis getUpperArmPot() {
+        return upperPot;
     }
 
     @Override
-    public AnalogPotentiometer getLowerArmPot() {
-        return lowerArmPot;
+    public PIDConfiguration getUpperArmPIDConfig() {
+        return upperPIDConfig;
     }
 
     @Override
-    public AnalogPotentiometer getUpperArmPot() {
-        return upperArmPot;
-    }
-
-    @Override
-    public AnalogPotentiometer getWristPotAxis() {
+    public IAxis getWristPotAxis() {
         return wristPot;
+    }
+
+    @Override
+    public PIDConfiguration getWristPIDConfig() {
+        return wristPIDConfig;
     }
 
     @Override
     public DigitalInput getGrabSensor() {
         return grabSensor;
+    }
+
+    @Override
+    public Solenoid getVacuumInnerValve() {
+        return innerValve;
+    }
+
+    @Override
+    public Solenoid getVacuumOuterValve() {
+        return outerValve;
     }
 }

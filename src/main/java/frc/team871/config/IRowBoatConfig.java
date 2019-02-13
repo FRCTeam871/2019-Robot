@@ -1,9 +1,11 @@
 package frc.team871.config;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.team871.hid.IAxis;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
 
 public interface IRowBoatConfig {
@@ -26,17 +28,21 @@ public interface IRowBoatConfig {
 
     AHRS getGyro();
 
-    AnalogInput getLowerArmAxisSensor();
+    IAxis getLowerArmPot();
 
-    AnalogInput getUpperArmAxisSensor();
+    PIDConfiguration getLowerArmPIDConfig();
 
-    AnalogInput getWristAxisSensor();
+    IAxis getUpperArmPot();
 
-    AnalogPotentiometer getLowerArmPot();
+    PIDConfiguration getUpperArmPIDConfig();
 
-    AnalogPotentiometer getUpperArmPot();
+    IAxis getWristPotAxis();
 
-    AnalogPotentiometer getWristPotAxis();
+    PIDConfiguration getWristPIDConfig();
 
     DigitalInput getGrabSensor();
+
+    Solenoid getVacuumInnerValve();
+
+    Solenoid getVacuumOuterValve();
 }
