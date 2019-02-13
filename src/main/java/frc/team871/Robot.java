@@ -46,7 +46,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         this.controlScheme = InitialControlScheme.DEFAULT;
         this.config = RowBoatConfig.DEFAULT;
-        this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor());
+        this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor(), null, null); //TODO: add solenoids to config
         this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro());
         // TODO: Get actually lengths of the arm segments
         upperSegment = new ArmSegment(config.getUpperArmMotor(), config.getUpperArmPot(), config.getUpperArmPIDConfig(), 20.5);
