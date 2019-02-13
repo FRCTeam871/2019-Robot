@@ -115,7 +115,7 @@ public class Robot extends TimedRobot {
         arm.upperSegment.rotate(controlScheme.getUpperArmAxis().getValue() * -1.0);
         arm.lowerSegment.rotate(controlScheme.getLowerArmAxis().getValue() * 1.0);
         InitialControlSchemeHack cs = (InitialControlSchemeHack)controlScheme;
-        arm.wrist.setOrientation((cs.getWristAxis().getValue() - cs.getWristAxis2().getValue()) * 90);
+        arm.wrist.setOrientation((cs.getWristAxis().getValue() - cs.getWristAxis2().getValue()));
 //        arm.lowerSegment.setAngle((cs.getWristAxis().getValue() - cs.getWristAxis2().getValue()) * 45);
 
 //        s1.set(controlScheme.getWristToggleButton().getValue());
