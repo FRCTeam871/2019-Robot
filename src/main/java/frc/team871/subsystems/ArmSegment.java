@@ -1,17 +1,18 @@
 package frc.team871.subsystems;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.SpeedController;
 
 public class ArmSegment {
 
     private SpeedController rotateMotor;
-    private AnalogInput pot;
+    private AnalogPotentiometer pot;
     private double length;
     private PIDController pid;
 
-    public ArmSegment(SpeedController rotateMotor, AnalogInput pot, double length){
+    public ArmSegment(SpeedController rotateMotor, AnalogPotentiometer pot, double length){
         this.rotateMotor = rotateMotor;
         this.pot = pot;
         this.length = length;
@@ -27,7 +28,7 @@ public class ArmSegment {
 
 
     public double getAngle(){
-        return pot.getValue() / 1.1 ; //approx. conversion from ADC to degrees
+        return pot.get() / 1.1 ; //approx. conversion from ADC to degrees
     }
 
     public void enablePID(){

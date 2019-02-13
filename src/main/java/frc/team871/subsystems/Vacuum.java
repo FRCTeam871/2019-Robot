@@ -1,5 +1,6 @@
 package frc.team871.subsystems;
 
+import com.team871.hid.IButton;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.SpeedController;
 
@@ -8,7 +9,7 @@ public class Vacuum {
     private DigitalInput grabSensor;
     private VacuumState state;
 
-    public enum VacuumState{
+    private enum VacuumState{
         ENABLED,
         DISABLED
     }
@@ -18,7 +19,7 @@ public class Vacuum {
         this.grabSensor = grabSensor;
     }
 
-    public void setState(VacuumState newState){
+    private void setState(VacuumState newState){
          switch(newState){
              case ENABLED:
                  pump.set(1.);
@@ -30,12 +31,8 @@ public class Vacuum {
          state = newState;
     }
 
-    public void toggleState(){
-        setState((state == VacuumState.ENABLED) ? VacuumState.DISABLED : VacuumState.ENABLED);
-    }
-
-    public VacuumState getState(){
-        return state;
+    public void setState(IButton vacuumToggleButton){
+        setState((vacuumToggleButton.getValue())? VacuumState.ENABLED: VacuumState.DISABLED);
     }
 
     public boolean hasGamePiece(){
