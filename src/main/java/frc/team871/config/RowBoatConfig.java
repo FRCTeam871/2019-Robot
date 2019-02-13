@@ -8,6 +8,7 @@ import com.team871.hid.IAxis;
 import com.team871.io.actuator.CombinedSpeedController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
 import java.util.Arrays;
 
@@ -31,6 +32,9 @@ public enum RowBoatConfig implements IRowBoatConfig {
     PIDConfiguration lowerPIDConfig;
     IAxis upperPot;
     PIDConfiguration upperPIDConfig;
+
+    Solenoid innerValve;
+    Solenoid outerValve;
 
     RowBoatConfig(){
         this.frontLeftMotor = new WPI_VictorSPX(0);
@@ -65,7 +69,8 @@ public enum RowBoatConfig implements IRowBoatConfig {
         upperPot.setMapping(90, -90);
         upperPIDConfig = new PIDConfiguration(0.2, 0, 0, -90, 90, -upperMaxSpeed, upperMaxSpeed, 4);
 
-
+        innerValve = new Solenoid(0);
+        outerValve = new Solenoid(1);
     }
 
     @Override
@@ -146,5 +151,15 @@ public enum RowBoatConfig implements IRowBoatConfig {
     @Override
     public DigitalInput getGrabSensor() {
         return grabSensor;
+    }
+
+    @Override
+    public Solenoid getVacuumInnerValve() {
+        return innerValve;
+    }
+
+    @Override
+    public Solenoid getVacuumOuterValve() {
+        return outerValve;
     }
 }
