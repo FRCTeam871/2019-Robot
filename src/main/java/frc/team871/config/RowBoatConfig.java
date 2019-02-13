@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.SpeedController;
 import java.util.Arrays;
 
-public enum RowBoatConfig implements IRowBoatConfig{
+public enum RowBoatConfig implements IRowBoatConfig {
     DEFAULT;
 
     SpeedController frontLeftMotor;
@@ -26,8 +26,11 @@ public enum RowBoatConfig implements IRowBoatConfig{
     DigitalInput grabSensor;
 
     IAxis wristPot;
+    PIDConfiguration wristPIDConfig;
     IAxis lowerPot;
+    PIDConfiguration lowerPIDConfig;
     IAxis upperPot;
+    PIDConfiguration upperPIDConfig;
 
     RowBoatConfig(){
         this.frontLeftMotor = new WPI_VictorSPX(0);
@@ -44,14 +47,20 @@ public enum RowBoatConfig implements IRowBoatConfig{
 
         //TODO: check values
 
+        double wristMaxSpeed = 1.0;
         wristPot = new TalonAnalogAxis((TalonSRX)wristMotor, 301, 377);
         wristPot.setMapping(90, -90);
+        wristPIDConfig = new PIDConfiguration(0, 0, 0, -90, 90, -wristMaxSpeed, wristMaxSpeed, 4);
 
+        double lowerMaxSpeed = 1.0;
         lowerPot = new TalonAnalogAxis((TalonSRX)wristMotor, 779, 554);
         lowerPot.setMapping(0, -90);
+        lowerPIDConfig = new PIDConfiguration(0, 0, 0, -90, 60, -lowerMaxSpeed, lowerMaxSpeed, 4);
 
+        double upperMaxSpeed = 1.0;
         upperPot = new TalonAnalogAxis((TalonSRX)wristMotor, 301, 377);
         upperPot.setMapping(90, -90);
+        upperPIDConfig = new PIDConfiguration(0, 0, 0, -90, 90, -upperMaxSpeed, upperMaxSpeed, 4);
 
 
     }
@@ -103,17 +112,32 @@ public enum RowBoatConfig implements IRowBoatConfig{
 
     @Override
     public IAxis getLowerArmPot() {
-        return null;
+        return lowerPot;
+    }
+
+    @Override
+    public PIDConfiguration getLowerArmPIDConfig() {
+        return lowerPIDConfig;
     }
 
     @Override
     public IAxis getUpperArmPot() {
-        return null;
+        return upperPot;
+    }
+
+    @Override
+    public PIDConfiguration getUpperArmPIDConfig() {
+        return upperPIDConfig;
     }
 
     @Override
     public IAxis getWristPotAxis() {
-        return null;
+        return wristPot;
+    }
+
+    @Override
+    public PIDConfiguration getWristPIDConfig() {
+        return wristPIDConfig;
     }
 
     @Override

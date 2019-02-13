@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.SpeedController;
+import frc.team871.config.PIDConfiguration;
 
 public class Wrist {
 
@@ -17,10 +18,14 @@ public class Wrist {
     private double oldAxis;
     private boolean oldButton;
 
-    public Wrist(SpeedController motor, IAxis pot) {
+    public Wrist(SpeedController motor, IAxis pot, PIDConfiguration pidConfig) {
         this.motor = motor;
         this.pot = pot;
-        pid = new PIDController(0, 0, 0, pot, motor);
+
+        pid = new PIDController(pidConfig.getKp(), pidConfig.getKi(), pidConfig.getKd(), pot, motor);
+        pid.setInputRange(pidConfig.getInMin(), pidConfig.getInMax());
+        pid.setOutputRange(pidConfig.getOutMin(), pidConfig.getOutMax());
+        pid.setAbsoluteTolerance(pidConfig.getTolerance());
     }
 
     public void enablePID(){

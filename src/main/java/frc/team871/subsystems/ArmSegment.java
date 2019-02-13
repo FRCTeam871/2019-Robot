@@ -3,6 +3,7 @@ package frc.team871.subsystems;
 import com.team871.hid.IAxis;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.SpeedController;
+import frc.team871.config.PIDConfiguration;
 
 public class ArmSegment {
 
@@ -11,14 +12,15 @@ public class ArmSegment {
     private double length;
     private PIDController pid;
 
-    public ArmSegment(SpeedController rotateMotor, IAxis pot, double length){
+    public ArmSegment(SpeedController rotateMotor, IAxis pot, PIDConfiguration pidConfig, double length){
         this.rotateMotor = rotateMotor;
         this.pot = pot;
         this.length = length;
-        //TODO: Add Apropreate Values
-        pid = new PIDController(0,0,0, pot, rotateMotor);
-        pid.setInputRange(-60, 90);
-        pid.setOutputRange(-1,1);
+
+        pid = new PIDController(pidConfig.getKp(), pidConfig.getKi(), pidConfig.getKd(), pot, rotateMotor);
+        pid.setInputRange(pidConfig.getInMin(), pidConfig.getInMax());
+        pid.setOutputRange(pidConfig.getOutMin(), pidConfig.getOutMax());
+        pid.setAbsoluteTolerance(pidConfig.getTolerance());
     }
 
     public void setAngle(double angle){

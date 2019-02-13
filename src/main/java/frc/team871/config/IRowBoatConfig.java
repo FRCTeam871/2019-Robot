@@ -29,9 +29,15 @@ public interface IRowBoatConfig {
 
     IAxis getLowerArmPot();
 
+    PIDConfiguration getLowerArmPIDConfig();
+
     IAxis getUpperArmPot();
 
+    PIDConfiguration getUpperArmPIDConfig();
+
     IAxis getWristPotAxis();
+
+    PIDConfiguration getWristPIDConfig();
 
     DigitalInput getGrabSensor();
 }
