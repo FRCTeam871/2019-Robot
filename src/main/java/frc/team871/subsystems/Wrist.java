@@ -12,15 +12,15 @@ import edu.wpi.first.wpilibj.SpeedController;
 public class Wrist {
 
     private SpeedController motor;
-    //TODO: orientation sensor
     private PIDController pid;
-    private AnalogPotentiometer pot;
+    private IAxis pot;
     private double oldAxis;
     private boolean oldButton;
 
-    public Wrist(SpeedController motor, AnalogPotentiometer pot) {
+    public Wrist(SpeedController motor, IAxis pot) {
         this.motor = motor;
         this.pot = pot;
+        pid = new PIDController(0, 0, 0, pot, motor);
     }
 
     public void enablePID(){
@@ -36,7 +36,7 @@ public class Wrist {
     }
 
     public double getAngle(){
-        return pot.get() / 1.1; //approx. conversion from ADC to degrees
+        return pot.getValue();
     }
 
     /**

@@ -6,12 +6,9 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 import com.team871.hid.IAxis;
 import com.team871.io.actuator.CombinedSpeedController;
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.SpeedController;
-import edu.wpi.first.wpilibj.Talon;
 import java.util.Arrays;
 
 public enum RowBoatConfig implements IRowBoatConfig{
@@ -44,6 +41,8 @@ public enum RowBoatConfig implements IRowBoatConfig{
         this.vacuumMotor = new WPI_TalonSRX(8);
 
         this.gyro = new AHRS(SerialPort.Port.kMXP);
+
+        //TODO: check values
 
         wristPot = new TalonAnalogAxis((TalonSRX)wristMotor, 301, 377);
         wristPot.setMapping(90, -90);
