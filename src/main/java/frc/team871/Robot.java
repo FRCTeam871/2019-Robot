@@ -34,6 +34,8 @@ public class Robot extends TimedRobot {
     private Vacuum vacuum;
     private Arm arm;
     private Wrist wrist;
+    private ArmSegment upperSegment;
+    private ArmSegment lowerSegment;
 
     /**
       * This function is run when the robot is first started up and should be used
@@ -46,8 +48,8 @@ public class Robot extends TimedRobot {
         this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor());
         this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro());
         // TODO: Get actually lengths of the arm segments
-        ArmSegment upperSegment = new ArmSegment(config.getUpperArmMotor(), config.getUpperArmPot(), config.getUpperArmPIDConfig(), 20.5);
-        ArmSegment lowerSegment = new ArmSegment(config.getLowerArmMotor(), config.getLowerArmPot(), config.getLowerArmPIDConfig(),22.);
+        upperSegment = new ArmSegment(config.getUpperArmMotor(), config.getUpperArmPot(), config.getUpperArmPIDConfig(), 20.5);
+        lowerSegment = new ArmSegment(config.getLowerArmMotor(), config.getLowerArmPot(), config.getLowerArmPIDConfig(),22.);
         this.wrist = new Wrist(config.getWristMotor(), config.getWristPotAxis(), config.getWristPIDConfig());
         this.arm = new Arm(upperSegment, lowerSegment, wrist);
     }
@@ -64,7 +66,14 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        //set the default PID setpoints as the current position so it doesn't freak out instantly
+        upperSegment.setAngle(upperSegment.getAngle());
+        lowerSegment.setAngle(lowerSegment.getAngle());
+        wrist.setOrientation(wrist.getAngle());
 
+        upperSegment.enablePID();
+        lowerSegment.enablePID();
+        wrist.enablePID();
     }
 
     @Override
