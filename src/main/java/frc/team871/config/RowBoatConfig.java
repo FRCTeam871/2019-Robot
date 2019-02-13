@@ -47,20 +47,23 @@ public enum RowBoatConfig implements IRowBoatConfig {
 
         //TODO: check values
 
+        // an angle of 0 on all segments is when the entire arm is pointed directly forward, parallel to the base of the robot
+        // positive angles are clockwise
+
         double wristMaxSpeed = 1.0;
         wristPot = new TalonAnalogAxis((TalonSRX)wristMotor, 301, 377);
         wristPot.setMapping(90, -90);
-        wristPIDConfig = new PIDConfiguration(0, 0, 0, -90, 90, -wristMaxSpeed, wristMaxSpeed, 4);
+        wristPIDConfig = new PIDConfiguration(0.2, 0, 0, -90, 90, -wristMaxSpeed, wristMaxSpeed, 4);
 
-        double lowerMaxSpeed = 1.0;
-        lowerPot = new TalonAnalogAxis((TalonSRX)wristMotor, 779, 554);
+        double lowerMaxSpeed = 0.5;
+        lowerPot = new TalonAnalogAxis((TalonSRX)lowerArmMotor, -469, -242);
         lowerPot.setMapping(0, -90);
-        lowerPIDConfig = new PIDConfiguration(0, 0, 0, -90, 60, -lowerMaxSpeed, lowerMaxSpeed, 4);
+        lowerPIDConfig = new PIDConfiguration(0.2, 0, 0, -90, 60, -lowerMaxSpeed, lowerMaxSpeed, 4);
 
-        double upperMaxSpeed = 1.0;
-        upperPot = new TalonAnalogAxis((TalonSRX)wristMotor, 301, 377);
+        double upperMaxSpeed = 0.5;
+        upperPot = new TalonAnalogAxis((TalonSRX)upperArmMotor, -616, -514);
         upperPot.setMapping(90, -90);
-        upperPIDConfig = new PIDConfiguration(0, 0, 0, -90, 90, -upperMaxSpeed, upperMaxSpeed, 4);
+        upperPIDConfig = new PIDConfiguration(0.2, 0, 0, -90, 90, -upperMaxSpeed, upperMaxSpeed, 4);
 
 
     }
