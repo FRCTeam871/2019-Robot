@@ -44,6 +44,10 @@ public class Wrist {
         return pot.getValue();
     }
 
+    public void rotate(double speed){
+        motor.set(speed);
+    }
+
     /**
      * Handles both input values of an axis and button, making it
      * so that the most recently used input is used.

@@ -38,6 +38,9 @@ public class Robot extends TimedRobot {
     private ArmSegment upperSegment;
     private ArmSegment lowerSegment;
 
+    private boolean manualDriveMode = true;
+    private boolean driveTrainEnabled = false;
+
     /**
       * This function is run when the robot is first started up and should be used
       * for any initialization code.
@@ -79,26 +82,34 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
-
-        if(driveTrain.getDriveMode() == DriveTrain.DriveMode.ROBOT){
-            driveTrain.driveRobotOriented(controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
-        } else {
-            driveTrain.driveFieldOriented(controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
-        }
-        if(controlScheme.getRobotOrientationToggleButton().getValue()){
-            driveTrain.toggleFieldDriveMode();
-        }
-        driveTrain.setHeadingHoldEnabled(controlScheme.getHeadingHoldButton().getValue());
-        if(controlScheme.getResetGyroButton().getValue()) {
-            driveTrain.resetGyro();
+        if(driveTrainEnabled) {
+            if (driveTrain.getDriveMode() == DriveTrain.DriveMode.ROBOT) {
+                driveTrain.driveRobotOriented(controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
+            } else {
+                driveTrain.driveFieldOriented(controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
+            }
+            if (controlScheme.getRobotOrientationToggleButton().getValue()) {
+                driveTrain.toggleFieldDriveMode();
+            }
+            driveTrain.setHeadingHoldEnabled(controlScheme.getHeadingHoldButton().getValue());
+            if (controlScheme.getResetGyroButton().getValue()) {
+                driveTrain.resetGyro();
+            }
         }
 
         vacuum.setState(controlScheme.getVacuumToggleButton());
 
-        arm.handleArmAxes(controlScheme.getUpperArmAxis(), controlScheme.getLowerArmAxis(), controlScheme.getArmTargetXAxis(), controlScheme.getMecDriveYAxis());
-        arm.handleInverseKinematicsMode(controlScheme.getInverseKinematicsToggleButton());
+        if(!manualDriveMode){
+            arm.handleArmAxes(controlScheme.getUpperArmAxis(), controlScheme.getLowerArmAxis(), controlScheme.getArmTargetXAxis(), controlScheme.getMecDriveYAxis());
+            arm.handleInverseKinematicsMode(controlScheme.getInverseKinematicsToggleButton());
 
-        wrist.handleInputs(controlScheme.getWristAxis(), controlScheme.getWristToggleButton());
+            wrist.handleInputs(controlScheme.getWristAxis(), controlScheme.getWristToggleButton());
+        }else{
+            lowerSegment.rotate(controlScheme.getLowerArmAxis().getValue());
+            upperSegment.rotate(controlScheme.getUpperArmAxis().getValue());
+            wrist.rotate(controlScheme.getWristAxis().getValue());
+        }
+
     }
 
     @Override
