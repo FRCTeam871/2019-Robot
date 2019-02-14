@@ -129,7 +129,7 @@ public class Robot extends TimedRobot {
 //        arm.handleInverseKinematicsMode(controlScheme.getInverseKinematicsToggleButton());
 
 //        System.out.println("ANGLE = " + wrist.getAngle());
-        System.out.println("ANGLE x = " + arm.upperSegment.getAngle());
+        System.out.println("VAL = " + ((RowBoatConfigHack)config).getLowerPot().getRaw());
 //        arm.lowerSegment.tickCalibration(((RowBoatConfigHack)config).getLowerPot(), controlScheme.getWristToggleButton());
 //        arm.upperSegment.tickCalibration(((RowBoatConfigHack)config).getUpperPot(), controlScheme.getWristToggleButton());
 
