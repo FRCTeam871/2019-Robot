@@ -58,10 +58,10 @@ public class Robot extends TimedRobot {
         ArmSegment lowerSegment = new ArmSegment(config.getLowerArmMotor(), ((RowBoatConfigHack)config).getLowerPot(),22., 342, 568);
         this.wrist = new Wrist(config.getWristMotor(), ((RowBoatConfigHack)config).getWristPot());
         this.arm = new Arm(upperSegment, lowerSegment, wrist);
-        wrist.enablePID();
-        lowerSegment.enablePID();
-//        config.getUpperArmMotor().setInverted(true);
-        upperSegment.enablePID();
+//        wrist.enablePID();
+//        lowerSegment.enablePID();
+////        config.getUpperArmMotor().setInverted(true);
+//        upperSegment.enablePID();
 
 //        wrist.setOrientation(-90);
 //        lowerSegment.setAngle(-35);
@@ -120,18 +120,18 @@ public class Robot extends TimedRobot {
 
 
         InitialControlSchemeHack cs = (InitialControlSchemeHack)controlScheme;
-        wrist.setOrientation((cs.getWristAxis().getValue() - cs.getWristAxis2().getValue()) * 90);
-        arm.lowerSegment.setAngle(cs.getLowerArmAxis().getValue() * -90);
-        arm.upperSegment.setAngle(cs.getUpperArmAxis().getValue() * -90);
+//        wrist.setOrientation((cs.getWristAxis().getValue() - cs.getWristAxis2().getValue()) * 90);
+//        arm.lowerSegment.setAngle(cs.getLowerArmAxis().getValue() * -90);
+//        arm.upperSegment.setAngle(cs.getUpperArmAxis().getValue() * -90);
 
 //
 //        if(controlScheme.getVacuumToggleButton().getValue()) {
 //            vacuum.toggleState();
 //        }
 
-//        arm.upperSegment.rotate(controlScheme.getUpperArmAxis().getValue() * -1.0);
-//        arm.lowerSegment.rotate(controlScheme.getLowerArmAxis().getValue() * 1.0);
-//        arm.wrist.setOrientation((cs.getWristAxis().getValue() - cs.getWristAxis2().getValue()));
+        arm.upperSegment.rotate(controlScheme.getUpperArmAxis().getValue() * -1.0);
+        arm.lowerSegment.rotate(controlScheme.getLowerArmAxis().getValue() * 1.0);
+        arm.wrist.setOrientation((cs.getWristAxis().getValue() - cs.getWristAxis2().getValue()));
 //        arm.lowerSegment.setAngle((cs.getWristAxis().getValue() - cs.getWristAxis2().getValue()) * 45);
 
 //        s1.set(controlScheme.getWristToggleButton().getValue());
