@@ -54,14 +54,14 @@ public class Robot extends TimedRobot {
         this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor());
         this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro());
         // TODO: Get actually lengths of the arm segments
-        ArmSegment upperSegment = new ArmSegment(config.getUpperArmMotor(), ((RowBoatConfigHack)config).getUpperPot(), 20.5, -616, -514);
-        ArmSegment lowerSegment = new ArmSegment(config.getLowerArmMotor(), ((RowBoatConfigHack)config).getLowerPot(),22., -469, -242);
+        ArmSegment upperSegment = new ArmSegment(config.getUpperArmMotor(), ((RowBoatConfigHack)config).getUpperPot(), 20.5, 718-102-102, 616-102-102); //90 = 102 514
+        ArmSegment lowerSegment = new ArmSegment(config.getLowerArmMotor(), ((RowBoatConfigHack)config).getLowerPot(),22., 342, 568);
         this.wrist = new Wrist(config.getWristMotor(), ((RowBoatConfigHack)config).getWristPot());
         this.arm = new Arm(upperSegment, lowerSegment, wrist);
-//        wrist.enablePID();
-//        lowerSegment.enablePID();
+        wrist.enablePID();
+        lowerSegment.enablePID();
 //        config.getUpperArmMotor().setInverted(true);
-//        upperSegment.enablePID();
+        upperSegment.enablePID();
 
         s1 = new Solenoid(0);
         s2 = new Solenoid(1);
@@ -80,6 +80,13 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
 
+    }
+
+    @Override
+    public void robotPeriodic() {
+
+//        System.out.println("VAL = " + ((RowBoatConfigHack)config).getLowerPot().getRaw());
+        System.out.println("ANG = " + arm.lowerSegment.getAngle() + " " + arm.upperSegment.getAngle() + " " + wrist.getAngle());
     }
 
     @Override
@@ -112,10 +119,10 @@ public class Robot extends TimedRobot {
 //            vacuum.toggleState();
 //        }
 
-        arm.upperSegment.rotate(controlScheme.getUpperArmAxis().getValue() * -1.0);
-        arm.lowerSegment.rotate(controlScheme.getLowerArmAxis().getValue() * 1.0);
+//        arm.upperSegment.rotate(controlScheme.getUpperArmAxis().getValue() * -1.0);
+//        arm.lowerSegment.rotate(controlScheme.getLowerArmAxis().getValue() * 1.0);
         InitialControlSchemeHack cs = (InitialControlSchemeHack)controlScheme;
-        arm.wrist.setOrientation((cs.getWristAxis().getValue() - cs.getWristAxis2().getValue()));
+//        arm.wrist.setOrientation((cs.getWristAxis().getValue() - cs.getWristAxis2().getValue()));
 //        arm.lowerSegment.setAngle((cs.getWristAxis().getValue() - cs.getWristAxis2().getValue()) * 45);
 
 //        s1.set(controlScheme.getWristToggleButton().getValue());
@@ -129,7 +136,6 @@ public class Robot extends TimedRobot {
 //        arm.handleInverseKinematicsMode(controlScheme.getInverseKinematicsToggleButton());
 
 //        System.out.println("ANGLE = " + wrist.getAngle());
-        System.out.println("VAL = " + ((RowBoatConfigHack)config).getLowerPot().getRaw());
 //        arm.lowerSegment.tickCalibration(((RowBoatConfigHack)config).getLowerPot(), controlScheme.getWristToggleButton());
 //        arm.upperSegment.tickCalibration(((RowBoatConfigHack)config).getUpperPot(), controlScheme.getWristToggleButton());
 
