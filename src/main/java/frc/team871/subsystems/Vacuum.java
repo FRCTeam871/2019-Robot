@@ -67,8 +67,8 @@ public class Vacuum {
 
     public void setSideOpen(VacuumSide side){
         this.side = side;
-        valve1.set(side.s1);
-        valve2.set(side.s2);
+//        valve1.set(side.s1);
+//        valve2.set(side.s2);
     }
 
 }

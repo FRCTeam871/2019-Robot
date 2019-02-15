@@ -25,6 +25,7 @@ public enum InitialControlScheme implements IControlScheme{
         systemsController.getAxis(XBoxAxes.TRIGGER).setDeadband(0.2);
         systemsController.getAxis(XBoxAxes.LEFTY).setDeadband(0.2);
         systemsController.getAxis(XBoxAxes.RIGHTY).setDeadband(0.2);
+        systemsController.getAxis(XBoxAxes.RIGHTX).setDeadband(0.2);
         driveController.getButton(XBoxButtons.LBUMPER).setMode(ButtonTypes.MOMENTARY);
         driveController.getButton(XBoxButtons.START).setMode(ButtonTypes.RISING);
         driveController.getButton(XBoxButtons.BACK).setMode(ButtonTypes.TOGGLE);
@@ -50,7 +51,7 @@ public enum InitialControlScheme implements IControlScheme{
 
     @Override
     public IAxis getWristAxis() {
-        return systemsController.getAxis(XBoxAxes.TRIGGER);
+        return systemsController.getAxis(XBoxAxes.RIGHTX);
     }
 
     @Override

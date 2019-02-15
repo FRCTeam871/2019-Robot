@@ -43,7 +43,8 @@ public enum RowBoatConfig implements IRowBoatConfig {
         this.rearRightMotor = new WPI_VictorSPX(3);
 
         this.lowerArmMotor = new WPI_TalonSRX(7);
-        this.upperArmMotor = new CombinedSpeedController(Arrays.asList(new WPI_TalonSRX(5), new WPI_TalonSRX(6)));
+        WPI_TalonSRX t = new WPI_TalonSRX(5);
+        this.upperArmMotor = new CombinedSpeedController(Arrays.asList(t, new WPI_TalonSRX(6)));
         this.wristMotor = new WPI_TalonSRX(4);
         this.vacuumMotor = new WPI_TalonSRX(8);
 
@@ -65,8 +66,8 @@ public enum RowBoatConfig implements IRowBoatConfig {
         lowerPIDConfig = new PIDConfiguration(0.2, 0, 0, -90, 60, -lowerMaxSpeed, lowerMaxSpeed, 4);
 
         double upperMaxSpeed = 0.5;
-        upperPot = new TalonAnalogAxis((TalonSRX)upperArmMotor, 718-102-102, 616-102-102);
-        upperPot.setMapping(90, -90);
+        upperPot = new TalonAnalogAxis((TalonSRX)t, 718-102-102, 616-102-102);
+        upperPot.setMapping(0, -90);
         upperPIDConfig = new PIDConfiguration(0.2, 0, 0, -90, 90, -upperMaxSpeed, upperMaxSpeed, 4);
 
         innerValve = new Solenoid(0);

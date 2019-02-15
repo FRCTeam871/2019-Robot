@@ -59,6 +59,11 @@ public class Robot extends TimedRobot {
     }
 
     @Override
+    public void robotPeriodic() {
+        System.out.println(lowerSegment.getAngle() + " " + upperSegment.getAngle() + " " + wrist.getAngle());
+    }
+
+    @Override
     public void autonomousInit() {
 
     }
@@ -71,13 +76,15 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         //set the default PID setpoints as the current position so it doesn't freak out instantly
-        upperSegment.setAngle(upperSegment.getAngle());
-        lowerSegment.setAngle(lowerSegment.getAngle());
-        wrist.setOrientation(wrist.getAngle());
+        if(!manualDriveMode) {
+            upperSegment.setAngle(upperSegment.getAngle());
+            lowerSegment.setAngle(lowerSegment.getAngle());
+            wrist.setOrientation(wrist.getAngle());
 
-        upperSegment.enablePID();
-        lowerSegment.enablePID();
-        wrist.enablePID();
+            upperSegment.enablePID();
+            lowerSegment.enablePID();
+            wrist.enablePID();
+        }
     }
 
     @Override

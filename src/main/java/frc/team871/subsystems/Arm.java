@@ -8,7 +8,7 @@ public class Arm {
     private ArmSegment upperSegment;
     private ArmSegment lowerSegment;
     private Wrist wrist;
-    private ArmMode currentArmMode;
+    private ArmMode currentArmMode = ArmMode.DIRECT;
     private double x;
     private double y;
 
@@ -32,6 +32,7 @@ public class Arm {
     }
 
     public void setAngles(double upperAngle, double lowerAngle){
+        System.out.println(upperAngle + " " + lowerAngle);
         upperSegment.setAngle(upperAngle);
         lowerSegment.setAngle(lowerAngle);
     }
