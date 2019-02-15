@@ -60,12 +60,12 @@ public enum RowBoatConfig implements IRowBoatConfig {
         wristPIDConfig = new PIDConfiguration(0.2, 0, 0, -90, 90, -wristMaxSpeed, wristMaxSpeed, 4);
 
         double lowerMaxSpeed = 0.5;
-        lowerPot = new TalonAnalogAxis((TalonSRX)lowerArmMotor, -469, -242);
+        lowerPot = new TalonAnalogAxis((TalonSRX)lowerArmMotor, 342, 568);
         lowerPot.setMapping(0, -90);
         lowerPIDConfig = new PIDConfiguration(0.2, 0, 0, -90, 60, -lowerMaxSpeed, lowerMaxSpeed, 4);
 
         double upperMaxSpeed = 0.5;
-        upperPot = new TalonAnalogAxis((TalonSRX)upperArmMotor, -616, -514);
+        upperPot = new TalonAnalogAxis((TalonSRX)upperArmMotor, 718-102-102, 616-102-102);
         upperPot.setMapping(90, -90);
         upperPIDConfig = new PIDConfiguration(0.2, 0, 0, -90, 90, -upperMaxSpeed, upperMaxSpeed, 4);
 
