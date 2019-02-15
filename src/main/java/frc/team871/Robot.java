@@ -63,6 +63,10 @@ public class Robot extends TimedRobot {
 //        config.getUpperArmMotor().setInverted(true);
         upperSegment.enablePID();
 
+//        wrist.setOrientation(-90);
+//        lowerSegment.setAngle(-35);
+//        upperSegment.setAngle(-120);
+
         s1 = new Solenoid(0);
         s2 = new Solenoid(1);
     }
@@ -114,6 +118,12 @@ public class Robot extends TimedRobot {
 
         vacuum.setState(controlScheme.getVacuumToggleButton().getValue() ? Vacuum.VacuumState.ENABLED : Vacuum.VacuumState.DISABLED);
 
+
+        InitialControlSchemeHack cs = (InitialControlSchemeHack)controlScheme;
+        wrist.setOrientation((cs.getWristAxis().getValue() - cs.getWristAxis2().getValue()) * 90);
+        arm.lowerSegment.setAngle(cs.getLowerArmAxis().getValue() * -90);
+        arm.upperSegment.setAngle(cs.getUpperArmAxis().getValue() * -90);
+
 //
 //        if(controlScheme.getVacuumToggleButton().getValue()) {
 //            vacuum.toggleState();
@@ -121,7 +131,6 @@ public class Robot extends TimedRobot {
 
 //        arm.upperSegment.rotate(controlScheme.getUpperArmAxis().getValue() * -1.0);
 //        arm.lowerSegment.rotate(controlScheme.getLowerArmAxis().getValue() * 1.0);
-        InitialControlSchemeHack cs = (InitialControlSchemeHack)controlScheme;
 //        arm.wrist.setOrientation((cs.getWristAxis().getValue() - cs.getWristAxis2().getValue()));
 //        arm.lowerSegment.setAngle((cs.getWristAxis().getValue() - cs.getWristAxis2().getValue()) * 45);
 

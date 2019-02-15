@@ -30,7 +30,7 @@ public class ArmSegment {
         this.length = length;
         //TODO: Add Apropreate Values
         if(pot != null) {
-            pid = new PIDController(0.2, 0, 0, new PIDSource() {
+            pid = new PIDController(0.05, 0, 0.02, new PIDSource() {
                 @Override
                 public void setPIDSourceType(PIDSourceType pidSource) {
 
@@ -47,7 +47,7 @@ public class ArmSegment {
                 }
             }, rotateMotor);
             pid.setOutputRange(-0.5, 0.5);
-            pid.setAbsoluteTolerance(3);
+            pid.setAbsoluteTolerance(5);
             pid.setSetpoint(0);
         }
 //        pid = null;
