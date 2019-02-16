@@ -44,7 +44,7 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput {
     }
 
 
-    public void driveRobotOriented(double y, double x, double r) {
+    public void driveRobotOriented(double x, double y, double r) {
         driveCartesian(y, x, r + (headingPID.isEnabled() ? pidRotation : 0));
     }
 

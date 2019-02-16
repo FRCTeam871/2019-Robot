@@ -37,10 +37,10 @@ public enum RowBoatConfig implements IRowBoatConfig {
     Solenoid outerValve;
 
     RowBoatConfig(){
-        this.frontLeftMotor = new WPI_VictorSPX(0);
-        this.rearLeftMotor = new WPI_VictorSPX(1);
-        this.frontRightMotor = new WPI_VictorSPX(2);
-        this.rearRightMotor = new WPI_VictorSPX(3);
+        this.frontLeftMotor = new WPI_VictorSPX(3);
+        this.rearLeftMotor = new WPI_VictorSPX(2);
+        this.frontRightMotor = new WPI_VictorSPX(0);
+        this.rearRightMotor = new WPI_VictorSPX(1);
 
         this.lowerArmMotor = new WPI_TalonSRX(7);
         WPI_TalonSRX t = new WPI_TalonSRX(5);

@@ -28,7 +28,7 @@ public enum InfinityGauntletControlScheme implements IControlScheme{
         saitekDrive.getButton(SaitekButtons.B).setMode(ButtonTypes.MOMENTARY);
         saitekDrive.getButton(SaitekButtons.C).setMode(ButtonTypes.RISING);
         saitekDrive.getButton(SaitekButtons.A).setMode(ButtonTypes.RISING);
-        saitekDrive.getButton(SaitekButtons.E).setMode(ButtonTypes.TOGGLE);
+        saitekDrive.getButton(SaitekButtons.TRIGGER_1).setMode(ButtonTypes.TOGGLE);
 
         unusedAxis = new ConstantAxis(0);
         unusedButton = new ConstantButton(false);
@@ -36,7 +36,7 @@ public enum InfinityGauntletControlScheme implements IControlScheme{
 
     @Override
     public IButton getVacuumToggleButton() {
-        return saitekDrive.getButton(SaitekButtons.E);
+        return saitekDrive.getButton(SaitekButtons.TRIGGER_1);
     }
 
     @Override

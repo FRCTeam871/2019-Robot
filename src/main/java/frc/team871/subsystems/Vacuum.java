@@ -49,7 +49,7 @@ public class Vacuum {
         }
          switch(newState){
              case ENABLED:
-                 pump.set(0.5);
+                 pump.set(0.25);
                  if(last){
                      setSideOpen(VacuumSide.INNER);
                  }else{
