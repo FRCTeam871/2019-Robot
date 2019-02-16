@@ -134,8 +134,8 @@ public class Robot extends TimedRobot {
         arm.wrist.setOrientation((cs.getWristAxis().getValue() - cs.getWristAxis2().getValue()));
 //        arm.lowerSegment.setAngle((cs.getWristAxis().getValue() - cs.getWristAxis2().getValue()) * 45);
 
-//        s1.set(controlScheme.getWristToggleButton().getValue());
-//        s2.set(((InitialControlSchemeHack) controlScheme).getSol2().getValue());
+        s1.set(controlScheme.getWristToggleButton().getValue());
+        s2.set(((InitialControlSchemeHack) controlScheme).getSol2().getValue());
 
 //        if(arm.getCurrentArmMode() == Arm.ArmMode.INVERSE_KINEMATICS) {
 //            arm.goToRelative(controlScheme.getArmTargetXAxis().getValue(), controlScheme.getArmTargetYAxis().getValue());
