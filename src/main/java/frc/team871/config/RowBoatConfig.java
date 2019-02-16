@@ -33,8 +33,8 @@ public enum RowBoatConfig implements IRowBoatConfig {
     IAxis upperPot;
     PIDConfiguration upperPIDConfig;
 
-    Solenoid innerValve;
-    Solenoid outerValve;
+    Solenoid middleSolenoid;
+    Solenoid sideSolenoid;
 
     RowBoatConfig(){
         this.frontLeftMotor = new WPI_VictorSPX(0);

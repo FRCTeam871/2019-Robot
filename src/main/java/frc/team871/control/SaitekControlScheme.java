@@ -22,7 +22,8 @@ public enum SaitekControlScheme implements IControlScheme{
 
     SaitekControlScheme() {
         saitekStickJoy = new GenericJoystick<>(0, Arrays.asList(SaitekButtons.values()), Arrays.asList(SaitekAxes.values()));
-        saitekStickJoy.getButton(SaitekButtons.HAT_LEFT).setMode(ButtonTypes.TOGGLE);
+        saitekStickJoy.getButton(SaitekButtons.HAT_LEFT).setMode(ButtonTypes.RISING);
+        saitekStickJoy.getButton(SaitekButtons.HAT_RIGHT).setMode(ButtonTypes.RISING);
         saitekStickJoy.getButton(SaitekButtons.I).setMode(ButtonTypes.TOGGLE);
         saitekStickJoy.getButton(SaitekButtons.C).setMode(ButtonTypes.RISING);
         saitekStickJoy.getButton(SaitekButtons.B).setMode(ButtonTypes.MOMENTARY);
@@ -35,8 +36,13 @@ public enum SaitekControlScheme implements IControlScheme{
     }
 
     @Override
-    public IButton getVacuumToggleButton() {
+    public IButton getVacuumSideButton() {
         return saitekStickJoy.getButton(SaitekButtons.HAT_LEFT);
+    }
+
+    @Override
+    public IButton getVacuumMiddleButton() {
+        return saitekStickJoy.getButton(SaitekButtons.HAT_RIGHT);
     }
 
     @Override

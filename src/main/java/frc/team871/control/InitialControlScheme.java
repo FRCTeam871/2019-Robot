@@ -19,7 +19,8 @@ public enum InitialControlScheme implements IControlScheme{
     InitialControlScheme(){
         systemsController = new GenericJoystick<>(0, Arrays.asList(XBoxButtons.values()), Arrays.asList(XBoxAxes.values()));
         driveController = new GenericJoystick<>(1, Arrays.asList(XBoxButtons.values()), Arrays.asList(XBoxAxes.values()));
-        systemsController.getButton(XBoxButtons.Y).setMode(ButtonTypes.TOGGLE);
+        systemsController.getButton(XBoxButtons.X).setMode(ButtonTypes.RISING);
+        systemsController.getButton(XBoxButtons.B).setMode(ButtonTypes.RISING);
         systemsController.getButton(XBoxButtons.BACK).setMode(ButtonTypes.TOGGLE);
         systemsController.getButton(XBoxButtons.A).setMode(ButtonTypes.TOGGLE);
         systemsController.getAxis(XBoxAxes.TRIGGER).setDeadband(0.2);
@@ -36,9 +37,12 @@ public enum InitialControlScheme implements IControlScheme{
     }
 
     @Override
-    public IButton getVacuumToggleButton() {
-        return systemsController.getButton(XBoxButtons.Y);
+    public IButton getVacuumSideButton() {
+        return systemsController.getButton(XBoxButtons.X);
     }
+
+    @Override
+    public IButton getVacuumMiddleButton() { return systemsController.getButton(XBoxButtons.B); }
 
     @Override
     public IButton getInverseKinematicsToggleButton() {

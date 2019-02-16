@@ -97,7 +97,7 @@ public class Robot extends TimedRobot {
             }
         }
 
-        vacuum.setState(controlScheme.getVacuumToggleButton());
+        vacuum.updateState(controlScheme.getVacuumSideButton(), controlScheme.getVacuumMiddleButton());
 
         if(!manualDriveMode){
             arm.handleArmAxes(controlScheme.getUpperArmAxis(), controlScheme.getLowerArmAxis(), controlScheme.getArmTargetXAxis(), controlScheme.getMecDriveYAxis());
