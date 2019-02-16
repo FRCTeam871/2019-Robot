@@ -94,9 +94,9 @@ public class Robot extends TimedRobot {
             lowerSegment.setAngle(0);
 
 
-            upperSegment.enablePID();
-            lowerSegment.enablePID();
-            wrist.enablePID();
+//            upperSegment.enablePID();
+//            lowerSegment.enablePID();
+//            wrist.enablePID();
         }
     }
 
@@ -120,7 +120,7 @@ public class Robot extends TimedRobot {
         vacuum.setState(controlScheme.getVacuumToggleButton());
 
         if(!manualDriveMode){
-            arm.handleArmAxes(controlScheme.getUpperArmAxis(), controlScheme.getLowerArmAxis(), controlScheme.getArmTargetXAxis(), controlScheme.getMecDriveYAxis());
+            arm.handleArmAxes(controlScheme.getUpperArmAxis(), controlScheme.getLowerArmAxis(), controlScheme.getArmTargetXAxis(), controlScheme.getArmTargetYAxis());
             arm.handleInverseKinematicsMode(controlScheme.getInverseKinematicsToggleButton());
 
             wrist.handleInputs(controlScheme.getWristAxis(), controlScheme.getWristToggleButton());

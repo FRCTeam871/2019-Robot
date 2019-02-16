@@ -12,11 +12,14 @@ public class Arm implements Sendable {
     private ArmSegment upperSegment;
     private ArmSegment lowerSegment;
     private Wrist wrist;
-    private ArmMode currentArmMode = ArmMode.DIRECT;
+    private ArmMode currentArmMode = ArmMode.INVERSE_KINEMATICS;
     private double x;
     private double y;
     private double lowerAngle;
     private double upperAngle;
+
+    private final double lowerSq;
+    private final double upperSq;
 
     private enum ArmMode {
         DIRECT,
@@ -34,14 +37,38 @@ public class Arm implements Sendable {
         LiveWindow.add(lowerSegment);
         LiveWindow.add(wrist);
 
+        lowerSq = lowerSegment.getLength() * lowerSegment.getLength();
+        upperSq = upperSegment.getLength() * upperSegment.getLength();
     }
 
     private double calcUpperAngle(){
-        return Math.acos((((upperSegment.getLength() * upperSegment.getLength()) + (lowerSegment.getLength() * lowerSegment.getLength())) - ((x * x) + (y * y))) / (2 * upperSegment.getLength() * lowerSegment.getLength()));
+        double sqDst = (x * x) + (y * y);
+        double ac = (upperSq + lowerSq - sqDst) / (2 * upperSegment.getLength() * lowerSegment.getLength());
+        return -180 + Math.toDegrees(Math.acos(ac));
     }
 
     private double calcLowerAngle(){
-         return Math.atan2(y, x) - Math.acos((((lowerSegment.getLength() * lowerSegment.getLength()) + ((x * x) + (y * y))) - (upperSegment.getLength() * upperSegment.getLength()) ) / (2 * upperSegment.getLength() * Math.sqrt((x * x) + (y * y))));
+
+        double targetX = x;
+        double targetY = y;
+
+        double sqDst = (x * x) + (y * y);
+
+//        if(sqDst > lowerSq + upperSq){
+//            double angle = Math.atan2(targetY, targetX);
+//
+//            targetX = (getRadius()) * Math.cos(angle);
+//            targetY = (getRadius()) * Math.sin(angle);
+//
+//            sqDst = (targetX * targetX) + (targetY * targetY);
+//        }
+
+        double a = Math.atan2(y, x);
+
+        double ac = (lowerSq + sqDst - upperSq) / (2 * upperSegment.getLength() * Math.sqrt(sqDst));
+        if(ac > 1) ac = 1;
+
+        return Math.toDegrees(a - Math.acos(ac));
     }
 
     public void setAngles(double upperAngle, double lowerAngle){
@@ -86,7 +113,7 @@ public class Arm implements Sendable {
      */
     public void handleArmAxes(IAxis upperAxis, IAxis lowerAxis, IAxis xAxis, IAxis yAxis){
         if(currentArmMode == ArmMode.INVERSE_KINEMATICS) {
-            goToRelative(xAxis.getValue(), yAxis.getValue());
+            goToRelative(xAxis.getValue() / 2.0 + 0.5, yAxis.getValue());
         } else {
             setAngles(upperAxis.getValue() * 90, lowerAxis.getValue() * 90);
         }
