@@ -2,8 +2,12 @@ package frc.team871.subsystems;
 
 import com.team871.hid.IAxis;
 import com.team871.hid.IButton;
+import edu.wpi.first.wpilibj.Sendable;
+import edu.wpi.first.wpilibj.SendableBase;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 
-public class Arm {
+public class Arm implements Sendable {
 
     private ArmSegment upperSegment;
     private ArmSegment lowerSegment;
@@ -11,6 +15,7 @@ public class Arm {
     private ArmMode currentArmMode = ArmMode.DIRECT;
     private double x;
     private double y;
+
 
     private enum ArmMode {
         DIRECT,
@@ -21,6 +26,13 @@ public class Arm {
         this.upperSegment = upperSegment;
         this.lowerSegment = lowerSegment;
         this.wrist = wrist;
+        upperSegment.setName("UpperArm");
+        lowerSegment.setName("LowerArm");
+        wrist.setName("Wrist");
+        LiveWindow.addChild(this, upperSegment);
+        LiveWindow.addChild(this, lowerSegment);
+        LiveWindow.addChild(this, wrist);
+
     }
 
     private double calcUpperAngle(){
@@ -77,4 +89,31 @@ public class Arm {
             setAngles(upperAxis.getValue() * 90, lowerAxis.getValue() * 90);
         }
     }
+
+
+    @Override
+    public String getName() {
+        return "Arm";
+    }
+
+    @Override
+    public void setName(String name) {
+
+    }
+
+    @Override
+    public String getSubsystem() {
+        return "Arm";
+    }
+
+    @Override
+    public void setSubsystem(String subsystem) {
+
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+
+    }
+
 }

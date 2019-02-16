@@ -8,11 +8,13 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import frc.team871.config.PIDConfiguration;
 
-public class Wrist {
+public class Wrist implements Sendable {
 
     private SpeedController motor;
     private PIDController pid;
@@ -20,20 +22,21 @@ public class Wrist {
     private double oldAxis;
     private boolean oldButton;
 
+    String name = "Wrist";
+    String subsystem = "Wrist";
+
     public Wrist(SpeedController motor, IAxis pot, PIDConfiguration pidConfig) {
         this.motor = motor;
         this.pot = pot;
 
         pid = new PIDController(pidConfig.getKp(), pidConfig.getKi(), pidConfig.getKd(), pot, motor);
-        pid.setName("PIDWrist");
-        LiveWindow.add(pid);
+        pid.setName("PID");
 
         pid.setInputRange(pidConfig.getInMin(), pidConfig.getInMax());
         pid.setOutputRange(pidConfig.getOutMin(), pidConfig.getOutMax());
         pid.setAbsoluteTolerance(pidConfig.getTolerance());
 
-        pot.setName("Wrist", "Pot");
-        LiveWindow.add(pot);
+        pot.setName("Pot");
     }
 
     public void enablePID(){
@@ -70,5 +73,31 @@ public class Wrist {
         }
         oldAxis = axis.getValue();
         oldButton = button.getValue();
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getSubsystem() {
+        return subsystem;
+    }
+
+    @Override
+    public void setSubsystem(String subsystem) {
+        this.subsystem = subsystem;
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+//        LiveWindow.addChild(this, pot);
+//        LiveWindow.addChild(this, pid);
     }
 }

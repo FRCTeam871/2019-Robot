@@ -9,6 +9,8 @@ package frc.team871;
 
 
 import com.team871.hid.IButton;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import frc.team871.subsystems.DriveTrain;
@@ -51,12 +53,13 @@ public class Robot extends TimedRobot {
         this.controlScheme = InitialControlScheme.DEFAULT;
         this.config = RowBoatConfig.DEFAULT;
         this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor(), config.getVacuumInnerValve(), config.getVacuumOuterValve()); //TODO: add solenoids to config
-        this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro());
+//        this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro());
         // TODO: Get actually lengths of the arm segments
         upperSegment = new ArmSegment(config.getUpperArmMotor(), config.getUpperArmPot(), config.getUpperArmPIDConfig(), 20.5);
         lowerSegment = new ArmSegment(config.getLowerArmMotor(), config.getLowerArmPot(), config.getLowerArmPIDConfig(),22.);
         this.wrist = new Wrist(config.getWristMotor(), config.getWristPotAxis(), config.getWristPIDConfig());
         this.arm = new Arm(upperSegment, lowerSegment, wrist);
+
     }
 
     @Override
