@@ -41,7 +41,7 @@ public class Robot extends TimedRobot {
     private ArmSegment lowerSegment;
 
     private boolean manualDriveMode = false;
-    private boolean driveTrainEnabled = false;
+    private boolean driveTrainEnabled = true;
 
     /**
       * This function is run when the robot is first started up and should be used
@@ -83,11 +83,11 @@ public class Robot extends TimedRobot {
         if(!manualDriveMode) {
             upperSegment.setAngle(upperSegment.getAngle());
             lowerSegment.setAngle(lowerSegment.getAngle());
-//            wrist.setOrientation(wrist.getAngle());
+            wrist.setOrientation(wrist.getAngle());
 
-            wrist.setOrientation(0);
-            upperSegment.setAngle(0);
-            lowerSegment.setAngle(0);
+//            wrist.setOrientation(0);
+//            upperSegment.setAngle(0);
+//            lowerSegment.setAngle(0);
 
 
             upperSegment.enablePID();
@@ -107,7 +107,7 @@ public class Robot extends TimedRobot {
             if (controlScheme.getRobotOrientationToggleButton().getValue()) {
                 driveTrain.toggleFieldDriveMode();
             }
-            driveTrain.setHeadingHoldEnabled(controlScheme.getHeadingHoldButton().getValue());
+//            driveTrain.setHeadingHoldEnabled(controlScheme.getHeadingHoldButton().getValue());
             if (controlScheme.getResetGyroButton().getValue()) {
                 driveTrain.resetGyro();
             }

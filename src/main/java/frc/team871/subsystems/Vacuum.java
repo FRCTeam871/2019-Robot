@@ -14,6 +14,8 @@ public class Vacuum {
     Solenoid valve1;
     Solenoid valve2;
 
+    boolean last = true;
+
     public enum VacuumSide {
         NONE  (false, false),
         INNER (false, true),
@@ -37,13 +39,23 @@ public class Vacuum {
     public Vacuum(SpeedController pump, DigitalInput grabSensor, Solenoid valve1, Solenoid valve2){
         this.pump = pump;
         this.grabSensor = grabSensor;
+        this.valve1 = valve1;
+        this.valve2 = valve2;
     }
 
     private void setState(VacuumState newState){
+        if(newState != state && newState == VacuumState.ENABLED){
+            last = !last;
+        }
          switch(newState){
              case ENABLED:
-                 pump.set(1.);
-                 setSideOpen(VacuumSide.INNER);
+                 pump.set(0.5);
+                 if(last){
+                     setSideOpen(VacuumSide.INNER);
+                 }else{
+                     setSideOpen(VacuumSide.OUTER);
+                 }
+
                  break;
              case DISABLED:
                  pump.set(0.);
@@ -67,8 +79,8 @@ public class Vacuum {
 
     public void setSideOpen(VacuumSide side){
         this.side = side;
-//        valve1.set(side.s1);
-//        valve2.set(side.s2);
+        valve1.set(side.s1);
+        valve2.set(side.s2);
     }
 
 }
