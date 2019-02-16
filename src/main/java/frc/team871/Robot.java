@@ -11,6 +11,7 @@ package frc.team871;
 import com.team871.hid.IButton;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import frc.team871.control.InfinityGauntletControlScheme;
 import frc.team871.subsystems.DriveTrain;
 import frc.team871.config.IRowBoatConfig;
 import frc.team871.config.RowBoatConfig;
@@ -48,7 +49,7 @@ public class Robot extends TimedRobot {
       */
     @Override
     public void robotInit() {
-        this.controlScheme = InitialControlScheme.DEFAULT;
+        this.controlScheme = InfinityGauntletControlScheme.DEFAULT;
         this.config = RowBoatConfig.DEFAULT;
         this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor(), config.getVacuumInnerValve(), config.getVacuumOuterValve()); //TODO: add solenoids to config
         this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro());

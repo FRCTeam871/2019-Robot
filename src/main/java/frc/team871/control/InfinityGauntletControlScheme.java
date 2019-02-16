@@ -22,10 +22,13 @@ public enum InfinityGauntletControlScheme implements IControlScheme{
         saitekDrive = new GenericJoystick<>(0, Arrays.asList(SaitekButtons.values()), Arrays.asList(SaitekAxes.values()));
         infinitySystem = new GenericJoystick<>(1, Arrays.asList(GauntletButtons.values()), Arrays.asList(GauntletAxes.values()));
         infinitySystem.getButton(GauntletButtons.Z).setMode(ButtonTypes.TOGGLE);
+        infinitySystem.getAxis(GauntletAxes.LOWER_ARM).setMapping(1, -1);
+        infinitySystem.getAxis(GauntletAxes.UPPER_ARM).setMapping(1, -1);
         infinitySystem.getAxis(GauntletAxes.Y).setDeadband(0.1);
         saitekDrive.getButton(SaitekButtons.B).setMode(ButtonTypes.MOMENTARY);
         saitekDrive.getButton(SaitekButtons.C).setMode(ButtonTypes.RISING);
         saitekDrive.getButton(SaitekButtons.A).setMode(ButtonTypes.RISING);
+        saitekDrive.getButton(SaitekButtons.E).setMode(ButtonTypes.TOGGLE);
 
         unusedAxis = new ConstantAxis(0);
         unusedButton = new ConstantButton(false);
@@ -33,7 +36,7 @@ public enum InfinityGauntletControlScheme implements IControlScheme{
 
     @Override
     public IButton getVacuumToggleButton() {
-        return infinitySystem.getButton(GauntletButtons.Z);
+        return saitekDrive.getButton(SaitekButtons.E);
     }
 
     @Override
