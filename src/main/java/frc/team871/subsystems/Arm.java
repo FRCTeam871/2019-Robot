@@ -44,7 +44,8 @@ public class Arm implements Sendable {
     private double calcUpperAngle(){
         double sqDst = (x * x) + (y * y);
         double ac = (upperSq + lowerSq - sqDst) / (2 * upperSegment.getLength() * lowerSegment.getLength());
-        return -180 + Math.toDegrees(Math.acos(ac));
+        if(ac > 1) ac = 1;
+        return -(-180 + Math.toDegrees(Math.acos(ac)));
     }
 
     private double calcLowerAngle(){
@@ -65,7 +66,7 @@ public class Arm implements Sendable {
 
         double a = Math.atan2(y, x);
 
-        double ac = (lowerSq + sqDst - upperSq) / (2 * upperSegment.getLength() * Math.sqrt(sqDst));
+        double ac = (lowerSq + sqDst - upperSq) / (2 * lowerSegment.getLength() * Math.sqrt(sqDst));
         if(ac > 1) ac = 1;
 
         return Math.toDegrees(a - Math.acos(ac));
@@ -85,7 +86,13 @@ public class Arm implements Sendable {
     }
 
     public void goToRelative(double x, double y){
-        goTo(getRadius() * x, getRadius() * y);
+
+        double angle = Math.atan2(y, x);
+        double r = Math.sqrt(x*x + y*y);
+
+        r *= getRadius();
+
+        goTo(r * Math.cos(angle), r * Math.sin(angle));
     }
 
     private double getRadius(){

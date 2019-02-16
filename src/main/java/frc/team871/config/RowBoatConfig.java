@@ -69,7 +69,7 @@ public enum RowBoatConfig implements IRowBoatConfig {
         double upperMaxSpeed = 0.5;
         upperPot = new TalonAnalogAxis((TalonSRX)t, 322, 433);
         upperPot.setMapping(-90, 0);
-        upperPIDConfig = new PIDConfiguration(-0.05, 0, 0.02, -90, 90, -upperMaxSpeed, upperMaxSpeed, 4);
+        upperPIDConfig = new PIDConfiguration(-0.05, 0, 0.02, -135, 135, -upperMaxSpeed, upperMaxSpeed, 4);
 
         innerValve = new Solenoid(0);
         outerValve = new Solenoid(1);
