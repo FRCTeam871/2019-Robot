@@ -43,11 +43,11 @@ public class Vacuum {
          switch(newState){
              case ENABLED:
                  pump.set(1.);
-                 setSideOpen(VacuumSide.BOTH);
+                 setSideOpen(VacuumSide.INNER);
                  break;
              case DISABLED:
                  pump.set(0.);
-                 setSideOpen(VacuumSide.NONE);
+                 setSideOpen(VacuumSide.BOTH);
                  break;
          }
          state = newState;
