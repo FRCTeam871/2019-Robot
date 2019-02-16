@@ -6,14 +6,19 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 import com.team871.hid.IAxis;
 import com.team871.io.actuator.CombinedSpeedController;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
+import frc.team871.config.network.DeepSpaceNetConfig;
+
 import java.util.Arrays;
 
 public enum RowBoatConfig implements IRowBoatConfig {
     DEFAULT;
+
+    DeepSpaceNetConfig deepSpaceNetConfig;
 
     SpeedController frontLeftMotor;
     SpeedController rearLeftMotor;
@@ -37,6 +42,8 @@ public enum RowBoatConfig implements IRowBoatConfig {
     Solenoid outerValve;
 
     RowBoatConfig(){
+        this.deepSpaceNetConfig = new DeepSpaceNetConfig(false, NetworkTableInstance.getDefault(), "0.0");
+
         this.frontLeftMotor = new WPI_VictorSPX(0);
         this.rearLeftMotor = new WPI_VictorSPX(1);
         this.frontRightMotor = new WPI_VictorSPX(2);
@@ -71,6 +78,11 @@ public enum RowBoatConfig implements IRowBoatConfig {
 
         innerValve = new Solenoid(0);
         outerValve = new Solenoid(1);
+    }
+
+    @Override
+    public DeepSpaceNetConfig getNetConfig() {
+        return this.deepSpaceNetConfig;
     }
 
     @Override

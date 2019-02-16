@@ -10,6 +10,7 @@ package frc.team871;
 
 import com.team871.hid.IButton;
 import edu.wpi.first.wpilibj.TimedRobot;
+import frc.team871.config.network.DeepSpaceNetConfig;
 import frc.team871.subsystems.DriveTrain;
 import frc.team871.config.IRowBoatConfig;
 import frc.team871.config.RowBoatConfig;
@@ -31,6 +32,8 @@ public class Robot extends TimedRobot {
 
     private IControlScheme controlScheme;
     private IRowBoatConfig config;
+    private DeepSpaceNetConfig netConfig;
+
     private DriveTrain driveTrain;
     private Vacuum vacuum;
     private Arm arm;
@@ -49,13 +52,15 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         this.controlScheme = InitialControlScheme.DEFAULT;
         this.config = RowBoatConfig.DEFAULT;
+        this.netConfig = config.getNetConfig();
+
         this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor(), config.getVacuumInnerValve(), config.getVacuumOuterValve()); //TODO: add solenoids to config
         this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro());
         // TODO: Get actually lengths of the arm segments
         upperSegment = new ArmSegment(config.getUpperArmMotor(), config.getUpperArmPot(), config.getUpperArmPIDConfig(), 20.5);
         lowerSegment = new ArmSegment(config.getLowerArmMotor(), config.getLowerArmPot(), config.getLowerArmPIDConfig(),22.);
         this.wrist = new Wrist(config.getWristMotor(), config.getWristPotAxis(), config.getWristPIDConfig());
-        this.arm = new Arm(upperSegment, lowerSegment, wrist);
+        this.arm = new Arm(netConfig, upperSegment, lowerSegment, wrist);
     }
 
     @Override
@@ -118,8 +123,16 @@ public class Robot extends TimedRobot {
     }
 
     @Override
+    public void robotPeriodic() {
+        updateNetwork();
+    }
+
+    @Override
     public void testPeriodic() {
 
     }
 
+    public void updateNetwork(){
+        netConfig.getTable().getEntry(netConfig.HEADING_KEY);
+    }
 }

@@ -2,8 +2,11 @@ package frc.team871.subsystems;
 
 import com.team871.hid.IAxis;
 import com.team871.hid.IButton;
+import frc.team871.config.network.DeepSpaceNetConfig;
 
 public class Arm {
+
+    private DeepSpaceNetConfig netConfig;
 
     private ArmSegment upperSegment;
     private ArmSegment lowerSegment;
@@ -17,7 +20,8 @@ public class Arm {
         INVERSE_KINEMATICS
     }
 
-    public Arm(ArmSegment upperSegment, ArmSegment lowerSegment, Wrist wrist){
+    public Arm(DeepSpaceNetConfig deepSpaceNetConfig, ArmSegment upperSegment, ArmSegment lowerSegment, Wrist wrist){
+        this.netConfig = deepSpaceNetConfig;
         this.upperSegment = upperSegment;
         this.lowerSegment = lowerSegment;
         this.wrist = wrist;
@@ -34,6 +38,10 @@ public class Arm {
     public void setAngles(double upperAngle, double lowerAngle){
         upperSegment.setAngle(upperAngle);
         lowerSegment.setAngle(lowerAngle);
+
+        netConfig.getTable().getEntry(netConfig.UPPER_ARM_ANGLE_KEY).setNumber(upperSegment.getAngle());
+        netConfig.getTable().getEntry(netConfig.LOWER_ARM_ANGLE_KEY).setNumber(lowerSegment.getAngle());
+        netConfig.getTable().getEntry(netConfig.WRIST_ANGLE_KEY).setNumber(wrist.getAngle());
     }
 
     public void goTo(double x, double y){
