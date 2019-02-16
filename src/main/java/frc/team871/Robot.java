@@ -10,6 +10,7 @@ package frc.team871;
 
 import com.team871.hid.IButton;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import frc.team871.subsystems.DriveTrain;
 import frc.team871.config.IRowBoatConfig;
 import frc.team871.config.RowBoatConfig;
@@ -38,7 +39,7 @@ public class Robot extends TimedRobot {
     private ArmSegment upperSegment;
     private ArmSegment lowerSegment;
 
-    private boolean manualDriveMode = true;
+    private boolean manualDriveMode = false;
     private boolean driveTrainEnabled = false;
 
     /**
@@ -60,7 +61,9 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-        System.out.println(lowerSegment.getAngle() + " " + upperSegment.getAngle() + " " + wrist.getAngle());
+        //System.out.println();
+//        System.out.println(lowerSegment.getAngle() + " " + upperSegment.getAngle() + " " + wrist.getAngle());
+//        System.out.println(config.getUpperArmPot().getRaw() + " -> " + config.getUpperArmPot().getValue());
     }
 
     @Override
@@ -79,7 +82,12 @@ public class Robot extends TimedRobot {
         if(!manualDriveMode) {
             upperSegment.setAngle(upperSegment.getAngle());
             lowerSegment.setAngle(lowerSegment.getAngle());
-            wrist.setOrientation(wrist.getAngle());
+//            wrist.setOrientation(wrist.getAngle());
+
+            wrist.setOrientation(0);
+            upperSegment.setAngle(0);
+            lowerSegment.setAngle(0);
+
 
             upperSegment.enablePID();
             lowerSegment.enablePID();
@@ -111,6 +119,7 @@ public class Robot extends TimedRobot {
             arm.handleInverseKinematicsMode(controlScheme.getInverseKinematicsToggleButton());
 
             wrist.handleInputs(controlScheme.getWristAxis(), controlScheme.getWristToggleButton());
+
         }else{
             lowerSegment.rotate(controlScheme.getLowerArmAxis().getValue());
             upperSegment.rotate(controlScheme.getUpperArmAxis().getValue());

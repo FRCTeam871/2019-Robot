@@ -56,7 +56,10 @@ public class Arm {
     }
 
     public void handleInverseKinematicsMode(IButton button) {
-        currentArmMode = (button.getValue())? ArmMode.DIRECT : ArmMode.INVERSE_KINEMATICS;
+
+        if(button.getValue()){
+            currentArmMode = currentArmMode == ArmMode.INVERSE_KINEMATICS ? ArmMode.DIRECT : ArmMode.INVERSE_KINEMATICS;
+        }
         // currentArmMode = (currentArmMode == ArmMode.INVERSE_KINEMATICS)? ArmMode.DIRECT : ArmMode.INVERSE_KINEMATICS;
     }
 
@@ -69,9 +72,9 @@ public class Arm {
      */
     public void handleArmAxes(IAxis upperAxis, IAxis lowerAxis, IAxis xAxis, IAxis yAxis){
         if(currentArmMode == ArmMode.INVERSE_KINEMATICS) {
-            goToRelative(xAxis.getValue(),yAxis.getValue());
+            goToRelative(xAxis.getValue(), yAxis.getValue());
         } else {
-            setAngles(upperAxis.getValue(), lowerAxis.getValue());
+            setAngles(upperAxis.getValue() * 90, lowerAxis.getValue() * 90);
         }
     }
 }

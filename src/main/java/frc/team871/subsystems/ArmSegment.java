@@ -3,6 +3,7 @@ package frc.team871.subsystems;
 import com.team871.hid.IAxis;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import frc.team871.config.PIDConfiguration;
 
 public class ArmSegment {
@@ -21,6 +22,13 @@ public class ArmSegment {
         pid.setInputRange(pidConfig.getInMin(), pidConfig.getInMax());
         pid.setOutputRange(pidConfig.getOutMin(), pidConfig.getOutMax());
         pid.setAbsoluteTolerance(pidConfig.getTolerance());
+
+        pid.setName("ArmSegmentPID " + hashCode());
+        LiveWindow.add(pid);
+
+        pot.setName("ArmSegmentPID " + hashCode(), "Pot");
+        LiveWindow.add(pot);
+
     }
 
     public void setAngle(double angle){

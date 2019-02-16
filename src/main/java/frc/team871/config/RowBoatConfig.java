@@ -46,6 +46,7 @@ public enum RowBoatConfig implements IRowBoatConfig {
         WPI_TalonSRX t = new WPI_TalonSRX(5);
         this.upperArmMotor = new CombinedSpeedController(Arrays.asList(t, new WPI_TalonSRX(6)));
         this.wristMotor = new WPI_TalonSRX(4);
+//        this.wristMotor.setInverted(true);
         this.vacuumMotor = new WPI_TalonSRX(8);
 
         this.gyro = new AHRS(SerialPort.Port.kMXP);
@@ -58,17 +59,17 @@ public enum RowBoatConfig implements IRowBoatConfig {
         double wristMaxSpeed = 1.0;
         wristPot = new TalonAnalogAxis((TalonSRX)wristMotor, 301, 377);
         wristPot.setMapping(90, -90);
-        wristPIDConfig = new PIDConfiguration(0.2, 0, 0, -90, 90, -wristMaxSpeed, wristMaxSpeed, 4);
+        wristPIDConfig = new PIDConfiguration(-0.05, 0, 0.02, -90, 90, -wristMaxSpeed, wristMaxSpeed, 4);
 
-        double lowerMaxSpeed = 0.5;
+        double lowerMaxSpeed = 1.0;
         lowerPot = new TalonAnalogAxis((TalonSRX)lowerArmMotor, 342, 568);
         lowerPot.setMapping(0, -90);
-        lowerPIDConfig = new PIDConfiguration(0.2, 0, 0, -90, 60, -lowerMaxSpeed, lowerMaxSpeed, 4);
+        lowerPIDConfig = new PIDConfiguration(0.04, 0, 0.04, -90, 90, -lowerMaxSpeed, lowerMaxSpeed, 4);
 
         double upperMaxSpeed = 0.5;
-        upperPot = new TalonAnalogAxis((TalonSRX)t, 718-102-102, 616-102-102);
-        upperPot.setMapping(0, -90);
-        upperPIDConfig = new PIDConfiguration(0.2, 0, 0, -90, 90, -upperMaxSpeed, upperMaxSpeed, 4);
+        upperPot = new TalonAnalogAxis((TalonSRX)t, 322, 433);
+        upperPot.setMapping(-90, 0);
+        upperPIDConfig = new PIDConfiguration(-0.05, 0, 0.02, -90, 90, -upperMaxSpeed, upperMaxSpeed, 4);
 
         innerValve = new Solenoid(0);
         outerValve = new Solenoid(1);

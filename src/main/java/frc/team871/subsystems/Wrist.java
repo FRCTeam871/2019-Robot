@@ -4,10 +4,12 @@ import com.team871.hid.HIDAxis;
 import com.team871.hid.HIDButton;
 import com.team871.hid.IAxis;
 import com.team871.hid.IButton;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import frc.team871.config.PIDConfiguration;
 
 public class Wrist {
@@ -23,9 +25,15 @@ public class Wrist {
         this.pot = pot;
 
         pid = new PIDController(pidConfig.getKp(), pidConfig.getKi(), pidConfig.getKd(), pot, motor);
+        pid.setName("PIDWrist");
+        LiveWindow.add(pid);
+
         pid.setInputRange(pidConfig.getInMin(), pidConfig.getInMax());
         pid.setOutputRange(pidConfig.getOutMin(), pidConfig.getOutMax());
         pid.setAbsoluteTolerance(pidConfig.getTolerance());
+
+        pot.setName("Wrist", "Pot");
+        LiveWindow.add(pot);
     }
 
     public void enablePID(){
@@ -56,7 +64,7 @@ public class Wrist {
      */
     public void handleInputs(IAxis axis, IButton button){
         if(oldAxis != axis.getValue()){
-            setOrientation(axis.getValue());
+            setOrientation(axis.getValue() * 90);
         }else if(oldButton != button.getValue()){
             setOrientation(button.getValue() ? 90 : 0);
         }
