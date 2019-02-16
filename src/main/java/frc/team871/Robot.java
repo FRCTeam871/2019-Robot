@@ -8,17 +8,15 @@
 package frc.team871;
 
 
-import com.team871.hid.IButton;
 import edu.wpi.first.wpilibj.TimedRobot;
-import frc.team871.config.network.DeepSpaceNetConfig;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import frc.team871.subsystems.DriveTrain;
 import frc.team871.config.IRowBoatConfig;
 import frc.team871.config.RowBoatConfig;
+import frc.team871.config.network.DeepSpaceNetConfig;
 import frc.team871.control.IControlScheme;
 import frc.team871.control.InitialControlScheme;
 import frc.team871.subsystems.Arm;
 import frc.team871.subsystems.ArmSegment;
+import frc.team871.subsystems.DriveTrain;
 import frc.team871.subsystems.Vacuum;
 import frc.team871.subsystems.Wrist;
 
@@ -126,22 +124,4 @@ public class Robot extends TimedRobot {
 
     }
 
-    @Override
-    public void testInit() {
-
-    }
-
-    @Override
-    public void robotPeriodic() {
-        updateNetwork();
-    }
-
-    @Override
-    public void testPeriodic() {
-
-    }
-
-    public void updateNetwork(){
-        netConfig.getTable().getEntry(netConfig.HEADING_KEY);
-    }
 }
