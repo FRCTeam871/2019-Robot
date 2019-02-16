@@ -20,7 +20,7 @@ public enum InitialControlSchemeHack implements IControlScheme{
         driveController = new GenericJoystick<>(1, Arrays.asList(XBoxButtons.values()), Arrays.asList(XBoxAxes.values()));
         systemsController.getButton(XBoxButtons.Y).setMode(ButtonTypes.TOGGLE);
         systemsController.getButton(XBoxButtons.BACK).setMode(ButtonTypes.TOGGLE);
-        systemsController.getButton(XBoxButtons.A).setMode(ButtonTypes.RISING);
+        systemsController.getButton(XBoxButtons.A).setMode(ButtonTypes.TOGGLE);
         systemsController.getButton(XBoxButtons.B).setMode(ButtonTypes.TOGGLE);
         systemsController.getAxis(XBoxAxes.TRIGGER).setDeadband(0.2);
         systemsController.getAxis(XBoxAxes.LEFTY).setDeadband(0.2);

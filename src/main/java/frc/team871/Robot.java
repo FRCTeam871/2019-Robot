@@ -129,9 +129,9 @@ public class Robot extends TimedRobot {
 //            vacuum.toggleState();
 //        }
 
-        arm.upperSegment.rotate(controlScheme.getUpperArmAxis().getValue() * -1.0);
-        arm.lowerSegment.rotate(controlScheme.getLowerArmAxis().getValue() * 1.0);
-        arm.wrist.setOrientation((cs.getWristAxis().getValue() - cs.getWristAxis2().getValue()));
+//        arm.upperSegment.rotate(controlScheme.getUpperArmAxis().getValue() * -1.0);
+//        arm.lowerSegment.rotate(controlScheme.getLowerArmAxis().getValue() * 1.0);
+//        arm.wrist.setOrientation((cs.getWristAxis().getValue() - cs.getWristAxis2().getValue()));
 //        arm.lowerSegment.setAngle((cs.getWristAxis().getValue() - cs.getWristAxis2().getValue()) * 45);
 
         s1.set(controlScheme.getWristToggleButton().getValue());
