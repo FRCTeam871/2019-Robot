@@ -15,10 +15,15 @@ public class TalonAnalogAxis implements IAxis {
     double outMin;
     double outMax;
 
+    double outRange;
+    double inRange;
+
     public TalonAnalogAxis(TalonSRX talon, double inMin, double inMax){
         this.talon = talon;
         this.inMin = inMin;
         this.inMax = inMax;
+
+        inRange = Math.abs(inMax - inMin);
     }
 
     @Override
@@ -32,12 +37,22 @@ public class TalonAnalogAxis implements IAxis {
      */
     @Override
     public double getValue() {
-        return (getRaw() - inMin) / (inMax - inMin) * (outMax - outMin) + outMin;
+
+
+
+        if(outMin > outMax){
+//            return (1.0 - ((getRaw() - inMin) / (inRange))) * (outRange) + outMin;
+            return (((getRaw() - inMin) / (inRange))) * (outMin - outMax) + outMax;
+        }else {
+            return (getRaw() - inMin) / (inRange) * (outRange) + outMin;
+        }
     }
 
     @Override
     public void setMapping(double outMin, double outMax) {
         this.outMin = outMin;
         this.outMax = outMax;
+
+        outRange = Math.abs(outMax - outMin);
     }
 }

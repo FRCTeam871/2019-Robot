@@ -11,6 +11,7 @@ package frc.team871;
 import com.team871.hid.IButton;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.team871.config.network.DeepSpaceNetConfig;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import frc.team871.subsystems.DriveTrain;
 import frc.team871.config.IRowBoatConfig;
 import frc.team871.config.RowBoatConfig;
@@ -41,7 +42,7 @@ public class Robot extends TimedRobot {
     private ArmSegment upperSegment;
     private ArmSegment lowerSegment;
 
-    private boolean manualDriveMode = true;
+    private boolean manualDriveMode = false;
     private boolean driveTrainEnabled = false;
 
     /**
@@ -76,13 +77,20 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         //set the default PID setpoints as the current position so it doesn't freak out instantly
-        upperSegment.setAngle(upperSegment.getAngle());
-        lowerSegment.setAngle(lowerSegment.getAngle());
-        wrist.setOrientation(wrist.getAngle());
+        if(!manualDriveMode) {
+            upperSegment.setAngle(upperSegment.getAngle());
+            lowerSegment.setAngle(lowerSegment.getAngle());
+//            wrist.setOrientation(wrist.getAngle());
 
-        upperSegment.enablePID();
-        lowerSegment.enablePID();
-        wrist.enablePID();
+            wrist.setOrientation(0);
+            upperSegment.setAngle(0);
+            lowerSegment.setAngle(0);
+
+
+            upperSegment.enablePID();
+            lowerSegment.enablePID();
+            wrist.enablePID();
+        }
     }
 
     @Override
@@ -109,6 +117,7 @@ public class Robot extends TimedRobot {
             arm.handleInverseKinematicsMode(controlScheme.getInverseKinematicsToggleButton());
 
             wrist.handleInputs(controlScheme.getWristAxis(), controlScheme.getWristToggleButton());
+
         }else{
             lowerSegment.rotate(controlScheme.getLowerArmAxis().getValue());
             upperSegment.rotate(controlScheme.getUpperArmAxis().getValue());
