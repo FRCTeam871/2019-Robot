@@ -30,14 +30,12 @@ public class ArmSegment implements Sendable {
         pid.setAbsoluteTolerance(pidConfig.getTolerance());
 
         pid.setName("PID");
-//        LiveWindow.add(pid);
+        LiveWindow.add(pid);
 
         pot.setName("Pot");
-//        LiveWindow.add(pot);
+        LiveWindow.add(pot);
 
 
-        LiveWindow.addChild(this, pot);
-        LiveWindow.addChild(this, pid);
 
 
     }
@@ -75,6 +73,8 @@ public class ArmSegment implements Sendable {
     @Override
     public void setName(String name) {
         this.sendableName = name;
+        pot.setName("Pot");
+        pid.setName("PID");
     }
 
     @Override
@@ -85,6 +85,8 @@ public class ArmSegment implements Sendable {
     @Override
     public void setSubsystem(String subsystem) {
         this.systemName = subsystem;
+        pot.setSubsystem(subsystem);
+        pid.setSubsystem(subsystem);
     }
 
     @Override

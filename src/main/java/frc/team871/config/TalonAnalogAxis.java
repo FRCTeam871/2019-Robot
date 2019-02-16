@@ -17,6 +17,8 @@ public class TalonAnalogAxis implements IAxis {
 
     double outRange;
     double inRange;
+    private String name;
+    private String subsystem;
 
     public TalonAnalogAxis(TalonSRX talon, double inMin, double inMax){
         this.talon = talon;
@@ -54,5 +56,25 @@ public class TalonAnalogAxis implements IAxis {
         this.outMax = outMax;
 
         outRange = Math.abs(outMax - outMin);
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setSubsystem(String subsystem) {
+        this.subsystem = subsystem;
+    }
+
+    @Override
+    public String getSubsystem() {
+        return subsystem;
     }
 }

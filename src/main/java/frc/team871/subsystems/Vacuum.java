@@ -99,7 +99,7 @@ public class Vacuum implements Sendable {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        LiveWindow.addChild(this, grabSensor);
+        //LiveWindow.addChild(this, grabSensor);
         builder.addStringProperty("State", state::toString, (m) -> {});
         builder.addStringProperty("ValveState", side::toString, (m) -> {});
     }

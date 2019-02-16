@@ -31,12 +31,14 @@ public class Wrist implements Sendable {
 
         pid = new PIDController(pidConfig.getKp(), pidConfig.getKi(), pidConfig.getKd(), pot, motor);
         pid.setName("PID");
+        LiveWindow.add(pid);
 
         pid.setInputRange(pidConfig.getInMin(), pidConfig.getInMax());
         pid.setOutputRange(pidConfig.getOutMin(), pidConfig.getOutMax());
         pid.setAbsoluteTolerance(pidConfig.getTolerance());
 
         pot.setName("Pot");
+        LiveWindow.add(pot);
     }
 
     public void enablePID(){
@@ -83,6 +85,8 @@ public class Wrist implements Sendable {
     @Override
     public void setName(String name) {
         this.name = name;
+        pot.setName("Pot");
+        pid.setName("PID");
     }
 
     @Override
@@ -93,6 +97,8 @@ public class Wrist implements Sendable {
     @Override
     public void setSubsystem(String subsystem) {
         this.subsystem = subsystem;
+        pot.setSubsystem(subsystem);
+        pid.setSubsystem(subsystem);
     }
 
     @Override

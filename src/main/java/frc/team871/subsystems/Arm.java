@@ -15,7 +15,8 @@ public class Arm implements Sendable {
     private ArmMode currentArmMode = ArmMode.DIRECT;
     private double x;
     private double y;
-
+    private double lowerAngle;
+    private double upperAngle;
 
     private enum ArmMode {
         DIRECT,
@@ -26,12 +27,12 @@ public class Arm implements Sendable {
         this.upperSegment = upperSegment;
         this.lowerSegment = lowerSegment;
         this.wrist = wrist;
-        upperSegment.setName("UpperArm");
-        lowerSegment.setName("LowerArm");
-        wrist.setName("Wrist");
-        LiveWindow.addChild(this, upperSegment);
-        LiveWindow.addChild(this, lowerSegment);
-        LiveWindow.addChild(this, wrist);
+        upperSegment.setName("UpperArm", "UpperArm");
+        lowerSegment.setName("LowerArm","LowerArm");
+        wrist.setName("Wrist","Wrist");
+        LiveWindow.add(upperSegment);
+        LiveWindow.add(lowerSegment);
+        LiveWindow.add(wrist);
 
     }
 
@@ -44,7 +45,8 @@ public class Arm implements Sendable {
     }
 
     public void setAngles(double upperAngle, double lowerAngle){
-        System.out.println(upperAngle + " " + lowerAngle);
+        this.upperAngle = upperAngle;
+        this.lowerAngle = lowerAngle;
         upperSegment.setAngle(upperAngle);
         lowerSegment.setAngle(lowerAngle);
     }
@@ -113,7 +115,11 @@ public class Arm implements Sendable {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-
+        builder.addStringProperty("ArmMode", currentArmMode::toString, (m) -> {});
+        builder.addDoubleProperty("LastX", () -> x, (v) -> {});
+        builder.addDoubleProperty("LastY", () -> y, (v) -> {});
+        builder.addDoubleProperty("LastLowerAngle", () -> lowerAngle, (v) -> {});
+        builder.addDoubleProperty("LastUpperAngle", () -> upperAngle, (v) -> {});
     }
 
 }
