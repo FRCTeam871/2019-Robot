@@ -34,10 +34,6 @@ public class ArmSegment implements Sendable {
 
         pot.setName("Pot");
         LiveWindow.add(pot);
-
-
-
-
     }
 
     public void setAngle(double angle){

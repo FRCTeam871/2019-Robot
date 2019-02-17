@@ -66,9 +66,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-        //System.out.println();
-//        System.out.println(lowerSegment.getAngle() + " " + upperSegment.getAngle() + " " + wrist.getAngle());
-//        System.out.println(config.getUpperArmPot().getRaw() + " -> " + config.getUpperArmPot().getValue());
     }
 
     @Override
@@ -142,5 +139,4 @@ public class Robot extends TimedRobot {
     public void testPeriodic() {
 
     }
-
 }
