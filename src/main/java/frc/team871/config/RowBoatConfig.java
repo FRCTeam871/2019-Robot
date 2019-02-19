@@ -7,6 +7,7 @@ import com.kauailabs.navx.frc.AHRS;
 import com.team871.hid.IAxis;
 import com.team871.io.actuator.CombinedSpeedController;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
@@ -49,7 +50,7 @@ public enum RowBoatConfig implements IRowBoatConfig {
 //        this.wristMotor.setInverted(true);
         this.vacuumMotor = new WPI_TalonSRX(8);
 
-        this.gyro = new AHRS(SerialPort.Port.kMXP);
+        this.gyro = new AHRS(I2C.Port.kMXP);
 
         //TODO: check values
 
