@@ -21,13 +21,15 @@ public class Wrist implements Sendable {
     private IAxis pot;
     private double oldAxis;
     private boolean oldButton;
+    private double length;
 
     String name = "Wrist";
     String subsystem = "Wrist";
 
-    public Wrist(SpeedController motor, IAxis pot, PIDConfiguration pidConfig) {
+    public Wrist(SpeedController motor, IAxis pot, PIDConfiguration pidConfig, double length) {
         this.motor = motor;
         this.pot = pot;
+        this.length = length;
 
         pid = new PIDController(pidConfig.getKp(), pidConfig.getKi(), pidConfig.getKd(), pot, motor);
         pid.setName("PID");
@@ -39,6 +41,10 @@ public class Wrist implements Sendable {
 
         pot.setName("Pot");
         LiveWindow.add(pot);
+    }
+
+    public double getLength(){
+        return length;
     }
 
     public void enablePID(){

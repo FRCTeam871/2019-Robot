@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 
 public class Arm implements Sendable {
 
+    private static final double MAX_EXTENT = 30 + 15; // 30 inch extents + 15 inches from center to edge of frame
     private ArmSegment upperSegment;
     private ArmSegment lowerSegment;
     private Wrist wrist;
@@ -80,8 +81,10 @@ public class Arm implements Sendable {
     }
 
     public void goTo(double x, double y){
+        if(x + wrist.getLength() > MAX_EXTENT) x = MAX_EXTENT - wrist.getLength();
         this.x = x;
         this.y = y;
+
         setAngles(calcUpperAngle(), calcLowerAngle());
     }
 
