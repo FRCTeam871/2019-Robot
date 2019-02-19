@@ -14,6 +14,7 @@ import frc.team871.config.IRowBoatConfig;
 import frc.team871.config.RowBoatConfig;
 import frc.team871.control.IControlScheme;
 import frc.team871.control.InfinityGauntletControlScheme;
+import frc.team871.control.SaitekControlScheme;
 import frc.team871.subsystems.Arm;
 import frc.team871.subsystems.ArmSegment;
 import frc.team871.subsystems.DriveTrain;
@@ -48,7 +49,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
 
-        this.controlScheme = InfinityGauntletControlScheme.DEFAULT;
+        this.controlScheme = SaitekControlScheme.DEFAULT;
 
         this.config = RowBoatConfig.DEFAULT;
         this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor(), config.getVacuumInnerValve(), config.getVacuumOuterValve()); //TODO: add solenoids to config

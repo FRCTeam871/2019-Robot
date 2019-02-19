@@ -55,7 +55,7 @@ public class Vacuum implements Sendable {
         }
          switch(newState){
              case ENABLED:
-                 pump.set(0.25);
+                 pump.set(0.35);
                  if(last){
                      setSideOpen(VacuumSide.INNER);
                  }else{
