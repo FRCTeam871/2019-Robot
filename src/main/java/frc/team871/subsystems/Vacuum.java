@@ -2,10 +2,13 @@ package frc.team871.subsystems;
 
 import com.team871.hid.IButton;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 
-public class Vacuum {
+public class Vacuum implements Sendable {
     private SpeedController pump;
     private DigitalInput grabSensor;
     private VacuumState state;
@@ -13,6 +16,9 @@ public class Vacuum {
 
     Solenoid valve1;
     Solenoid valve2;
+
+    String name;
+    String subsystem;
 
     boolean last = true;
 
@@ -82,5 +88,33 @@ public class Vacuum {
         valve1.set(side.s1);
         valve2.set(side.s2);
     }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getSubsystem() {
+        return subsystem;
+    }
+
+    @Override
+    public void setSubsystem(String subsystem) {
+        this.subsystem = subsystem;
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        //LiveWindow.addChild(this, grabSensor);
+        builder.addStringProperty("State", state::toString, (m) -> {});
+        builder.addStringProperty("ValveState", side::toString, (m) -> {});
+    }
+
 
 }

@@ -96,11 +96,12 @@ public enum InitialControlScheme implements IControlScheme{
 
     @Override
     public IAxis getArmTargetXAxis() {
-        return unusedAxis;
+        return systemsController.getAxis(XBoxAxes.RIGHTX);
     }
 
     @Override
     public IAxis getArmTargetYAxis() {
-        return unusedAxis;
+//        return unusedAxis;
+        return systemsController.getAxis(XBoxAxes.RIGHTY);
     }
 }

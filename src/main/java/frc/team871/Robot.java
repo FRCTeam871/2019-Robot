@@ -9,9 +9,11 @@ package frc.team871;
 
 
 import com.team871.hid.IButton;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import frc.team871.control.InfinityGauntletControlScheme;
+import frc.team871.control.SaitekControlScheme;
 import frc.team871.subsystems.DriveTrain;
 import frc.team871.config.IRowBoatConfig;
 import frc.team871.config.RowBoatConfig;
@@ -41,7 +43,7 @@ public class Robot extends TimedRobot {
     private ArmSegment lowerSegment;
 
     private boolean manualDriveMode = false;
-    private boolean driveTrainEnabled = true;
+    private boolean driveTrainEnabled = false;
 
     /**
       * This function is run when the robot is first started up and should be used
@@ -49,22 +51,23 @@ public class Robot extends TimedRobot {
       */
     @Override
     public void robotInit() {
-        this.controlScheme = InfinityGauntletControlScheme.DEFAULT;
+        this.controlScheme = SaitekControlScheme.DEFAULT;
         this.config = RowBoatConfig.DEFAULT;
         this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor(), config.getVacuumInnerValve(), config.getVacuumOuterValve()); //TODO: add solenoids to config
-        this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro());
-        // TODO: Get actually lengths of the arm segments
+//        this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro());
+
         upperSegment = new ArmSegment(config.getUpperArmMotor(), config.getUpperArmPot(), config.getUpperArmPIDConfig(), 20.5);
-        lowerSegment = new ArmSegment(config.getLowerArmMotor(), config.getLowerArmPot(), config.getLowerArmPIDConfig(),22.);
-        this.wrist = new Wrist(config.getWristMotor(), config.getWristPotAxis(), config.getWristPIDConfig());
+        lowerSegment = new ArmSegment(config.getLowerArmMotor(), config.getLowerArmPot(), config.getLowerArmPIDConfig(),22);
+        this.wrist = new Wrist(config.getWristMotor(), config.getWristPotAxis(), config.getWristPIDConfig(), 10);
         this.arm = new Arm(upperSegment, lowerSegment, wrist);
+
+        LiveWindow.add(arm);
+
     }
 
     @Override
     public void robotPeriodic() {
-        //System.out.println();
-//        System.out.println(lowerSegment.getAngle() + " " + upperSegment.getAngle() + " " + wrist.getAngle());
-//        System.out.println(config.getUpperArmPot().getRaw() + " -> " + config.getUpperArmPot().getValue());
+//        System.out.println(controlScheme.getArmTargetYAxis().getRaw() + " " + controlScheme.getArmTargetXAxis().getRaw() + " -> " + controlScheme.getArmTargetXAxis().getValue());
     }
 
     @Override
@@ -83,11 +86,11 @@ public class Robot extends TimedRobot {
         if(!manualDriveMode) {
             upperSegment.setAngle(upperSegment.getAngle());
             lowerSegment.setAngle(lowerSegment.getAngle());
-            wrist.setOrientation(wrist.getAngle());
+//            wrist.setOrientation(wrist.getAngle());
 
-//            wrist.setOrientation(0);
-//            upperSegment.setAngle(0);
-//            lowerSegment.setAngle(0);
+            wrist.setOrientation(0);
+            upperSegment.setAngle(0);
+            lowerSegment.setAngle(0);
 
 
             upperSegment.enablePID();
@@ -100,14 +103,14 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {
         if(driveTrainEnabled) {
             if (driveTrain.getDriveMode() == DriveTrain.DriveMode.ROBOT) {
-                driveTrain.driveRobotOriented(-controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
+                driveTrain.driveRobotOriented(controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
             } else {
-                driveTrain.driveFieldOriented(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
+                driveTrain.driveFieldOriented(controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
             }
             if (controlScheme.getRobotOrientationToggleButton().getValue()) {
                 driveTrain.toggleFieldDriveMode();
             }
-//            driveTrain.setHeadingHoldEnabled(controlScheme.getHeadingHoldButton().getValue());
+            driveTrain.setHeadingHoldEnabled(controlScheme.getHeadingHoldButton().getValue());
             if (controlScheme.getResetGyroButton().getValue()) {
                 driveTrain.resetGyro();
             }
@@ -116,7 +119,7 @@ public class Robot extends TimedRobot {
         vacuum.setState(controlScheme.getVacuumToggleButton());
 
         if(!manualDriveMode){
-            arm.handleArmAxes(controlScheme.getUpperArmAxis(), controlScheme.getLowerArmAxis(), controlScheme.getArmTargetXAxis(), controlScheme.getMecDriveYAxis());
+            arm.handleArmAxes(controlScheme.getUpperArmAxis(), controlScheme.getLowerArmAxis(), controlScheme.getArmTargetXAxis(), controlScheme.getArmTargetYAxis());
             arm.handleInverseKinematicsMode(controlScheme.getInverseKinematicsToggleButton());
 
             wrist.handleInputs(controlScheme.getWristAxis(), controlScheme.getWristToggleButton());
@@ -136,7 +139,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testPeriodic() {
-
+//        teleopPeriodic();
     }
-
 }
