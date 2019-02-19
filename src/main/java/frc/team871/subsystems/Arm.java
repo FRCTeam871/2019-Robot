@@ -13,7 +13,7 @@ public class Arm implements Sendable {
     private ArmSegment upperSegment;
     private ArmSegment lowerSegment;
     private Wrist wrist;
-    private ArmMode currentArmMode = ArmMode.INVERSE_KINEMATICS;
+    private ArmMode currentArmMode = ArmMode.DIRECT;
     private double x;
     private double y;
     private double lowerAngle;
