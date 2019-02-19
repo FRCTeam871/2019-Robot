@@ -2,11 +2,9 @@ package frc.team871.config;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.team871.hid.IAxis;
+import com.team871.hid.ScaledOffsetAxis;
 import edu.wpi.first.wpilibj.Sendable;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
-import frc.team871.control.ScaledOffsetAxis;
 
 /**
  * Class that maps an analog sensor on a TalonSRX SpeedController to an IAxis.
