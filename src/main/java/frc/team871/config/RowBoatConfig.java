@@ -58,18 +58,18 @@ public enum RowBoatConfig implements IRowBoatConfig {
 
         double wristMaxSpeed = 1.0;
         //wristPot = new TalonMappableAxis((TalonSRX)wristMotor, 301, 377, 90, -90);
-        wristPot = new TalonSmartAxis((WPI_TalonSRX)wristMotor, -2.36842, 802.89442);
+        wristPot = new TalonSmartAxis((WPI_TalonSRX)wristMotor, 2.432, -832);
         wristPIDConfig = new PIDConfiguration(-0.05, 0, 0.02, -90, 90, -wristMaxSpeed, wristMaxSpeed, 4);
 
         double lowerMaxSpeed = 1.0;
         //lowerPot = new TalonMappableAxis((TalonSRX)lowerArmMotor, 342, 568, 0, -90);
-        lowerPot = new TalonSmartAxis((WPI_TalonSRX)lowerArmMotor, -0.39823008849557522123893805309735, 136.19469026548672566371681415929);
-        lowerPIDConfig = new PIDConfiguration(0.04, 0, 0.04, -90, 90, -lowerMaxSpeed, lowerMaxSpeed, 4);
+        lowerPot = new TalonSmartAxis((WPI_TalonSRX)lowerArmMotor,  0.411, -221);
+        lowerPIDConfig = new PIDConfiguration(0.04, 0, 0.04, -110, 90, -lowerMaxSpeed, lowerMaxSpeed, 4);
 
         double upperMaxSpeed = 0.5;
         //upperPot = new TalonMappableAxis(t, 322, 433, -90, 0);
-        upperPot = new TalonSmartAxis((WPI_TalonSRX)upperArmMotor, 0.81081081081081081081081081081081, -351.08108108108108108108108108108);
-        upperPIDConfig = new PIDConfiguration(-0.05, 0, 0.02, -135, 135, -upperMaxSpeed, upperMaxSpeed, 4);
+        upperPot = new TalonSmartAxis((WPI_TalonSRX)t, 0.918, -236 - 180);
+        upperPIDConfig = new PIDConfiguration(-0.05, 0, 0.02, -145, 145, -upperMaxSpeed, upperMaxSpeed, 4);
 
         innerValve = new Solenoid(0);
         outerValve = new Solenoid(1);

@@ -87,12 +87,13 @@ public class Arm implements Sendable {
 
     public void goToRelative(double x, double y){
 
-        double angle = Math.atan2(y, x);
-        double r = Math.sqrt(x*x + y*y);
-
-        r *= getRadius();
-
-        goTo(r * Math.cos(angle), r * Math.sin(angle));
+//        double angle = Math.atan2(y, x);
+//        double r = Math.sqrt(x*x + y*y);
+//
+//        r *= getRadius();
+//
+//        goTo(r * Math.cos(angle), r * Math.sin(angle));
+        goTo(x * getRadius(), y * getRadius());
     }
 
     private double getRadius(){
@@ -120,7 +121,7 @@ public class Arm implements Sendable {
      */
     public void handleArmAxes(IAxis upperAxis, IAxis lowerAxis, IAxis xAxis, IAxis yAxis){
         if(currentArmMode == ArmMode.INVERSE_KINEMATICS) {
-            goToRelative(xAxis.getValue() / 2.0 + 0.5, yAxis.getValue());
+            goToRelative((xAxis.getValue() + 1) / 2, yAxis.getValue());
         } else {
             setAngles(upperAxis.getValue() * 90, lowerAxis.getValue() * 90);
         }

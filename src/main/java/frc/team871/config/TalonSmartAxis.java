@@ -97,6 +97,7 @@ public class TalonSmartAxis implements ScaledOffsetAxis, Sendable {
     }
 
     private void setLowerMark(double userValue) {
+        if(Double.isNaN(userValue)) return;
         lowerMarkRaw = getRaw();
         lowerMarkUser = userValue;
 
@@ -104,6 +105,7 @@ public class TalonSmartAxis implements ScaledOffsetAxis, Sendable {
     }
 
     private void setUpperMark(double userValue) {
+        if(Double.isNaN(userValue)) return;
         upperMarkRaw = getRaw();
         upperMarkUser = userValue;
 
