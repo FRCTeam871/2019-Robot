@@ -8,19 +8,15 @@
 package frc.team871;
 
 
-import com.team871.hid.IButton;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import frc.team871.control.SaitekControlScheme;
-import frc.team871.subsystems.DriveTrain;
 import frc.team871.config.IRowBoatConfig;
 import frc.team871.config.RowBoatConfig;
 import frc.team871.control.IControlScheme;
-import frc.team871.control.InitialControlScheme;
+import frc.team871.control.InfinityGauntletControlScheme;
 import frc.team871.subsystems.Arm;
 import frc.team871.subsystems.ArmSegment;
+import frc.team871.subsystems.DriveTrain;
 import frc.team871.subsystems.Vacuum;
 import frc.team871.subsystems.Wrist;
 
@@ -43,7 +39,7 @@ public class Robot extends TimedRobot {
     private ArmSegment lowerSegment;
 
     private boolean manualDriveMode = false;
-    private boolean driveTrainEnabled = false;
+    private boolean driveTrainEnabled = true;
 
     /**
       * This function is run when the robot is first started up and should be used
@@ -51,10 +47,12 @@ public class Robot extends TimedRobot {
       */
     @Override
     public void robotInit() {
-        this.controlScheme = SaitekControlScheme.DEFAULT;
+
+        this.controlScheme = InfinityGauntletControlScheme.DEFAULT;
+
         this.config = RowBoatConfig.DEFAULT;
         this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor(), config.getVacuumInnerValve(), config.getVacuumOuterValve()); //TODO: add solenoids to config
-//        this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro());
+        this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro());
 
         upperSegment = new ArmSegment(config.getUpperArmMotor(), config.getUpperArmPot(), config.getUpperArmPIDConfig(), 20.5);
         lowerSegment = new ArmSegment(config.getLowerArmMotor(), config.getLowerArmPot(), config.getLowerArmPIDConfig(),22);
@@ -86,11 +84,11 @@ public class Robot extends TimedRobot {
         if(!manualDriveMode) {
             upperSegment.setAngle(upperSegment.getAngle());
             lowerSegment.setAngle(lowerSegment.getAngle());
-//            wrist.setOrientation(wrist.getAngle());
+            wrist.setOrientation(wrist.getAngle());
 
-            wrist.setOrientation(0);
-            upperSegment.setAngle(0);
-            lowerSegment.setAngle(0);
+//            wrist.setOrientation(0);
+//            upperSegment.setAngle(0);
+//            lowerSegment.setAngle(0);
 
 
             upperSegment.enablePID();
@@ -103,14 +101,14 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {
         if(driveTrainEnabled) {
             if (driveTrain.getDriveMode() == DriveTrain.DriveMode.ROBOT) {
-                driveTrain.driveRobotOriented(controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
+                driveTrain.driveRobotOriented(-controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
             } else {
-                driveTrain.driveFieldOriented(controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
+                driveTrain.driveFieldOriented(controlScheme.getMecDriveXAxis().getValue(), controlScheme.getMecDriveYAxis().getValue(), controlScheme.getMecDriveRotationAxis().getValue());
             }
             if (controlScheme.getRobotOrientationToggleButton().getValue()) {
                 driveTrain.toggleFieldDriveMode();
             }
-            driveTrain.setHeadingHoldEnabled(controlScheme.getHeadingHoldButton().getValue());
+//            driveTrain.setHeadingHoldEnabled(controlScheme.getHeadingHoldButton().getValue());
             if (controlScheme.getResetGyroButton().getValue()) {
                 driveTrain.resetGyro();
             }
