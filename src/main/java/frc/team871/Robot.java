@@ -59,6 +59,7 @@ public class Robot extends TimedRobot {
         this.wrist = new Wrist(config.getWristMotor(), config.getWristPotAxis(), config.getWristPIDConfig(), 10);
         this.arm = new Arm(upperSegment, lowerSegment, wrist);
 
+
         LiveWindow.add(arm);
 
     }
