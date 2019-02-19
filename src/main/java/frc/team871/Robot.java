@@ -8,9 +8,8 @@
 package frc.team871;
 
 
-import com.team871.hid.IButton;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import com.team871.io.peripheral.EndPoint;
+import com.team871.io.peripheral.SerialCommunicationInterface;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import frc.team871.control.SaitekControlScheme;
@@ -18,11 +17,12 @@ import frc.team871.subsystems.DriveTrain;
 import frc.team871.config.IRowBoatConfig;
 import frc.team871.config.RowBoatConfig;
 import frc.team871.control.IControlScheme;
-import frc.team871.control.InitialControlScheme;
 import frc.team871.subsystems.Arm;
 import frc.team871.subsystems.ArmSegment;
 import frc.team871.subsystems.Vacuum;
 import frc.team871.subsystems.Wrist;
+import frc.team871.subsystems.peripheral.PixelStripMode;
+import frc.team871.subsystems.peripheral.Teensy;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -41,6 +41,7 @@ public class Robot extends TimedRobot {
     private Wrist wrist;
     private ArmSegment upperSegment;
     private ArmSegment lowerSegment;
+    private Teensy teensyWeensy;
 
     private boolean manualDriveMode = false;
     private boolean driveTrainEnabled = false;
@@ -61,13 +62,16 @@ public class Robot extends TimedRobot {
         this.wrist = new Wrist(config.getWristMotor(), config.getWristPotAxis(), config.getWristPIDConfig(), 10);
         this.arm = new Arm(upperSegment, lowerSegment, wrist);
 
+        this.teensyWeensy = new Teensy(new SerialCommunicationInterface(), EndPoint.NULL_ENDPOINT);
+        teensyWeensy.setPixelStripMode(0, PixelStripMode.FIRE_RED );//TODO: implement PixelStripMode.LEAF_GREEN
+
         LiveWindow.add(arm);
 
     }
 
     @Override
     public void robotPeriodic() {
-//        System.out.println(controlScheme.getArmTargetYAxis().getRaw() + " " + controlScheme.getArmTargetXAxis().getRaw() + " -> " + controlScheme.getArmTargetXAxis().getValue());
+
     }
 
     @Override
@@ -139,6 +143,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testPeriodic() {
-//        teleopPeriodic();
+
     }
 }
