@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput {
 
@@ -50,6 +51,11 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput {
 
         autoDockXSource = new SettablePIDSource(0);
         autoDockXController = new PIDController(0, 0, 0, autoDockXSource, o -> {}); //TODO: PID values
+
+        gyro.setName("gyro");
+        gyro.setSubsystem("drive");
+        LiveWindow.add(gyro);
+
     }
 
     public void handleInputs(IAxis xAxis, IAxis yAxis, IAxis rotationAxis, IButton fieldDriveModeButton, IButton headingHoldButton, IButton resetGyroButton, ITargetProvider targetProvider, IButton autoDockButton) {

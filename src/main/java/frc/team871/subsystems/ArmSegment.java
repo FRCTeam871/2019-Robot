@@ -1,25 +1,39 @@
 package frc.team871.subsystems;
 
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import com.team871.hid.IAxis;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
+import frc.team871.config.PIDConfiguration;
 
-public class ArmSegment {
+public class ArmSegment implements Sendable {
 
     private SpeedController rotateMotor;
-    private AnalogPotentiometer pot;
+    private IAxis pot;
     private double length;
     private PIDController pid;
 
-    public ArmSegment(SpeedController rotateMotor, AnalogPotentiometer pot, double length){
+    private String sendableName;
+    private String systemName;
+
+    public ArmSegment(SpeedController rotateMotor, IAxis pot, PIDConfiguration pidConfig, double length){
         this.rotateMotor = rotateMotor;
         this.pot = pot;
         this.length = length;
-        //TODO: Add Apropreate Values
-        pid = new PIDController(0,0,0, pot, rotateMotor);
-        pid.setInputRange(-60, 90);
-        pid.setOutputRange(-1,1);
+
+        pid = new PIDController(pidConfig.getKp(), pidConfig.getKi(), pidConfig.getKd(), pot, rotateMotor);
+        pid.setInputRange(pidConfig.getInMin(), pidConfig.getInMax());
+        pid.setOutputRange(pidConfig.getOutMin(), pidConfig.getOutMax());
+        pid.setAbsoluteTolerance(pidConfig.getTolerance());
+
+        pid.setName("PID");
+        LiveWindow.add(pid);
+
+        pot.setName("Pot");
+        LiveWindow.add(pot);
     }
 
     public void setAngle(double angle){
@@ -28,7 +42,7 @@ public class ArmSegment {
 
 
     public double getAngle(){
-        return pot.get() / 1.1 ; //approx. conversion from ADC to degrees
+        return pot.getValue(); //approx. conversion from ADC to degrees
     }
 
     public void enablePID(){
@@ -45,5 +59,34 @@ public class ArmSegment {
 
     public double getLength(){
         return length;
+    }
+
+    @Override
+    public String getName() {
+        return sendableName;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.sendableName = name;
+        pot.setName("Pot");
+        pid.setName("PID");
+    }
+
+    @Override
+    public String getSubsystem() {
+        return systemName;
+    }
+
+    @Override
+    public void setSubsystem(String subsystem) {
+        this.systemName = subsystem;
+        pot.setSubsystem(subsystem);
+        pid.setSubsystem(subsystem);
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+
     }
 }

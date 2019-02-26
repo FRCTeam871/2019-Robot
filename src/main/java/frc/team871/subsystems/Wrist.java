@@ -4,23 +4,47 @@ import com.team871.hid.HIDAxis;
 import com.team871.hid.HIDButton;
 import com.team871.hid.IAxis;
 import com.team871.hid.IButton;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
+import frc.team871.config.PIDConfiguration;
 
-public class Wrist {
+public class Wrist implements Sendable {
 
     private SpeedController motor;
-    //TODO: orientation sensor
     private PIDController pid;
-    private AnalogPotentiometer pot;
+    private IAxis pot;
     private double oldAxis;
     private boolean oldButton;
+    private double length;
 
-    public Wrist(SpeedController motor, AnalogPotentiometer pot) {
+    String name = "Wrist";
+    String subsystem = "Wrist";
+
+    public Wrist(SpeedController motor, IAxis pot, PIDConfiguration pidConfig, double length) {
         this.motor = motor;
         this.pot = pot;
+        this.length = length;
+
+        pid = new PIDController(pidConfig.getKp(), pidConfig.getKi(), pidConfig.getKd(), pot, motor);
+        pid.setName("PID");
+        LiveWindow.add(pid);
+
+        pid.setInputRange(pidConfig.getInMin(), pidConfig.getInMax());
+        pid.setOutputRange(pidConfig.getOutMin(), pidConfig.getOutMax());
+        pid.setAbsoluteTolerance(pidConfig.getTolerance());
+
+        pot.setName("Pot");
+        LiveWindow.add(pot);
+    }
+
+    public double getLength(){
+        return length;
     }
 
     public void enablePID(){
@@ -36,7 +60,11 @@ public class Wrist {
     }
 
     public double getAngle(){
-        return pot.get() / 1.1; //approx. conversion from ADC to degrees
+        return pot.getValue();
+    }
+
+    public void rotate(double speed){
+        motor.set(speed);
     }
 
     /**
@@ -47,11 +75,41 @@ public class Wrist {
      */
     public void handleInputs(IAxis axis, IButton button){
         if(oldAxis != axis.getValue()){
-            setOrientation(axis.getValue());
+            setOrientation(axis.getValue() * 90);
         }else if(oldButton != button.getValue()){
             setOrientation(button.getValue() ? 90 : 0);
         }
         oldAxis = axis.getValue();
         oldButton = button.getValue();
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+        pot.setName("Pot");
+        pid.setName("PID");
+    }
+
+    @Override
+    public String getSubsystem() {
+        return subsystem;
+    }
+
+    @Override
+    public void setSubsystem(String subsystem) {
+        this.subsystem = subsystem;
+        pot.setSubsystem(subsystem);
+        pid.setSubsystem(subsystem);
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+//        LiveWindow.addChild(this, pot);
+//        LiveWindow.addChild(this, pid);
     }
 }

@@ -2,15 +2,25 @@ package frc.team871.subsystems;
 
 import com.team871.hid.IAxis;
 import com.team871.hid.IButton;
+import edu.wpi.first.wpilibj.Sendable;
+import edu.wpi.first.wpilibj.SendableBase;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 
-public class Arm {
+public class Arm implements Sendable {
 
+    private static final double MAX_EXTENT = 30 + 15; // 30 inch extents + 15 inches from center to edge of frame
     private ArmSegment upperSegment;
     private ArmSegment lowerSegment;
     private Wrist wrist;
-    private ArmMode currentArmMode;
+    private ArmMode currentArmMode = ArmMode.INVERSE_KINEMATICS;
     private double x;
     private double y;
+    private double lowerAngle;
+    private double upperAngle;
+
+    private final double lowerSq;
+    private final double upperSq;
 
     private enum ArmMode {
         DIRECT,
@@ -21,29 +31,72 @@ public class Arm {
         this.upperSegment = upperSegment;
         this.lowerSegment = lowerSegment;
         this.wrist = wrist;
+        upperSegment.setName("UpperArm", "UpperArm");
+        lowerSegment.setName("LowerArm","LowerArm");
+        wrist.setName("Wrist","Wrist");
+        LiveWindow.add(upperSegment);
+        LiveWindow.add(lowerSegment);
+        LiveWindow.add(wrist);
+
+        lowerSq = lowerSegment.getLength() * lowerSegment.getLength();
+        upperSq = upperSegment.getLength() * upperSegment.getLength();
     }
 
     private double calcUpperAngle(){
-        return Math.acos((((upperSegment.getLength() * upperSegment.getLength()) + (lowerSegment.getLength() * lowerSegment.getLength())) - ((x * x) + (y * y))) / (2 * upperSegment.getLength() * lowerSegment.getLength()));
+        double sqDst = (x * x) + (y * y);
+        double ac = (upperSq + lowerSq - sqDst) / (2 * upperSegment.getLength() * lowerSegment.getLength());
+        if(ac > 1) ac = 1;
+        return -(-180 + Math.toDegrees(Math.acos(ac)));
     }
 
     private double calcLowerAngle(){
-         return Math.atan2(y, x) - Math.acos((((lowerSegment.getLength() * lowerSegment.getLength()) + ((x * x) + (y * y))) - (upperSegment.getLength() * upperSegment.getLength()) ) / (2 * upperSegment.getLength() * Math.sqrt((x * x) + (y * y))));
+
+        double targetX = x;
+        double targetY = y;
+
+        double sqDst = (x * x) + (y * y);
+
+//        if(sqDst > lowerSq + upperSq){
+//            double angle = Math.atan2(targetY, targetX);
+//
+//            targetX = (getRadius()) * Math.cos(angle);
+//            targetY = (getRadius()) * Math.sin(angle);
+//
+//            sqDst = (targetX * targetX) + (targetY * targetY);
+//        }
+
+        double a = Math.atan2(y, x);
+
+        double ac = (lowerSq + sqDst - upperSq) / (2 * lowerSegment.getLength() * Math.sqrt(sqDst));
+        if(ac > 1) ac = 1;
+
+        return Math.toDegrees(a - Math.acos(ac));
     }
 
     public void setAngles(double upperAngle, double lowerAngle){
+        this.upperAngle = upperAngle;
+        this.lowerAngle = lowerAngle;
         upperSegment.setAngle(upperAngle);
         lowerSegment.setAngle(lowerAngle);
     }
 
     public void goTo(double x, double y){
+        if(x + wrist.getLength() > MAX_EXTENT) x = MAX_EXTENT - wrist.getLength();
         this.x = x;
         this.y = y;
+
         setAngles(calcUpperAngle(), calcLowerAngle());
     }
 
     public void goToRelative(double x, double y){
-        goTo(getRadius() * x, getRadius() * y);
+
+//        double angle = Math.atan2(y, x);
+//        double r = Math.sqrt(x*x + y*y);
+//
+//        r *= getRadius();
+//
+//        goTo(r * Math.cos(angle), r * Math.sin(angle));
+        goTo(x * getRadius(), y * getRadius());
     }
 
     private double getRadius(){
@@ -55,7 +108,10 @@ public class Arm {
     }
 
     public void handleInverseKinematicsMode(IButton button) {
-        currentArmMode = (button.getValue())? ArmMode.DIRECT : ArmMode.INVERSE_KINEMATICS;
+
+        if(button.getValue()){
+            currentArmMode = currentArmMode == ArmMode.INVERSE_KINEMATICS ? ArmMode.DIRECT : ArmMode.INVERSE_KINEMATICS;
+        }
         // currentArmMode = (currentArmMode == ArmMode.INVERSE_KINEMATICS)? ArmMode.DIRECT : ArmMode.INVERSE_KINEMATICS;
     }
 
@@ -68,9 +124,40 @@ public class Arm {
      */
     public void handleArmAxes(IAxis upperAxis, IAxis lowerAxis, IAxis xAxis, IAxis yAxis){
         if(currentArmMode == ArmMode.INVERSE_KINEMATICS) {
-            goToRelative(xAxis.getValue(),yAxis.getValue());
+            goToRelative((xAxis.getValue() + 1) / 2, yAxis.getValue());
         } else {
-            setAngles(upperAxis.getValue(), lowerAxis.getValue());
+            setAngles(upperAxis.getValue() * 90, lowerAxis.getValue() * 90);
         }
     }
+
+
+    @Override
+    public String getName() {
+        return "Arm";
+    }
+
+    @Override
+    public void setName(String name) {
+
+    }
+
+    @Override
+    public String getSubsystem() {
+        return "Arm";
+    }
+
+    @Override
+    public void setSubsystem(String subsystem) {
+
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        builder.addStringProperty("ArmMode", currentArmMode::toString, (m) -> {});
+        builder.addDoubleProperty("LastX", () -> x, (v) -> {});
+        builder.addDoubleProperty("LastY", () -> y, (v) -> {});
+        builder.addDoubleProperty("LastLowerAngle", () -> lowerAngle, (v) -> {});
+        builder.addDoubleProperty("LastUpperAngle", () -> upperAngle, (v) -> {});
+    }
+
 }

@@ -22,19 +22,19 @@ public enum InitialControlScheme implements IControlScheme{
         systemsController = new GenericJoystick<>(0, Arrays.asList(XBoxButtons.values()), Arrays.asList(XBoxAxes.values()));
         driveController = new GenericJoystick<>(1, Arrays.asList(XBoxButtons.values()), Arrays.asList(XBoxAxes.values()));
         systemsController.getButton(XBoxButtons.Y).setMode(ButtonTypes.TOGGLE);
-        systemsController.getButton(XBoxButtons.BACK).setMode(ButtonTypes.TOGGLE);
+        systemsController.getButton(XBoxButtons.BACK).setMode(ButtonTypes.RISING);
         systemsController.getButton(XBoxButtons.A).setMode(ButtonTypes.TOGGLE);
         systemsController.getAxis(XBoxAxes.TRIGGER).setDeadband(0.2);
         systemsController.getAxis(XBoxAxes.LEFTY).setDeadband(0.2);
         systemsController.getAxis(XBoxAxes.RIGHTY).setDeadband(0.2);
         systemsController.getButton(XBoxButtons.START).setMode(ButtonTypes.TOGGLE);
+        systemsController.getAxis(XBoxAxes.RIGHTX).setDeadband(0.2);
         driveController.getButton(XBoxButtons.LBUMPER).setMode(ButtonTypes.MOMENTARY);
         driveController.getButton(XBoxButtons.START).setMode(ButtonTypes.RISING);
         driveController.getButton(XBoxButtons.BACK).setMode(ButtonTypes.TOGGLE);
         driveController.getAxis(XBoxAxes.LEFTX).setDeadband(0.2);
         driveController.getAxis(XBoxAxes.LEFTY).setDeadband(0.2);
         driveController.getAxis(XBoxAxes.RIGHTX).setDeadband(0.2);
-
 
         unusedAxis = new ConstantAxis(0);
     }
@@ -54,7 +54,7 @@ public enum InitialControlScheme implements IControlScheme{
 
     @Override
     public IAxis getWristAxis() {
-        return systemsController.getAxis(XBoxAxes.TRIGGER);
+        return systemsController.getAxis(XBoxAxes.RIGHTX);
     }
 
     @Override
@@ -99,12 +99,13 @@ public enum InitialControlScheme implements IControlScheme{
 
     @Override
     public IAxis getArmTargetXAxis() {
-        return unusedAxis;
+        return systemsController.getAxis(XBoxAxes.RIGHTX);
     }
 
     @Override
     public IAxis getArmTargetYAxis() {
-        return unusedAxis;
+//        return unusedAxis;
+        return systemsController.getAxis(XBoxAxes.RIGHTY);
     }
 
     @Override

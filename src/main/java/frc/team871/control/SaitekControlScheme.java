@@ -52,7 +52,7 @@ public enum SaitekControlScheme implements IControlScheme{
     @Override
     public IAxis getWristAxis() {
         //This button will not be used in this configuration
-        return unusedAxis;
+        return saitekStickJoy.getAxis(SaitekAxes.E_AXIS);
     }
 
     @Override
@@ -104,7 +104,7 @@ public enum SaitekControlScheme implements IControlScheme{
 
     @Override
     public IAxis getArmTargetYAxis() {
-        return saitekStickJoy.getAxis(SaitekAxes.I_AXIS);
+        return saitekStickJoy.getAxis(SaitekAxes.THROTTLE);
     }
 
     @Override

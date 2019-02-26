@@ -5,8 +5,8 @@ import com.team871.hid.AxisID;
 public enum GauntletAxes implements AxisID{
     X(0),
     Y(1),
-    UPPER_ARM(2),
-    LOWER_ARM(3);
+    UPPER_ARM(3),
+    LOWER_ARM(2);
 
     private final int value;
 
