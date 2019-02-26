@@ -3,7 +3,6 @@ package frc.team871.subsystems;
 import com.team871.hid.IAxis;
 import com.team871.hid.IButton;
 import edu.wpi.first.wpilibj.Sendable;
-import edu.wpi.first.wpilibj.SendableBase;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 
@@ -21,6 +20,7 @@ public class Arm implements Sendable {
 
     private final double lowerSq;
     private final double upperSq;
+
 
     private enum ArmMode {
         DIRECT,
@@ -126,8 +126,16 @@ public class Arm implements Sendable {
         if(currentArmMode == ArmMode.INVERSE_KINEMATICS) {
             goToRelative((xAxis.getValue() + 1) / 2, yAxis.getValue());
         } else {
-            setAngles(upperAxis.getValue() * 90, lowerAxis.getValue() * 90);
+            calcTarget(upperAxis.getValue() * 90, lowerAxis.getValue() * 90);
         }
+    }
+
+    public void calcTarget(double lowerPowAngle1, double upperPowAngle2){
+        double angle3 = upperPowAngle2 - lowerPowAngle1;
+        double x = (Math.cos(lowerPowAngle1) * lowerSegment.getLength()) + (Math.cos(angle3) * upperSegment.getLength());
+        double y = (Math.sin(lowerPowAngle1) * lowerSegment.getLength()) + (Math.sin(angle3) * upperSegment.getLength());
+
+        goTo(x, y);
     }
 
 
