@@ -113,8 +113,4 @@ public enum InitialControlScheme implements IControlScheme{
         return unusedButton;
     }
 
-    @Override
-    public IButton getVacuumPrimaryButton() {
-        return systemsController.getButton(XBoxButtons.START);
-    }
 }

@@ -50,16 +50,14 @@ public class Robot extends TimedRobot {
     private Vacuum vacuum;
     private Arm arm;
     private Wrist wrist;
-    private Navigation nav;
-    private DockingWaypointProvider waypointProvider;
     private ITargetProvider targetProvider;
 
-    boolean testBoard = true;
     private ArmSegment upperSegment;
     private ArmSegment lowerSegment;
 
     private boolean manualDriveMode = false;
     private boolean driveTrainEnabled = true;
+    private boolean testBoard = true;
 
     /**
       * This function is run when the robot is first started up and should be used
@@ -67,40 +65,39 @@ public class Robot extends TimedRobot {
       */
     @Override
     public void robotInit() {
+        this.config = RowBoatConfig.DEFAULT;
+
         if(!testBoard) {
-            this.controlScheme = InitialControlScheme.DEFAULT;
-            this.config = RowBoatConfig.DEFAULT;
-            this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor());
+            this.controlScheme = SaitekControlScheme.DEFAULT;
+
+            this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor(), config.getVacuumInnerValve(), config.getVacuumOuterValve()); //TODO: add solenoids to config
             this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro());
-            // TODO: Get actually lengths of the arm segments
-            ArmSegment upperSegment = new ArmSegment(config.getUpperArmMotor(), config.getUpperArmPot(), 20.5);
-            ArmSegment lowerSegment = new ArmSegment(config.getLowerArmMotor(), config.getLowerArmPot(), 22.);
-            this.wrist = new Wrist(config.getWristMotor(), config.getWristPotAxis());
+
+            upperSegment = new ArmSegment(config.getUpperArmMotor(), config.getUpperArmPot(), config.getUpperArmPIDConfig(), 20.5);
+            lowerSegment = new ArmSegment(config.getLowerArmMotor(), config.getLowerArmPot(), config.getLowerArmPIDConfig(),22);
+            this.wrist = new Wrist(config.getWristMotor(), config.getWristPotAxis(), config.getWristPIDConfig(), 10);
             this.arm = new Arm(upperSegment, lowerSegment, wrist);
-            this.targetProvider = new RobotUSBTargetProvider(config.getLineCam());
+
+            LiveWindow.add(arm);
+
         }
 
-
-
-
-        this.controlScheme = SaitekControlScheme.DEFAULT;
-
-        this.config = RowBoatConfig.DEFAULT;
-        this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor(), config.getVacuumInnerValve(), config.getVacuumOuterValve()); //TODO: add solenoids to config
-        this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro());
-
-        upperSegment = new ArmSegment(config.getUpperArmMotor(), config.getUpperArmPot(), config.getUpperArmPIDConfig(), 20.5);
-        lowerSegment = new ArmSegment(config.getLowerArmMotor(), config.getLowerArmPot(), config.getLowerArmPIDConfig(),22);
-        this.wrist = new Wrist(config.getWristMotor(), config.getWristPotAxis(), config.getWristPIDConfig(), 10);
-        this.arm = new Arm(upperSegment, lowerSegment, wrist);
-
-
-        LiveWindow.add(arm);
-
+        this.targetProvider = new RobotUSBTargetProvider(config.getLineCam());
     }
 
     @Override
     public void robotPeriodic() {
+
+        //TODO: network tables
+        boolean printLineStatus = false;
+        if(printLineStatus) {
+            if (targetProvider.getLineSensor().doesTargetExist()) {
+                DecimalFormat d = new DecimalFormat("0.0");
+                System.out.println(d.format(targetProvider.getLineSensor().getCenterX()) + "\t" + d.format(targetProvider.getLineSensor().getLineAngle()));
+            } else {
+                System.out.println("No line");
+            }
+        }
 //        System.out.println(controlScheme.getArmTargetYAxis().getRaw() + " " + controlScheme.getArmTargetXAxis().getRaw() + " -> " + controlScheme.getArmTargetXAxis().getValue());
     }
 
@@ -136,12 +133,13 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
 
+
+
         if(testBoard) return;
 
-        driveTrain.handleInputs(controlScheme.getMecDriveXAxis(), controlScheme.getMecDriveYAxis(), controlScheme.getMecDriveRotationAxis(), controlScheme.getRobotOrientationToggleButton(), controlScheme.getHeadingHoldButton(), controlScheme.getResetGyroButton(), config.getTargetProvider(), controlScheme.getAutoDockButton());
+        if(driveTrainEnabled) driveTrain.handleInputs(controlScheme.getMecDriveXAxis(), controlScheme.getMecDriveYAxis(), controlScheme.getMecDriveRotationAxis(), controlScheme.getRobotOrientationToggleButton(), controlScheme.getHeadingHoldButton(), controlScheme.getResetGyroButton(), config.getTargetProvider(), controlScheme.getAutoDockButton());
 
         vacuum.setState(controlScheme.getVacuumToggleButton());
-        vacuum.setTogglePrimarySucc(controlScheme.getVacuumPrimaryButton());
 
         if(!manualDriveMode){
             arm.handleArmAxes(controlScheme.getUpperArmAxis(), controlScheme.getLowerArmAxis(), controlScheme.getArmTargetXAxis(), controlScheme.getArmTargetYAxis());

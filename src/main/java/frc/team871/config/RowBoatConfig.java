@@ -80,6 +80,9 @@ public enum RowBoatConfig implements IRowBoatConfig {
 
         innerValve = new Solenoid(0);
         outerValve = new Solenoid(1);
+
+        this.lineCam = CameraServer.getInstance().startAutomaticCapture(0);
+        this.lineCam.setResolution(320, 240);
     }
 
     @Override

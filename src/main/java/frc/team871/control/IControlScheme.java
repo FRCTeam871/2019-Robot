@@ -34,6 +34,4 @@ public interface IControlScheme {
     IAxis getArmTargetYAxis();
 
     IButton getAutoDockButton();
-
-    IButton getVacuumPrimaryButton();
 }
