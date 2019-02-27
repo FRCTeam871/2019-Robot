@@ -11,9 +11,11 @@ import com.team871.navigation.Waypoint;
 import com.team871.subsystem.IDriveTrain;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
+import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.drive.Vector2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import frc.team871.SettablePIDSource;
 import frc.team871.auto.DockingWaypointProvider;
 import frc.team871.auto.ILineSensor;
@@ -25,7 +27,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
-public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput {
+public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput, Sendable {
 
     private double lastXInput;
     private double lastYInput;
@@ -34,7 +36,7 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput {
     private PIDController headingPID;
     private DriveMode currentDriveMode;
     private double pidRotation;
-    private DockMode autoDoctorState;
+    private DockMode autoDoctorState = DockMode.PLAYER;
 
     private PIDController autoDockXController;
     private SettablePIDSource autoDockXSource;
@@ -50,15 +52,23 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput {
         headingPID.setAbsoluteTolerance(5);
 
         autoDockXSource = new SettablePIDSource(0);
-        autoDockXController = new PIDController(0, 0, 0, autoDockXSource, o -> {}); //TODO: PID values
+        autoDockXController = new PIDController(-0.01, 0, 0.001, autoDockXSource, o -> {}); //TODO: PID values
 
         gyro.setName("gyro");
         gyro.setSubsystem("drive");
         LiveWindow.add(gyro);
 
+        headingPID.setName("Heading PID");
+        LiveWindow.add(headingPID);
+        autoDockXController.setName("Autodock PID");
+        LiveWindow.add(autoDockXController);
+
+        LiveWindow.add(this);
+
     }
 
     public void handleInputs(IAxis xAxis, IAxis yAxis, IAxis rotationAxis, IButton fieldDriveModeButton, IButton headingHoldButton, IButton resetGyroButton, ITargetProvider targetProvider, IButton autoDockButton) {
+        //System.out.println(autoDoctorState);
         if (autoDoctorState == DockMode.PLAYER) {
             if (getDriveMode() == DriveTrain.DriveMode.ROBOT) {
                 driveRobotOriented(xAxis.getValue(), yAxis.getValue(), rotationAxis.getValue());
@@ -73,6 +83,7 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput {
                 resetGyro();
             }
             if (autoDockButton.getValue()) {
+                System.out.println("ENTER AUTODOCK");
                 autoDoctorState = DockMode.AUTODOCK;
             }
         } else if (autoDoctorState == DockMode.AUTODOCK) {
@@ -80,13 +91,16 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput {
 
             if (autoDockButton.getValue()) {
                 autoDoctorState = DockMode.PLAYER;
+                System.out.println("ENTER PLAYER 1");
             }
             if (!targetProvider.getLineSensor().doesTargetExist() && !targetProvider.getTarget().doesTargetExist()) {
                 autoDoctorState = DockMode.PLAYER;
+                System.out.println("ENTER PLAYER 2");
             }
             //TODO: get the number
             if (targetProvider.getTarget().doesTargetExist() && targetProvider.getTarget().getDistance() <= 20) {
                 autoDoctorState = DockMode.PLAYER;
+                System.out.println("ENTER PLAYER 3");
             }
         }
     }
@@ -97,7 +111,7 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput {
             autoDockXController.setEnabled(true);
             setHeadingHold(gyro.getYaw() + line.getLineAngle());
             setHeadingHoldEnabled(true);
-            driveRobotOriented(autoDockXController.get(), .3, 0);
+            driveRobotOriented(autoDockXController.get(), 0, 0);
         }else{
             if(target.doesTargetExist()) {
                 setHeadingHold(gyro.getYaw());
@@ -115,7 +129,7 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput {
     public void driveFieldOriented(double x, double y, double r) {
         lastXInput = x;
         lastYInput = y;
-        driveCartesian(y, x, r + (headingPID.isEnabled() ? pidRotation : 0), gyro.getAngle());
+        super.driveCartesian(y, x, r + (headingPID.isEnabled() ? pidRotation : 0), gyro.getAngle());
     }
 
 
@@ -130,7 +144,7 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput {
     public void driveRobotOriented(double x, double y, double r) {
         lastXInput = x;
         lastYInput = y;
-        driveCartesian(y, x, r + (headingPID.isEnabled() ? pidRotation : 0));
+        super.driveCartesian(y, x, r + (headingPID.isEnabled() ? pidRotation : 0));
     }
 
     @Override
@@ -171,7 +185,7 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput {
 
     @Override
     public void pidWrite(double output) {
-        pidRotation = output;
+        //pidRotation = output;
     }
 
     public void toggleFieldDriveMode(){
@@ -194,5 +208,13 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput {
     public enum DockMode {
         AUTODOCK,
         PLAYER
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        super.initSendable(builder);
+
+        builder.addDoubleProperty("AutoDockXPIDOut", () -> autoDockXController.get(), (v) -> {});
+
     }
 }

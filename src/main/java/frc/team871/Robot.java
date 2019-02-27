@@ -18,6 +18,8 @@ import frc.team871.auto.DockingWaypointProvider;
 import frc.team871.auto.GripPipeline;
 import frc.team871.auto.ITargetProvider;
 import frc.team871.auto.RobotUSBTargetProvider;
+import frc.team871.config.FrisbroConfig;
+import frc.team871.control.InitialControlScheme;
 import frc.team871.subsystems.DriveTrain;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import frc.team871.config.IRowBoatConfig;
@@ -50,7 +52,6 @@ public class Robot extends TimedRobot {
     private Vacuum vacuum;
     private Arm arm;
     private Wrist wrist;
-    private ITargetProvider targetProvider;
 
     private ArmSegment upperSegment;
     private ArmSegment lowerSegment;
@@ -65,13 +66,13 @@ public class Robot extends TimedRobot {
       */
     @Override
     public void robotInit() {
-        this.config = RowBoatConfig.DEFAULT;
+        this.config = FrisbroConfig.DEFAULT;
+        this.controlScheme = InitialControlScheme.DEFAULT;
+        this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro());
 
         if(!testBoard) {
-            this.controlScheme = SaitekControlScheme.DEFAULT;
 
             this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor(), config.getVacuumInnerValve(), config.getVacuumOuterValve()); //TODO: add solenoids to config
-            this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro());
 
             upperSegment = new ArmSegment(config.getUpperArmMotor(), config.getUpperArmPot(), config.getUpperArmPIDConfig(), 20.5);
             lowerSegment = new ArmSegment(config.getLowerArmMotor(), config.getLowerArmPot(), config.getLowerArmPIDConfig(),22);
@@ -82,18 +83,17 @@ public class Robot extends TimedRobot {
 
         }
 
-        this.targetProvider = new RobotUSBTargetProvider(config.getLineCam());
     }
 
     @Override
     public void robotPeriodic() {
 
         //TODO: network tables
-        boolean printLineStatus = false;
+        boolean printLineStatus = true;
         if(printLineStatus) {
-            if (targetProvider.getLineSensor().doesTargetExist()) {
+            if (config.getTargetProvider().getLineSensor().doesTargetExist()) {
                 DecimalFormat d = new DecimalFormat("0.0");
-                System.out.println(d.format(targetProvider.getLineSensor().getCenterX()) + "\t" + d.format(targetProvider.getLineSensor().getLineAngle()));
+                System.out.println(d.format(config.getTargetProvider().getLineSensor().getCenterX()) + "\t" + d.format(config.getTargetProvider().getLineSensor().getLineAngle()));
             } else {
                 System.out.println("No line");
             }
@@ -113,20 +113,22 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        //set the default PID setpoints as the current position so it doesn't freak out instantly
-        if(!manualDriveMode) {
-            upperSegment.setAngle(upperSegment.getAngle());
-            lowerSegment.setAngle(lowerSegment.getAngle());
-            wrist.setOrientation(wrist.getAngle());
+        if(!testBoard) {
+            //set the default PID setpoints as the current position so it doesn't freak out instantly
+            if (!manualDriveMode) {
+                upperSegment.setAngle(upperSegment.getAngle());
+                lowerSegment.setAngle(lowerSegment.getAngle());
+                wrist.setOrientation(wrist.getAngle());
 
 //            wrist.setOrientation(0);
 //            upperSegment.setAngle(0);
 //            lowerSegment.setAngle(0);
 
 
-            upperSegment.enablePID();
-            lowerSegment.enablePID();
-            wrist.enablePID();
+                upperSegment.enablePID();
+                lowerSegment.enablePID();
+                wrist.enablePID();
+            }
         }
     }
 
@@ -135,9 +137,10 @@ public class Robot extends TimedRobot {
 
 
 
+        if(driveTrainEnabled) driveTrain.handleInputs(controlScheme.getMecDriveXAxis(), controlScheme.getMecDriveYAxis(), controlScheme.getMecDriveRotationAxis(), controlScheme.getRobotOrientationToggleButton(), controlScheme.getHeadingHoldButton(), controlScheme.getResetGyroButton(), config.getTargetProvider(), controlScheme.getAutoDockButton());
         if(testBoard) return;
 
-        if(driveTrainEnabled) driveTrain.handleInputs(controlScheme.getMecDriveXAxis(), controlScheme.getMecDriveYAxis(), controlScheme.getMecDriveRotationAxis(), controlScheme.getRobotOrientationToggleButton(), controlScheme.getHeadingHoldButton(), controlScheme.getResetGyroButton(), config.getTargetProvider(), controlScheme.getAutoDockButton());
+
 
         vacuum.setState(controlScheme.getVacuumToggleButton());
 

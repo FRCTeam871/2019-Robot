@@ -18,23 +18,29 @@ public class RobotUSBLineSensor implements ILineSensor{
     public double lengthX;
     public double lengthY;
     public boolean hasLine;
+    UsbCamera cam;
+    int width;
+    int height;
 
-    RobotUSBLineSensor(UsbCamera cam){
+    RobotUSBLineSensor(UsbCamera cam, int width, int height){
         vt = new VisionThread(cam, new GripPipeline(), this::update);
         vt.start();
+        this.cam = cam;
+        this.width = width;
+        this.height = height;
     }
 
     private <P extends GripPipeline> void update(P pipeline) {
-        if(!pipeline.filterContoursOutput().isEmpty()){
+        if(!pipeline.findContoursOutput().isEmpty()){
             hasLine = true;
-            RotatedRect r = Imgproc.minAreaRect(new MatOfPoint2f(pipeline.filterContoursOutput().stream().sorted((m1, m2) -> {
+            RotatedRect r = Imgproc.minAreaRect(new MatOfPoint2f(pipeline.findContoursOutput().stream().sorted((m1, m2) -> {
                 return Imgproc.contourArea(m1) < Imgproc.contourArea(m2) ? -1 : 1;
             }).findFirst().get().toArray()));
 //            angle = r.angle;
 //            if(r.size.width > r.size.height) angle = angle + 90;
             angle = r.angle + ((r.size.width > r.size.height)? 90: 0);
             DecimalFormat d = new DecimalFormat("0.0");
-            centerX = r.center.x;
+            centerX = r.center.x - (width / 2);
             centerY = r.center.y;
             if(r.size.width > r.size.height) {
                 lengthX = r.size.height;

@@ -35,6 +35,7 @@ public enum InitialControlScheme implements IControlScheme{
         driveController.getAxis(XBoxAxes.LEFTX).setDeadband(0.2);
         driveController.getAxis(XBoxAxes.LEFTY).setDeadband(0.2);
         driveController.getAxis(XBoxAxes.RIGHTX).setDeadband(0.2);
+        driveController.getButton(XBoxButtons.B).setMode(ButtonTypes.RISING);
 
         unusedAxis = new ConstantAxis(0);
     }
@@ -110,7 +111,7 @@ public enum InitialControlScheme implements IControlScheme{
 
     @Override
     public IButton getAutoDockButton() {
-        return unusedButton;
+        return driveController.getButton(XBoxButtons.B);
     }
 
 }
