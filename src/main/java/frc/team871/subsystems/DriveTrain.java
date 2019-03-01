@@ -21,6 +21,7 @@ import frc.team871.auto.DockingWaypointProvider;
 import frc.team871.auto.ILineSensor;
 import frc.team871.auto.ITarget;
 import frc.team871.auto.ITargetProvider;
+import frc.team871.config.PIDConfiguration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -41,18 +42,18 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput, 
     private PIDController autoDockXController;
     private SettablePIDSource autoDockXSource;
 
-    public DriveTrain(SpeedController frontLeft, SpeedController rearLeft, SpeedController frontRight, SpeedController rearRight, AHRS gyro){
+    public DriveTrain(SpeedController frontLeft, SpeedController rearLeft, SpeedController frontRight, SpeedController rearRight, AHRS gyro, PIDConfiguration headingPIDConfig, PIDConfiguration autodockXPIDConfig){
         super(frontLeft, rearLeft, frontRight, rearRight);
         this.gyro = gyro;
         this.currentDriveMode = DriveMode.ROBOT;
-        headingPID = new PIDController(0.01, 0, 0.03, gyro, this); //values from last year's robor
-        headingPID.setInputRange(-180, 180);
-        headingPID.setOutputRange(-0.5, 0.5);
+        headingPID = new PIDController(headingPIDConfig.getKp(), headingPIDConfig.getKi(), headingPIDConfig.getKd(), gyro, this); //values from last year's robor
+        headingPID.setInputRange(headingPIDConfig.getInMin(), headingPIDConfig.getInMax());
+        headingPID.setOutputRange(headingPIDConfig.getOutMin(), headingPIDConfig.getOutMax());
         headingPID.setContinuous();
-        headingPID.setAbsoluteTolerance(5);
+        headingPID.setAbsoluteTolerance(headingPIDConfig.getTolerance());
 
         autoDockXSource = new SettablePIDSource(0);
-        autoDockXController = new PIDController(-0.01, 0, 0.001, autoDockXSource, o -> {}); //TODO: PID values
+        autoDockXController = new PIDController(autodockXPIDConfig.getKp(), autodockXPIDConfig.getKi(), autodockXPIDConfig.getKd(), autoDockXSource, o -> {}); //TODO: PID values
 
         gyro.setName("gyro");
         gyro.setSubsystem("drive");

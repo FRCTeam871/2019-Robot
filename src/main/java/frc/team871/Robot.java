@@ -53,7 +53,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         this.config = SecondRowBoatConfig.DEFAULT;
         this.controlScheme = InitialControlScheme.DEFAULT;
-        this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro());
+        this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro(), config.getHeadingPIDConfig(), config.getAutoDockXPIDConfig());
 
         if(!testBoard) {
 

@@ -25,6 +25,8 @@ public enum FrisbroConfig implements IRowBoatConfig {
     SpeedController rearLeftMotor;
     SpeedController frontRightMotor;
     SpeedController rearRightMotor;
+    PIDConfiguration headingPIDConfig;
+    PIDConfiguration autoDockXPIDConfig;
     SpeedController lowerArmMotor;
     SpeedController upperArmMotor;
     SpeedController wristMotor;
@@ -52,6 +54,10 @@ public enum FrisbroConfig implements IRowBoatConfig {
         this.frontRightMotor = new Talon(1);
         this.rearLeftMotor = new Talon(2);
         this.rearRightMotor = new Talon(3);
+
+        headingPIDConfig = new PIDConfiguration(0.01, 0, 0.03, -180, 180, -0.5, 0.5, 5);
+        autoDockXPIDConfig = new PIDConfiguration(-0.01, 0, 0.001, 0, 0, 0, 0, 0);
+
         this.lowerArmMotor = new WPI_TalonSRX(7);
         WPI_TalonSRX t = new WPI_TalonSRX(5);
         this.upperArmMotor = new CombinedSpeedController(Arrays.asList(t, new WPI_TalonSRX(6)));
@@ -114,6 +120,16 @@ public enum FrisbroConfig implements IRowBoatConfig {
     @Override
     public SpeedController getRearRightMotor() {
         return rearRightMotor;
+    }
+
+    @Override
+    public PIDConfiguration getHeadingPIDConfig() {
+        return headingPIDConfig;
+    }
+
+    @Override
+    public PIDConfiguration getAutoDockXPIDConfig() {
+        return autoDockXPIDConfig;
     }
 
     @Override

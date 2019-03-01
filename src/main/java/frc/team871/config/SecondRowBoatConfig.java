@@ -10,6 +10,7 @@ import edu.wpi.cscore.VideoMode;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
 import frc.team871.auto.ITargetProvider;
@@ -23,6 +24,8 @@ public enum SecondRowBoatConfig implements IRowBoatConfig {
     SpeedController rearLeftMotor;
     SpeedController frontRightMotor;
     SpeedController rearRightMotor;
+    PIDConfiguration headingPIDConfig;
+    PIDConfiguration autoDockXPIDConfig;
     SpeedController lowerArmMotor;
     SpeedController upperArmMotor;
     SpeedController wristMotor;
@@ -48,6 +51,9 @@ public enum SecondRowBoatConfig implements IRowBoatConfig {
         this.rearLeftMotor = new WPI_VictorSPX(2);
         this.frontRightMotor = new WPI_VictorSPX(0);
         this.rearRightMotor = new WPI_VictorSPX(1);
+
+        headingPIDConfig = new PIDConfiguration(0.01, 0, 0.03, -180, 180, -0.5, 0.5, 5);
+        autoDockXPIDConfig = new PIDConfiguration(-0.01, 0, 0.001, 0, 0, 0, 0, 0);
 
         this.lowerArmMotor = new WPI_TalonSRX(7);
         WPI_TalonSRX t = new WPI_TalonSRX(5);
@@ -111,6 +117,16 @@ public enum SecondRowBoatConfig implements IRowBoatConfig {
     @Override
     public SpeedController getRearRightMotor() {
         return rearRightMotor;
+    }
+
+    @Override
+    public PIDConfiguration getHeadingPIDConfig() {
+        return headingPIDConfig;
+    }
+
+    @Override
+    public PIDConfiguration getAutoDockXPIDConfig() {
+        return autoDockXPIDConfig;
     }
 
     @Override

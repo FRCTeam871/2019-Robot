@@ -20,6 +20,10 @@ public interface IRowBoatConfig{
 
     SpeedController getRearRightMotor();
 
+    PIDConfiguration getHeadingPIDConfig();
+
+    PIDConfiguration getAutoDockXPIDConfig();
+
     SpeedController getLowerArmMotor();
 
     SpeedController getUpperArmMotor();
