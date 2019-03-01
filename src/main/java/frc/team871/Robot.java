@@ -59,6 +59,7 @@ public class Robot extends TimedRobot {
     private boolean manualDriveMode = false;
     private boolean driveTrainEnabled = true;
     private boolean testBoard = true;
+    private long lastPrint = System.currentTimeMillis();
 
     /**
       * This function is run when the robot is first started up and should be used
@@ -90,7 +91,8 @@ public class Robot extends TimedRobot {
 
         //TODO: network tables
         boolean printLineStatus = true;
-        if(printLineStatus) {
+        if(printLineStatus && System.currentTimeMillis() - lastPrint > 500) {
+            lastPrint = System.currentTimeMillis();
             if (config.getTargetProvider().getLineSensor().doesTargetExist()) {
                 DecimalFormat d = new DecimalFormat("0.0");
                 System.out.println(d.format(config.getTargetProvider().getLineSensor().getCenterX()) + "\t" + d.format(config.getTargetProvider().getLineSensor().getLineAngle()));

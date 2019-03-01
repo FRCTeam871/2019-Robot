@@ -45,7 +45,7 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput, 
         super(frontLeft, rearLeft, frontRight, rearRight);
         this.gyro = gyro;
         this.currentDriveMode = DriveMode.ROBOT;
-        headingPID = new PIDController(0.03, 0, 0.03, gyro, this); //values from last year's robor
+        headingPID = new PIDController(0.01, 0, 0.03, gyro, this); //values from last year's robor
         headingPID.setInputRange(-180, 180);
         headingPID.setOutputRange(-0.5, 0.5);
         headingPID.setContinuous();
@@ -111,7 +111,7 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput, 
             autoDockXController.setEnabled(true);
             setHeadingHold(gyro.getYaw() + line.getLineAngle());
             setHeadingHoldEnabled(true);
-            driveRobotOriented(autoDockXController.get(), 0, 0);
+            driveRobotOriented(autoDockXController.get(), -0.3, 0);
         }else{
             if(target.doesTargetExist()) {
                 setHeadingHold(gyro.getYaw());
@@ -185,7 +185,7 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput, 
 
     @Override
     public void pidWrite(double output) {
-        //pidRotation = output;
+        pidRotation = output;
     }
 
     public void toggleFieldDriveMode(){

@@ -6,7 +6,9 @@ import com.kauailabs.navx.frc.AHRS;
 import com.team871.hid.IAxis;
 import com.team871.io.actuator.CombinedSpeedController;
 import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoMode;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -44,6 +46,7 @@ public enum FrisbroConfig implements IRowBoatConfig {
     RobotUSBTargetProvider targetProvider;
 
     FrisbroConfig(){
+        new Compressor(0).stop();
 
         this.frontLeftMotor = new Talon(0);
         this.frontRightMotor = new Talon(1);
@@ -83,11 +86,12 @@ public enum FrisbroConfig implements IRowBoatConfig {
 
         this.lineCam = CameraServer.getInstance().startAutomaticCapture(0);
 
-        final int camWidth = 320;
-        final int camHeight = 240;
+        final int camWidth = 320/2;
+        final int camHeight = 240/2;
 
         this.lineCam.setResolution(camWidth, camHeight);
-        this.lineCam.setExposureAuto();
+        this.lineCam.setPixelFormat(VideoMode.PixelFormat.kMJPEG);
+        //this.lineCam.setExposureAuto();
 
         targetProvider = new RobotUSBTargetProvider(this.lineCam, camWidth, camHeight);
     }
