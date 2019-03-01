@@ -8,34 +8,18 @@
 package frc.team871;
 
 
-import com.team871.navigation.Coordinate;
-import com.team871.navigation.Navigation;
-import edu.wpi.cscore.UsbCamera;
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.wpilibj.TimedRobot;
-import frc.team871.auto.DockingWaypointProvider;
-import frc.team871.auto.GripPipeline;
-import frc.team871.auto.ITargetProvider;
-import frc.team871.auto.RobotUSBTargetProvider;
-import frc.team871.config.FrisbroConfig;
-import frc.team871.control.InitialControlScheme;
-import frc.team871.subsystems.DriveTrain;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import frc.team871.config.IRowBoatConfig;
-import frc.team871.config.RowBoatConfig;
+import frc.team871.config.SecondRowBoatConfig;
 import frc.team871.control.IControlScheme;
-import frc.team871.control.InfinityGauntletControlScheme;
-import frc.team871.control.SaitekControlScheme;
+import frc.team871.control.InitialControlScheme;
 import frc.team871.subsystems.Arm;
 import frc.team871.subsystems.ArmSegment;
 import frc.team871.subsystems.DriveTrain;
 import frc.team871.subsystems.Vacuum;
 import frc.team871.subsystems.Wrist;
 import java.text.DecimalFormat;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.RotatedRect;
-import org.opencv.imgproc.Imgproc;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -67,7 +51,7 @@ public class Robot extends TimedRobot {
       */
     @Override
     public void robotInit() {
-        this.config = FrisbroConfig.DEFAULT;
+        this.config = SecondRowBoatConfig.DEFAULT;
         this.controlScheme = InitialControlScheme.DEFAULT;
         this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro());
 
