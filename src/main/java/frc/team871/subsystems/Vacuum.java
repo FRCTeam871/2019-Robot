@@ -20,6 +20,8 @@ public class Vacuum implements Sendable {
     String name;
     String subsystem;
 
+    boolean last = true;
+
     public enum VacuumSide {
         NONE  (false, false),
         INNER (false, true),
@@ -43,17 +45,27 @@ public class Vacuum implements Sendable {
     public Vacuum(SpeedController pump, DigitalInput grabSensor, Solenoid valve1, Solenoid valve2){
         this.pump = pump;
         this.grabSensor = grabSensor;
+        this.valve1 = valve1;
+        this.valve2 = valve2;
     }
 
     private void setState(VacuumState newState){
+        if(newState != state && newState == VacuumState.ENABLED){
+            last = !last;
+        }
          switch(newState){
              case ENABLED:
-                 pump.set(1.);
-                 setSideOpen(VacuumSide.BOTH);
+                 pump.set(0.35);
+                 if(last){
+                     setSideOpen(VacuumSide.INNER);
+                 }else{
+                     setSideOpen(VacuumSide.OUTER);
+                 }
+
                  break;
              case DISABLED:
                  pump.set(0.);
-                 setSideOpen(VacuumSide.NONE);
+                 setSideOpen(VacuumSide.BOTH);
                  break;
          }
          state = newState;
@@ -73,8 +85,8 @@ public class Vacuum implements Sendable {
 
     public void setSideOpen(VacuumSide side){
         this.side = side;
-//        valve1.set(side.s1);
-//        valve2.set(side.s2);
+        valve1.set(side.s1);
+        valve2.set(side.s2);
     }
 
     @Override

@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput {
 
@@ -30,6 +31,11 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput {
         headingPID.setOutputRange(-0.5, 0.5);
         headingPID.setContinuous();
         headingPID.setAbsoluteTolerance(5);
+
+        gyro.setName("gyro");
+        gyro.setSubsystem("drive");
+        LiveWindow.add(gyro);
+
     }
 
 
@@ -44,7 +50,7 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput {
     }
 
 
-    public void driveRobotOriented(double y, double x, double r) {
+    public void driveRobotOriented(double x, double y, double r) {
         driveCartesian(y, x, r + (headingPID.isEnabled() ? pidRotation : 0));
     }
 

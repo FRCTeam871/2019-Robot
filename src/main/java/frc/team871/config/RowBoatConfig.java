@@ -7,6 +7,7 @@ import com.kauailabs.navx.frc.AHRS;
 import com.team871.hid.IAxis;
 import com.team871.io.actuator.CombinedSpeedController;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
@@ -37,10 +38,10 @@ public enum RowBoatConfig implements IRowBoatConfig {
     Solenoid outerValve;
 
     RowBoatConfig(){
-        this.frontLeftMotor = new WPI_VictorSPX(0);
-        this.rearLeftMotor = new WPI_VictorSPX(1);
-        this.frontRightMotor = new WPI_VictorSPX(2);
-        this.rearRightMotor = new WPI_VictorSPX(3);
+        this.frontLeftMotor = new WPI_VictorSPX(3);
+        this.rearLeftMotor = new WPI_VictorSPX(2);
+        this.frontRightMotor = new WPI_VictorSPX(0);
+        this.rearRightMotor = new WPI_VictorSPX(1);
 
         this.lowerArmMotor = new WPI_TalonSRX(7);
         WPI_TalonSRX t = new WPI_TalonSRX(5);
@@ -49,7 +50,7 @@ public enum RowBoatConfig implements IRowBoatConfig {
 //        this.wristMotor.setInverted(true);
         this.vacuumMotor = new WPI_TalonSRX(8);
 
-        this.gyro = new AHRS(SerialPort.Port.kMXP);
+        this.gyro = new AHRS(I2C.Port.kMXP);
 
         //TODO: check values
 
