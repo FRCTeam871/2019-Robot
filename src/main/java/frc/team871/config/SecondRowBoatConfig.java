@@ -47,10 +47,10 @@ public enum SecondRowBoatConfig implements IRowBoatConfig {
     RobotUSBTargetProvider targetProvider;
 
     SecondRowBoatConfig(){
-        this.frontLeftMotor = new WPI_VictorSPX(3);
-        this.rearLeftMotor = new WPI_VictorSPX(2);
-        this.frontRightMotor = new WPI_VictorSPX(0);
-        this.rearRightMotor = new WPI_VictorSPX(1);
+        this.frontLeftMotor = new WPI_TalonSRX(3);
+        this.rearLeftMotor = new WPI_TalonSRX(2);
+        this.frontRightMotor = new WPI_TalonSRX(0);
+        this.rearRightMotor = new WPI_TalonSRX(1);
 
         headingPIDConfig = new PIDConfiguration(0.01, 0, 0.03, -180, 180, -0.5, 0.5, 5);
         autoDockXPIDConfig = new PIDConfiguration(-0.01, 0, 0.001, 0, 0, 0, 0, 0);

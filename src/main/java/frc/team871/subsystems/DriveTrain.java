@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
@@ -24,7 +25,6 @@ import frc.team871.auto.ITargetProvider;
 import frc.team871.config.PIDConfiguration;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 import java.util.TimerTask;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
@@ -41,6 +41,9 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput, 
 
     private PIDController autoDockXController;
     private SettablePIDSource autoDockXSource;
+
+    private Timer lostLineTimer;
+    private boolean hadLine = false;
 
     public DriveTrain(SpeedController frontLeft, SpeedController rearLeft, SpeedController frontRight, SpeedController rearRight, AHRS gyro, PIDConfiguration headingPIDConfig, PIDConfiguration autodockXPIDConfig){
         super(frontLeft, rearLeft, frontRight, rearRight);
@@ -65,6 +68,8 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput, 
         LiveWindow.add(autoDockXController);
 
         LiveWindow.add(this);
+
+        lostLineTimer = new Timer();
 
     }
 
@@ -94,15 +99,20 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput, 
                 autoDoctorState = DockMode.PLAYER;
                 System.out.println("ENTER PLAYER 1");
             }
-            if (!targetProvider.getLineSensor().doesTargetExist() && !targetProvider.getTarget().doesTargetExist()) {
+            if(hadLine && !targetProvider.getLineSensor().doesTargetExist()){
+                lostLineTimer.start();
+            }
+            if ((!targetProvider.getLineSensor().doesTargetExist() && (!hadLine && lostLineTimer.get() > 1.0)) && !targetProvider.getTarget().doesTargetExist()) {
                 autoDoctorState = DockMode.PLAYER;
                 System.out.println("ENTER PLAYER 2");
+                lostLineTimer.stop();
             }
             //TODO: get the number
             if (targetProvider.getTarget().doesTargetExist() && targetProvider.getTarget().getDistance() <= 20) {
                 autoDoctorState = DockMode.PLAYER;
                 System.out.println("ENTER PLAYER 3");
             }
+            hadLine = targetProvider.getLineSensor().doesTargetExist();
         }
     }
 
@@ -112,7 +122,7 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput, 
             autoDockXController.setEnabled(true);
             setHeadingHold(gyro.getYaw() + line.getLineAngle());
             setHeadingHoldEnabled(true);
-            driveRobotOriented(autoDockXController.get(), -0.3, 0);
+            driveRobotOriented(autoDockXController.get(), Math.abs(line.getCenterX()) > 20 || Math.abs(line.getLineAngle()) > 5 ? 0 : -0.3, 0);
         }else{
             if(target.doesTargetExist()) {
                 setHeadingHold(gyro.getYaw());
@@ -120,6 +130,8 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput, 
                 autoDockXController.setEnabled(true);
                 setHeadingHoldEnabled(true);
                 driveRobotOriented(autoDockXController.get(), .3, 0);
+            }else if((!hadLine && lostLineTimer.get() <= 1.0)){
+                driveRobotOriented(autoDockXController.get(), 0, 0);
             }else{
                 autoDockXController.setEnabled(false);
                 setHeadingHoldEnabled(false);

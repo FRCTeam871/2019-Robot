@@ -56,7 +56,7 @@ public enum FrisbroConfig implements IRowBoatConfig {
         this.rearRightMotor = new Talon(3);
 
         headingPIDConfig = new PIDConfiguration(0.01, 0, 0.03, -180, 180, -0.5, 0.5, 5);
-        autoDockXPIDConfig = new PIDConfiguration(-0.01, 0, 0.001, 0, 0, 0, 0, 0);
+        autoDockXPIDConfig = new PIDConfiguration(-0.008, 0, 0.001, 0, 0, 0, 0, 0);
 
         this.lowerArmMotor = new WPI_TalonSRX(7);
         WPI_TalonSRX t = new WPI_TalonSRX(5);

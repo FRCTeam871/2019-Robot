@@ -46,7 +46,7 @@ public class GripPipeline implements VisionPipeline {
 
 		// Step HSL_Threshold0:
 		Mat hslThresholdInput = blurInput;
-		double[] hslThresholdHue = {0.0, 180.0};
+		double[] hslThresholdHue = {0.0, 90.0};
 		double[] hslThresholdSaturation = {0.0, 255.0};
 		double[] hslThresholdLuminance = {162.52634895615083, 254.71160075471204};
 		hslThreshold(hslThresholdInput, hslThresholdHue, hslThresholdSaturation, hslThresholdLuminance, hslThresholdOutput);
@@ -58,7 +58,7 @@ public class GripPipeline implements VisionPipeline {
 
 		// Step Filter_Contours0:
 		ArrayList<MatOfPoint> filterContoursContours = findContoursOutput;
-		double filterContoursMinArea = 50.0;
+		double filterContoursMinArea = 120.0;
 		double filterContoursMinPerimeter = 20.0;
 		double filterContoursMinWidth = 10.0;
 		double filterContoursMaxWidth = 1000;
@@ -70,7 +70,7 @@ public class GripPipeline implements VisionPipeline {
 		double filterContoursMinRatio = 0.0;
 		double filterContoursMaxRatio = 1000.0;
 		filterContours(filterContoursContours, filterContoursMinArea, filterContoursMinPerimeter, filterContoursMinWidth, filterContoursMaxWidth, filterContoursMinHeight, filterContoursMaxHeight, filterContoursSolidity, filterContoursMaxVertices, filterContoursMinVertices, filterContoursMinRatio, filterContoursMaxRatio, filterContoursOutput);
-
+		//System.out.println(filterContoursContours.size() + " " + filterContoursOutput.size());
 		// Step Convex_Hulls0:
 		ArrayList<MatOfPoint> convexHullsContours = filterContoursOutput;
 		convexHulls(convexHullsContours, convexHullsOutput);

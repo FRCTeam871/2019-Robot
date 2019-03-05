@@ -10,6 +10,7 @@ package frc.team871;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import frc.team871.config.FrisbroConfig;
 import frc.team871.config.IRowBoatConfig;
 import frc.team871.config.SecondRowBoatConfig;
 import frc.team871.control.IControlScheme;
@@ -45,13 +46,14 @@ public class Robot extends TimedRobot {
     private boolean testBoard = true;
     private long lastPrint = System.currentTimeMillis();
 
+
     /**
       * This function is run when the robot is first started up and should be used
       * for any initialization code.
       */
     @Override
     public void robotInit() {
-        this.config = SecondRowBoatConfig.DEFAULT;
+        this.config = FrisbroConfig.DEFAULT;
         this.controlScheme = InitialControlScheme.DEFAULT;
         this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro(), config.getHeadingPIDConfig(), config.getAutoDockXPIDConfig());
 
@@ -120,8 +122,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
-
-
 
         if(driveTrainEnabled) driveTrain.handleInputs(controlScheme.getMecDriveXAxis(), controlScheme.getMecDriveYAxis(), controlScheme.getMecDriveRotationAxis(), controlScheme.getRobotOrientationToggleButton(), controlScheme.getHeadingHoldButton(), controlScheme.getResetGyroButton(), config.getTargetProvider(), controlScheme.getAutoDockButton());
         if(testBoard) return;
