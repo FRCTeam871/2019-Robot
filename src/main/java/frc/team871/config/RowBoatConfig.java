@@ -7,6 +7,7 @@ import com.kauailabs.navx.frc.AHRS;
 import com.team871.hid.IAxis;
 import com.team871.io.actuator.CombinedSpeedController;
 import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoMode;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
@@ -90,13 +91,20 @@ public enum RowBoatConfig implements IRowBoatConfig {
         outerValve = new Solenoid(1);
 
         this.lineCam = CameraServer.getInstance().startAutomaticCapture(0);
+        UsbCamera targetCam = CameraServer.getInstance().startAutomaticCapture(1);
 
-        final int camWidth = 320;
-        final int camHeight = 240;
+        targetCam.setExposureManual(20);
+
+        final int camWidth = 320/2;
+        final int camHeight = 240/2;
 
         this.lineCam.setResolution(camWidth, camHeight);
+        this.lineCam.setPixelFormat(VideoMode.PixelFormat.kMJPEG);
+        targetCam.setResolution(camWidth, camHeight);
+        targetCam.setPixelFormat(VideoMode.PixelFormat.kMJPEG);
+        //this.lineCam.setExposureAuto();
 
-        targetProvider = new RobotUSBTargetProvider(this.lineCam, camWidth, camHeight);
+        targetProvider = new RobotUSBTargetProvider(this.lineCam, targetCam, camWidth, camHeight, camWidth, camHeight);
     }
 
     @Override

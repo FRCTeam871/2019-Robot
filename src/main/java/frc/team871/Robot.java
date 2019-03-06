@@ -76,7 +76,7 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
 
         //TODO: network tables
-        boolean printLineStatus = true;
+        boolean printLineStatus = false;
         if(printLineStatus && System.currentTimeMillis() - lastPrint > 500) {
             lastPrint = System.currentTimeMillis();
             if (config.getTargetProvider().getLineSensor().doesTargetExist()) {
@@ -86,6 +86,18 @@ public class Robot extends TimedRobot {
                 System.out.println("No line");
             }
         }
+
+        boolean printTargetStatus = true;
+        if(printTargetStatus && System.currentTimeMillis() - lastPrint > 500) {
+            lastPrint = System.currentTimeMillis();
+            if (config.getTargetProvider().getTarget().doesTargetExist()) {
+                DecimalFormat d = new DecimalFormat("0.0");
+                System.out.println(d.format(config.getTargetProvider().getTarget().getCenterX()) + "\t" + d.format(config.getTargetProvider().getTarget().getCenterY()) + "\t" + d.format(config.getTargetProvider().getTarget().getLengthX()) + "\t" + d.format(config.getTargetProvider().getTarget().getLengthY()));
+            } else {
+                System.out.println("No target");
+            }
+        }
+
 //        System.out.println(controlScheme.getArmTargetYAxis().getRaw() + " " + controlScheme.getArmTargetXAxis().getRaw() + " -> " + controlScheme.getArmTargetXAxis().getValue());
     }
 

@@ -88,15 +88,20 @@ public enum SecondRowBoatConfig implements IRowBoatConfig {
         outerValve = new Solenoid(1);
 
         this.lineCam = CameraServer.getInstance().startAutomaticCapture(0);
+        UsbCamera targetCam = CameraServer.getInstance().startAutomaticCapture(1);
+
+        targetCam.setExposureManual(20);
 
         final int camWidth = 320/2;
         final int camHeight = 240/2;
 
         this.lineCam.setResolution(camWidth, camHeight);
         this.lineCam.setPixelFormat(VideoMode.PixelFormat.kMJPEG);
+        targetCam.setResolution(camWidth, camHeight);
+        targetCam.setPixelFormat(VideoMode.PixelFormat.kMJPEG);
         //this.lineCam.setExposureAuto();
 
-        targetProvider = new RobotUSBTargetProvider(this.lineCam, camWidth, camHeight);
+        targetProvider = new RobotUSBTargetProvider(this.lineCam, targetCam, camWidth, camHeight, camWidth, camHeight);
     }
 
     @Override

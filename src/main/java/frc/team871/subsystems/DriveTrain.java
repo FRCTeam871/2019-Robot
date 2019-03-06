@@ -125,11 +125,13 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput, 
             driveRobotOriented(autoDockXController.get(), Math.abs(line.getCenterX()) > 20 || Math.abs(line.getLineAngle()) > 5 ? 0 : -0.3, 0);
         }else{
             if(target.doesTargetExist()) {
-                setHeadingHold(gyro.getYaw());
+
+//                setHeadingHold(gyro.getYaw());
                 autoDockXSource.setValue(target.getCenterX());
                 autoDockXController.setEnabled(true);
-                setHeadingHoldEnabled(true);
-                driveRobotOriented(autoDockXController.get(), .3, 0);
+//                setHeadingHoldEnabled(true);
+                System.out.println(autoDockXController.get());
+                driveRobotOriented(autoDockXController.get(), 0, 0);
             }else if((!hadLine && lostLineTimer.get() <= 1.0)){
                 driveRobotOriented(autoDockXController.get(), 0, 0);
             }else{

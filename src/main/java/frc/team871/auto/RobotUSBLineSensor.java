@@ -31,7 +31,7 @@ public class RobotUSBLineSensor implements ILineSensor{
     }
 
     private <P extends GripPipeline> void update(P pipeline) {
-        System.out.println(pipeline.filterContoursOutput().size() + " " + pipeline.findContoursOutput().size());
+        //System.out.println(pipeline.filterContoursOutput().size() + " " + pipeline.findContoursOutput().size());
         if(!pipeline.convexHullsOutput().isEmpty()){
             hasLine = true;
             RotatedRect r = Imgproc.minAreaRect(new MatOfPoint2f(pipeline.convexHullsOutput().stream().sorted((m1, m2) -> {
