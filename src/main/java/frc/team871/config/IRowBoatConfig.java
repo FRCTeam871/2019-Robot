@@ -1,14 +1,13 @@
 package frc.team871.config;
 
 import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.cscore.UsbCamera;
 import com.team871.hid.IAxis;
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
 import frc.team871.auto.ITargetProvider;
+import frc.team871.config.network.DeepSpaceNetConfig;
 
 public interface IRowBoatConfig{
 
@@ -55,4 +54,6 @@ public interface IRowBoatConfig{
     Solenoid getVacuumInnerValve();
 
     Solenoid getVacuumOuterValve();
+
+    DeepSpaceNetConfig getNetworkConfig();
 }

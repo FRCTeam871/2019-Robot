@@ -1,6 +1,5 @@
 package frc.team871.config;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
@@ -8,15 +7,15 @@ import com.team871.hid.IAxis;
 import com.team871.io.actuator.CombinedSpeedController;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
 import frc.team871.auto.ITargetProvider;
 import frc.team871.auto.RobotUSBTargetProvider;
+import frc.team871.config.network.DeepSpaceNetConfig;
+
 import java.util.Arrays;
 
 public enum RowBoatConfig implements IRowBoatConfig {
@@ -48,7 +47,11 @@ public enum RowBoatConfig implements IRowBoatConfig {
 
     RobotUSBTargetProvider targetProvider;
 
+    DeepSpaceNetConfig netConfig;
+
     RowBoatConfig(){
+        netConfig = new DeepSpaceNetConfig(false, NetworkTableInstance.getDefault(), "0.00");
+
         this.frontLeftMotor = new WPI_VictorSPX(3);
         this.rearLeftMotor = new WPI_VictorSPX(2);
         this.frontRightMotor = new WPI_VictorSPX(0);
@@ -198,6 +201,11 @@ public enum RowBoatConfig implements IRowBoatConfig {
     @Override
     public Solenoid getVacuumOuterValve() {
         return outerValve;
+    }
+
+    @Override
+    public DeepSpaceNetConfig getNetworkConfig() {
+        return netConfig;
     }
 
     @Override

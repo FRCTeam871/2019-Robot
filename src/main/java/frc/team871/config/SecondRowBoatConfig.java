@@ -10,11 +10,11 @@ import edu.wpi.cscore.VideoMode;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
+import frc.team871.auto.CoProcessorTargetProvider;
 import frc.team871.auto.ITargetProvider;
-import frc.team871.auto.RobotUSBTargetProvider;
+
 import java.util.Arrays;
 
 public enum SecondRowBoatConfig implements IRowBoatConfig {
@@ -44,7 +44,7 @@ public enum SecondRowBoatConfig implements IRowBoatConfig {
     Solenoid innerValve;
     Solenoid outerValve;
 
-    RobotUSBTargetProvider targetProvider;
+    CoProcessorTargetProvider targetProvider;
 
     SecondRowBoatConfig(){
         this.frontLeftMotor = new WPI_VictorSPX(3);
@@ -96,7 +96,7 @@ public enum SecondRowBoatConfig implements IRowBoatConfig {
         this.lineCam.setPixelFormat(VideoMode.PixelFormat.kMJPEG);
         //this.lineCam.setExposureAuto();
 
-        targetProvider = new RobotUSBTargetProvider(this.lineCam, camWidth, camHeight);
+        targetProvider = new CoProcessorTargetProvider(getNetworkConfig().getInstance().getTable(getNetworkConfig().VISUAL_TARGET_SENSOR_KEY), getNetworkConfig().getInstance().getTable(getNetworkConfig().LINE_SENSOR_KEY));
     }
 
     @Override
