@@ -8,6 +8,7 @@ import com.team871.io.actuator.CombinedSpeedController;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoMode;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -96,7 +97,8 @@ public enum SecondRowBoatConfig implements IRowBoatConfig {
         this.lineCam.setPixelFormat(VideoMode.PixelFormat.kMJPEG);
         //this.lineCam.setExposureAuto();
 
-        targetProvider = new CoProcessorTargetProvider(getNetworkConfig().getInstance().getTable(getNetworkConfig().VISUAL_TARGET_SENSOR_KEY), getNetworkConfig().getInstance().getTable(getNetworkConfig().LINE_SENSOR_KEY));
+        NetworkTable dataTable = getNetworkConfig().getInstance().getTable(getNetworkConfig().SENSOR_DATA_TABLE_KEY);
+        targetProvider = new CoProcessorTargetProvider(dataTable.getSubTable(getNetworkConfig()getNetworkConfig().VISUAL_TARGET_SENSOR_KEY), dataTable.getSubTable(getNetworkConfig().LINE_SENSOR_KEY));
     }
 
     @Override
