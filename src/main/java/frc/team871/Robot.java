@@ -15,14 +15,14 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import frc.team871.config.IRowBoatConfig;
 import frc.team871.config.RowBoatConfig;
 import frc.team871.control.IControlScheme;
-import frc.team871.control.InfinityGauntletControlScheme;
 import frc.team871.control.SaitekControlScheme;
 import frc.team871.subsystems.Arm;
 import frc.team871.subsystems.ArmSegment;
 import frc.team871.subsystems.DriveTrain;
 import frc.team871.subsystems.Vacuum;
 import frc.team871.subsystems.Wrist;
-import frc.team871.subsystems.peripheral.PixelStripMode;
+import frc.team871.subsystems.peripheral.LEDStripMode;
+import frc.team871.subsystems.peripheral.LEDStripSettings;
 import frc.team871.subsystems.peripheral.Teensy;
 
 /**
@@ -66,8 +66,7 @@ public class Robot extends TimedRobot {
         this.arm = new Arm(upperSegment, lowerSegment, wrist);
 
         this.teensyWeensy = new Teensy(new SerialCommunicationInterface(), EndPoint.NULL_ENDPOINT);
-        teensyWeensy.setPixelStripMode(0, PixelStripMode.FIRE_RED );//TODO: implement PixelStripMode.LEAF_GREEN
-
+        teensyWeensy.write(0, LEDStripMode.bounce(4, 0xff0000, 0x00ff00, 0x0000ff, 0xff00ff));
 
         LiveWindow.add(arm);
 
@@ -75,7 +74,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-
+        teensyWeensy.update();
     }
 
     @Override

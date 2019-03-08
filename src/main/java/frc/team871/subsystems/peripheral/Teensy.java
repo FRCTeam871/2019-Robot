@@ -20,15 +20,15 @@ public class Teensy {
         this.endpoint = endpoint;
     }
 
-    public void writePacketAll(TeensyPacket packet){
-        write(ALL_PREFIX + DELIMITER + packet)
+    public void writeAll(TeensyPacket packet){
+        writeRaw(ALL_PREFIX + DELIMITER + packet);
     }
 
-    public void writePacket(int strip, TeensyPacket packet){
-        write(strip + DELIMITER + packet)
+    public void write(int strip, TeensyPacket packet){
+        writeRaw(strip + DELIMITER + packet);
     }
 
-    public void write(String str) {
+    public void writeRaw(String str) {
         if(str.length() > MAX_MSG_LENGTH) {
             System.err.println("[Teensy] Message exceeds max length! (" + str.length() + "/" + MAX_MSG_LENGTH + "): " + str);
         }else {
@@ -59,43 +59,17 @@ public class Teensy {
             if(!queue.isEmpty()) {
                 packet.setPayload(queue.pop());
 
-//              System.out.println("Writing: " + str);
-
                 comms.send(endpoint, packet);
 
                 lastFlush = now;
             }
         }
-
-//        byte[] read = comms.read( )
-//        if(port.getBytesReceived() > 0) {
-//            System.out.println("Recieved: " + port.readString());
-//        }
-//
-//        long now = System.currentTimeMillis();
-//        if(now - lastFlush >= 100) {
-//            String str = null;
-//
-//            if(!queue.isEmpty()) {
-//                str = queue.get(0);
-//                queue.remove(0);
-//
-////              System.out.println("Writing: " + str);
-//
-//                comms.send(, str.getBytes());
-//
-//                port.writeString(str + "\n");
-//                port.flush();
-//
-//                lastFlush = now;
-//            }
-//        }
     }
 
     public static int color(int r, int g, int b){
-        int rgb = red;
-        rgb = (rgb << 8) + green;
-        rgb = (rgb << 8) + blue;
+        int rgb = r;
+        rgb = (rgb << 8) + g;
+        rgb = (rgb << 8) + b;
         return rgb;
     }
 

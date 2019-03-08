@@ -1,6 +1,6 @@
 package frc.team871.subsystems.peripheral;
 
-public class LEDStripMode {
+public class LEDStripSettings {
 
     /**
      * @param brightness The brightness to set as a percentage [0-100]
