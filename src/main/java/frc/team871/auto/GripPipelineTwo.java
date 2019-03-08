@@ -42,9 +42,9 @@ public class GripPipelineTwo implements VisionPipeline {
 	@Override	public void process(Mat source0) {
 		// Step HSV_Threshold0:
 		Mat hsvThresholdInput = source0;
-		double[] hsvThresholdHue = {55, 91};
-		double[] hsvThresholdSaturation = {70, 255.0};
-		double[] hsvThresholdValue = {35, 255.0};
+		double[] hsvThresholdHue = {49, 85};
+		double[] hsvThresholdSaturation = {170, 255.0};
+		double[] hsvThresholdValue = {80, 255.0};
 		hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
 
 		// Step Find_Contours0:

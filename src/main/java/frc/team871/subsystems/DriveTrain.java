@@ -126,10 +126,10 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput, 
         }else{
             if(target.doesTargetExist()) {
 
-//                setHeadingHold(gyro.getYaw());
+                setHeadingHold(gyro.getYaw());
                 autoDockXSource.setValue(target.getCenterX());
                 autoDockXController.setEnabled(true);
-//                setHeadingHoldEnabled(true);
+                setHeadingHoldEnabled(true);
                 System.out.println(autoDockXController.get());
                 driveRobotOriented(autoDockXController.get(), 0, 0);
             }else if((!hadLine && lostLineTimer.get() <= 1.0)){

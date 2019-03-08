@@ -24,7 +24,7 @@ public class RobotUSBLineSensor implements ILineSensor{
 
     RobotUSBLineSensor(UsbCamera cam, int width, int height){
         vt = new VisionThread(cam, new GripPipeline(), this::update);
-        vt.start();
+//        vt.start();
         this.cam = cam;
         this.width = width;
         this.height = height;
