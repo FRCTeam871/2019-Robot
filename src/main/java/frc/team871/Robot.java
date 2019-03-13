@@ -14,6 +14,7 @@ import frc.team871.config.FrisbroConfig;
 import frc.team871.config.IRowBoatConfig;
 import frc.team871.config.SecondRowBoatConfig;
 import frc.team871.control.IControlScheme;
+import frc.team871.control.InfinityGauntletControlScheme;
 import frc.team871.control.InitialControlScheme;
 import frc.team871.control.SaitekControlScheme;
 import frc.team871.subsystems.Arm;
@@ -42,8 +43,8 @@ public class Robot extends TimedRobot {
     private ArmSegment upperSegment;
     private ArmSegment lowerSegment;
 
-    private boolean manualDriveMode = true;
-    private boolean driveTrainEnabled = true;
+    private boolean manualDriveMode = false;
+    private boolean driveTrainEnabled = false;
     private boolean testBoard = false;
     private long lastPrint = System.currentTimeMillis();
 
@@ -55,7 +56,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         this.config = SecondRowBoatConfig.DEFAULT;
-        this.controlScheme = InitialControlScheme.DEFAULT;
+        this.controlScheme = InfinityGauntletControlScheme.DEFAULT;
         this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro(), config.getHeadingPIDConfig(), config.getAutoDockXPIDConfig());
 
         if(!testBoard) {
@@ -128,7 +129,7 @@ public class Robot extends TimedRobot {
 
                 upperSegment.enablePID();
                 lowerSegment.enablePID();
-                wrist.enablePID();
+//                wrist.enablePID();
             }
         }
     }
