@@ -77,6 +77,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
 
+
         //TODO: network tables
         boolean printLineStatus = false;
         if(printLineStatus && System.currentTimeMillis() - lastPrint > 500) {

@@ -77,15 +77,16 @@ public enum SecondRowBoatConfig implements IRowBoatConfig {
 
         double lowerMaxSpeed = 1.0;
         //lowerPot = new TalonMappableAxis((TalonSRX)lowerArmMotor, 342, 568, 0, -90);
-        lowerPot = new TalonSmartAxis((WPI_TalonSRX)lowerArmMotor,  1.0 / 225.0 * 90.0, - -225);
-        lowerPIDConfig = new PIDConfiguration(0.04, 0, 0.04, -110, 80, -lowerMaxSpeed, lowerMaxSpeed, 4);
+        lowerPot = new TalonSmartAxis((WPI_TalonSRX)lowerArmMotor,  1.0 / 213 * 90.0, -191);
+        //455 c  242 u90
+        lowerPIDConfig = new PIDConfiguration(0.01, 0, 0.04, -110, 80, -lowerMaxSpeed, lowerMaxSpeed, 4);
         //-560 c -785 u90
 
 
         double upperMaxSpeed = 0.5;
         //upperPot = new TalonMappableAxis(t, 322, 433, -90, 0);
         upperPot = new TalonSmartAxis((WPI_TalonSRX)t, 1.0 / 86.0 * 90.0, -690);
-        upperPIDConfig = new PIDConfiguration(-0.025, 0, 0.03, -145, 145, -upperMaxSpeed, upperMaxSpeed, 4);
+        upperPIDConfig = new PIDConfiguration(-0.01, 0, 0.03, -145, 145, -upperMaxSpeed, upperMaxSpeed, 4);
         //659 c 745
 
         innerValve = new Solenoid(0);
