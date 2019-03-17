@@ -43,7 +43,7 @@ public class Robot extends TimedRobot {
     private ArmSegment upperSegment;
     private ArmSegment lowerSegment;
 
-    private boolean manualDriveMode = false;
+    private boolean manualDriveMode = true;
     private boolean driveTrainEnabled = false;
     private boolean testBoard = false;
     private long lastPrint = System.currentTimeMillis();
@@ -56,7 +56,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         this.config = SecondRowBoatConfig.DEFAULT;
-        this.controlScheme = InfinityGauntletControlScheme.DEFAULT;
+        this.controlScheme = InitialControlScheme.DEFAULT;
         this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro(), config.getHeadingPIDConfig(), config.getAutoDockXPIDConfig());
 
         if(!testBoard) {

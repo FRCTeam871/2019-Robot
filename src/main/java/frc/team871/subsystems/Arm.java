@@ -42,33 +42,25 @@ public class Arm implements Sendable {
         upperSq = upperSegment.getLength() * upperSegment.getLength();
     }
 
-    private double calcUpperAngle(){
+    private double calcUpperAngle() {
         double sqDst = (x * x) + (y * y);
         double ac = (upperSq + lowerSq - sqDst) / (2 * upperSegment.getLength() * lowerSegment.getLength());
-        if(ac > 1) ac = 1;
+
+        if(ac > 1){
+            ac = 1;
+        }
+
         return -(-180 + Math.toDegrees(Math.acos(ac)));
     }
 
-    private double calcLowerAngle(){
-
-        double targetX = x;
-        double targetY = y;
-
+    private double calcLowerAngle() {
         double sqDst = (x * x) + (y * y);
-
-//        if(sqDst > lowerSq + upperSq){
-//            double angle = Math.atan2(targetY, targetX);
-//
-//            targetX = (getRadius()) * Math.cos(angle);
-//            targetY = (getRadius()) * Math.sin(angle);
-//
-//            sqDst = (targetX * targetX) + (targetY * targetY);
-//        }
-
         double a = Math.atan2(y, x);
 
         double ac = (lowerSq + sqDst - upperSq) / (2 * lowerSegment.getLength() * Math.sqrt(sqDst));
-        if(ac > 1) ac = 1;
+        if(ac > 1) {
+            ac = 1;
+        }
 
         return Math.toDegrees(a - Math.acos(ac));
     }
@@ -81,7 +73,10 @@ public class Arm implements Sendable {
     }
 
     public void goTo(double x, double y){
-        if(x + wrist.getLength() > MAX_EXTENT) x = MAX_EXTENT - wrist.getLength();
+        if(x + wrist.getLength() > MAX_EXTENT) {
+            x = MAX_EXTENT - wrist.getLength();
+        }
+
         this.x = x;
         this.y = y;
 
@@ -108,11 +103,9 @@ public class Arm implements Sendable {
     }
 
     public void handleInverseKinematicsMode(IButton button) {
-
         if(button.getValue()){
             currentArmMode = currentArmMode == ArmMode.INVERSE_KINEMATICS ? ArmMode.DIRECT : ArmMode.INVERSE_KINEMATICS;
         }
-        // currentArmMode = (currentArmMode == ArmMode.INVERSE_KINEMATICS)? ArmMode.DIRECT : ArmMode.INVERSE_KINEMATICS;
     }
 
     /**
@@ -126,21 +119,29 @@ public class Arm implements Sendable {
         if(currentArmMode == ArmMode.INVERSE_KINEMATICS) {
             goToRelative((xAxis.getValue() + 1) / 2, yAxis.getValue());
         } else {
-            System.out.println(lowerAxis.getValue() + " " + upperAxis.getValue());
-            calcTarget(lowerAxis.getValue() * -Math.PI/2, upperAxis.getValue() * -Math.PI/2);
+            calcTarget(lowerAxis.getValue(), upperAxis.getValue());
         }
     }
 
-    public void calcTarget(double lowerPowAngle1, double upperPowAngle2){
-//        lowerPowAngle1 += 45;
+    /**
+     * Apply forward kinematics from the input angles to get the desired setpoint.
+     *
+     * @param lowerPotAngle The lower joint angle of the controller.
+     * @param upperPotAngle The upper joint angle of the controller.
+     */
+    private void calcTarget(double lowerPotAngle, double upperPotAngle) {
+        // In reality this is upperAngle - (90 - lowerAngle)
+        final double compoundAngle = upperPotAngle + lowerPotAngle - 90;
+        final double lowerRads = Math.toRadians(lowerPotAngle);
+        final double compoundRads = Math.toRadians(compoundAngle);
 
-        double angle3 = upperPowAngle2 - lowerPowAngle1;
-        double x = (Math.cos(lowerPowAngle1) * lowerSegment.getLength()) + (Math.cos(angle3) * upperSegment.getLength());
-        double y = (Math.sin(lowerPowAngle1) * lowerSegment.getLength()) + (Math.sin(angle3) * upperSegment.getLength());
+        final double h1 = Math.sin(lowerRads) * lowerSegment.getLength();
+        final double h2 = Math.cos(compoundRads) * upperSegment.getLength();
 
-//        System.out.println(x + " " + y);
+        final double l1 = Math.cos(lowerRads) * lowerSegment.getLength();
+        final double l2 = -Math.sin(compoundRads) * upperSegment.getLength();
 
-        goTo(x, y);
+        goTo(l1 + l2, h1 + h2);
     }
 
 
