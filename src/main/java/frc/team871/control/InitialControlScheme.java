@@ -22,6 +22,8 @@ public enum InitialControlScheme implements IControlScheme{
         systemsController.getButton(XBoxButtons.Y).setMode(ButtonTypes.TOGGLE);
         systemsController.getButton(XBoxButtons.BACK).setMode(ButtonTypes.RISING);
         systemsController.getButton(XBoxButtons.A).setMode(ButtonTypes.TOGGLE);
+        systemsController.getButton(XBoxButtons.RBUMPER).setMode(ButtonTypes.RISING);
+        systemsController.getButton(XBoxButtons.LBUMPER).setMode(ButtonTypes.RISING);
         systemsController.getAxis(XBoxAxes.TRIGGER).setDeadband(0.2);
         systemsController.getAxis(XBoxAxes.LEFTY).setDeadband(0.2);
         systemsController.getAxis(XBoxAxes.RIGHTY).setDeadband(0.2);
@@ -103,5 +105,20 @@ public enum InitialControlScheme implements IControlScheme{
     public IAxis getArmTargetYAxis() {
 //        return unusedAxis;
         return systemsController.getAxis(XBoxAxes.RIGHTY);
+    }
+
+    @Override
+    public IAxis getArmSetpointAxis() {
+        return unusedAxis;
+    }
+
+    @Override
+    public IButton getArmSetpointUpButton() {
+        return systemsController.getButton(XBoxButtons.RBUMPER);
+    }
+
+    @Override
+    public IButton getArmSetpointDownButton() {
+        return systemsController.getButton(XBoxButtons.LBUMPER);
     }
 }

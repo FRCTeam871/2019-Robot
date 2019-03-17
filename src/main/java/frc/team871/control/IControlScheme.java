@@ -33,5 +33,10 @@ public interface IControlScheme {
 
     IAxis getArmTargetYAxis();
 
+    IAxis getArmSetpointAxis();
+
+    IButton getArmSetpointUpButton();
+
+    IButton getArmSetpointDownButton();
 
 }
