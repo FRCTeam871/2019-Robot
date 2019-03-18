@@ -10,13 +10,10 @@ package frc.team871;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import frc.team871.config.FrisbroConfig;
 import frc.team871.config.IRowBoatConfig;
 import frc.team871.config.SecondRowBoatConfig;
 import frc.team871.control.IControlScheme;
-import frc.team871.control.InfinityGauntletControlScheme;
 import frc.team871.control.InitialControlScheme;
-import frc.team871.control.SaitekControlScheme;
 import frc.team871.subsystems.Arm;
 import frc.team871.subsystems.ArmSegment;
 import frc.team871.subsystems.DriveTrain;
@@ -60,7 +57,6 @@ public class Robot extends TimedRobot {
         this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro(), config.getHeadingPIDConfig(), config.getAutoDockXPIDConfig());
 
         if(!testBoard) {
-
             this.vacuum = new Vacuum(config.getVacuumMotor(), config.getGrabSensor(), config.getVacuumInnerValve(), config.getVacuumOuterValve()); //TODO: add solenoids to config
 
             upperSegment = new ArmSegment(config.getUpperArmMotor(), config.getUpperArmPot(), config.getUpperArmPIDConfig(), 20.5);
@@ -69,15 +65,11 @@ public class Robot extends TimedRobot {
             this.arm = new Arm(upperSegment, lowerSegment, wrist);
 
             LiveWindow.add(arm);
-
         }
-
     }
 
     @Override
     public void robotPeriodic() {
-
-
         //TODO: network tables
         boolean printLineStatus = false;
         if(printLineStatus && System.currentTimeMillis() - lastPrint > 500) {
@@ -123,11 +115,6 @@ public class Robot extends TimedRobot {
                 lowerSegment.setAngle(lowerSegment.getAngle());
                 wrist.setOrientation(wrist.getAngle());
 
-//            wrist.setOrientation(0);
-//            upperSegment.setAngle(0);
-//            lowerSegment.setAngle(0);
-
-
                 upperSegment.enablePID();
                 lowerSegment.enablePID();
 //                wrist.enablePID();
@@ -137,35 +124,23 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
+        if(driveTrainEnabled) {
+            driveTrain.handleInputs(controlScheme.getMecDriveXAxis(), controlScheme.getMecDriveYAxis(), controlScheme.getMecDriveRotationAxis(), controlScheme.getRobotOrientationToggleButton(), controlScheme.getHeadingHoldButton(), controlScheme.getResetGyroButton(), config.getTargetProvider(), controlScheme.getAutoDockButton());
+        }
 
-        if(driveTrainEnabled) driveTrain.handleInputs(controlScheme.getMecDriveXAxis(), controlScheme.getMecDriveYAxis(), controlScheme.getMecDriveRotationAxis(), controlScheme.getRobotOrientationToggleButton(), controlScheme.getHeadingHoldButton(), controlScheme.getResetGyroButton(), config.getTargetProvider(), controlScheme.getAutoDockButton());
         if(testBoard) return;
 
+        vacuum.handleInputs(controlScheme.getInnerSuctionButton(), controlScheme.getOuterSuctionButton());
 
-
-        vacuum.setState(controlScheme.getVacuumToggleButton());
-
-        if(!manualDriveMode){
+        if(!manualDriveMode) {
             arm.handleArmAxes(controlScheme.getUpperArmAxis(), controlScheme.getLowerArmAxis(), controlScheme.getArmTargetXAxis(), controlScheme.getArmTargetYAxis());
             arm.handleInverseKinematicsMode(controlScheme.getInverseKinematicsToggleButton());
 
             wrist.handleInputs(controlScheme.getWristAxis(), controlScheme.getWristToggleButton());
-
-        }else{
+        } else {
             lowerSegment.rotate(controlScheme.getLowerArmAxis().getValue());
             upperSegment.rotate(controlScheme.getUpperArmAxis().getValue());
             wrist.rotate(controlScheme.getWristAxis().getValue());
         }
-
-    }
-
-    @Override
-    public void testInit() {
-
-    }
-
-    @Override
-    public void testPeriodic() {
-//        teleopPeriodic();
     }
 }

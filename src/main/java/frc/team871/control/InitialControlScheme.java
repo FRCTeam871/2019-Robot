@@ -24,6 +24,8 @@ public enum InitialControlScheme implements IControlScheme{
         systemsController.getButton(XBoxButtons.Y).setMode(ButtonTypes.TOGGLE);
         systemsController.getButton(XBoxButtons.BACK).setMode(ButtonTypes.RISING);
         systemsController.getButton(XBoxButtons.A).setMode(ButtonTypes.TOGGLE);
+        systemsController.getButton(XBoxButtons.X).setMode(ButtonTypes.RISING);
+        systemsController.getButton(XBoxButtons.B).setMode(ButtonTypes.RISING);
         systemsController.getAxis(XBoxAxes.TRIGGER).setDeadband(0.2);
         systemsController.getAxis(XBoxAxes.LEFTY).setDeadband(0.2);
         systemsController.getAxis(XBoxAxes.RIGHTY).setDeadband(0.2);
@@ -41,8 +43,13 @@ public enum InitialControlScheme implements IControlScheme{
     }
 
     @Override
-    public IButton getVacuumToggleButton() {
-        return systemsController.getButton(XBoxButtons.Y);
+    public IButton getOuterSuctionButton() {
+        return systemsController.getButton(XBoxButtons.B);
+    }
+
+    @Override
+    public IButton getInnerSuctionButton() {
+        return systemsController.getButton(XBoxButtons.X);
     }
 
     @Override

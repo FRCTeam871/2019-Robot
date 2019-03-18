@@ -1,7 +1,6 @@
 package frc.team871.subsystems;
 
 import com.team871.hid.IAxis;
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.SpeedController;

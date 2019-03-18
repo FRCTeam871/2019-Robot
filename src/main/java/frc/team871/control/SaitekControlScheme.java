@@ -28,6 +28,9 @@ public enum SaitekControlScheme implements IControlScheme{
         saitekStickJoy.getButton(SaitekButtons.B).setMode(ButtonTypes.MOMENTARY);
         saitekStickJoy.getButton(SaitekButtons.A).setMode(ButtonTypes.RISING);
 
+        saitekStickJoy.getButton(SaitekButtons.FIRE).setMode(ButtonTypes.RISING);
+        saitekStickJoy.getButton(SaitekButtons.E).setMode(ButtonTypes.RISING);
+
         unusedAxis = new ConstantAxis(0);
         unusedButton = new ConstantButton(false);
 
@@ -35,8 +38,13 @@ public enum SaitekControlScheme implements IControlScheme{
     }
 
     @Override
-    public IButton getVacuumToggleButton() {
-        return saitekStickJoy.getButton(SaitekButtons.HAT_LEFT);
+    public IButton getOuterSuctionButton() {
+        return saitekStickJoy.getButton(SaitekButtons.FIRE);
+    }
+
+    @Override
+    public IButton getInnerSuctionButton() {
+        return saitekStickJoy.getButton(SaitekButtons.E);
     }
 
     @Override

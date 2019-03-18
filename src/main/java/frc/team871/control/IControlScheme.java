@@ -5,7 +5,9 @@ import com.team871.hid.IButton;
 
 public interface IControlScheme {
 
-    IButton getVacuumToggleButton();
+    IButton getOuterSuctionButton();
+
+    IButton getInnerSuctionButton();
 
     IButton getInverseKinematicsToggleButton();
 

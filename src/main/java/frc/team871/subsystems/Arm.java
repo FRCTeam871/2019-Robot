@@ -21,7 +21,6 @@ public class Arm implements Sendable {
     private final double lowerSq;
     private final double upperSq;
 
-
     private enum ArmMode {
         DIRECT,
         INVERSE_KINEMATICS
