@@ -59,7 +59,7 @@ public class Vacuum implements Sendable {
                 break;
             case DISABLED:
                 pump.set(0.);
-                setSideOpen(VacuumSide.BOTH);
+//                setSideOpen(VacuumSide.BOTH);
                 break;
         }
         state = newState;

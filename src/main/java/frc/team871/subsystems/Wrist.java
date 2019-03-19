@@ -57,6 +57,7 @@ public class Wrist implements Sendable {
 
     public void setOrientation(double angle){
         pid.setSetpoint(angle);
+//        System.out.println(angle);
     }
 
     public double getAngle(){
@@ -75,9 +76,9 @@ public class Wrist implements Sendable {
      */
     public void handleInputs(IAxis axis, IButton button){
         if(oldAxis != axis.getValue()){
-            setOrientation(axis.getValue() * 90);
+            setOrientation(axis.getValue() * 120);
         }else if(oldButton != button.getValue()){
-            setOrientation(button.getValue() ? 90 : 0);
+            setOrientation(button.getValue() ? 120 : 0);
         }
         oldAxis = axis.getValue();
         oldButton = button.getValue();

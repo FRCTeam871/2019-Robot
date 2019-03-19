@@ -75,6 +75,7 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput, 
 
     public void handleInputs(IAxis xAxis, IAxis yAxis, IAxis rotationAxis, IButton fieldDriveModeButton, IButton headingHoldButton, IButton resetGyroButton, ITargetProvider targetProvider, IButton autoDockButton) {
         //System.out.println(autoDoctorState);
+//        autoDoctorState = DockMode.PLAye
         if (autoDoctorState == DockMode.PLAYER) {
             if (getDriveMode() == DriveTrain.DriveMode.ROBOT) {
                 driveRobotOriented(xAxis.getValue(), yAxis.getValue(), rotationAxis.getValue());
@@ -159,7 +160,8 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput, 
     public void driveRobotOriented(double x, double y, double r) {
         lastXInput = x;
         lastYInput = y;
-        super.driveCartesian(y, x, r + (headingPID.isEnabled() ? pidRotation : 0));
+        System.out.println(x + " " + y);
+        super.driveCartesian(-x, -y, r + (headingPID.isEnabled() ? pidRotation : 0));
     }
 
     @Override

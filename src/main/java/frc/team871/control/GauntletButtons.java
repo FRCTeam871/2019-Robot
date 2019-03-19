@@ -3,8 +3,8 @@ package frc.team871.control;
 import com.team871.hid.ButtonID;
 
 public enum GauntletButtons implements ButtonID {
-    C(0),
-    Z(1);
+    C(1),
+    Z(2);
 
     private final int val;
 

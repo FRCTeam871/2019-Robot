@@ -47,10 +47,10 @@ public enum SecondRowBoatConfig implements IRowBoatConfig {
     RobotUSBTargetProvider targetProvider;
 
     SecondRowBoatConfig(){
-        this.frontLeftMotor = new WPI_TalonSRX(3);
-        this.rearLeftMotor = new WPI_TalonSRX(2);
-        this.frontRightMotor = new WPI_TalonSRX(0);
-        this.rearRightMotor = new WPI_TalonSRX(1);
+        this.frontLeftMotor = new WPI_VictorSPX(3);
+        this.rearLeftMotor = new WPI_VictorSPX(2);
+        this.frontRightMotor = new WPI_VictorSPX(0);
+        this.rearRightMotor = new WPI_VictorSPX(1);
 
         headingPIDConfig = new PIDConfiguration(0.01, 0, 0.03, -180, 180, -0.5, 0.5, 5);
         autoDockXPIDConfig = new PIDConfiguration(-0.01, 0, 0.001, 0, 0, 0, 0, 0);
@@ -72,7 +72,7 @@ public enum SecondRowBoatConfig implements IRowBoatConfig {
         double wristMaxSpeed = 1.0;
         //wristPot = new TalonMappableAxis((TalonSRX)wristMotor, 301, 377, 90, -90);
         wristPot = new TalonSmartAxis((WPI_TalonSRX)wristMotor, 1.0 / 36.0 * 90.0, -1422);
-        wristPIDConfig = new PIDConfiguration(-0.05, 0, 0.02, -100, 100, -wristMaxSpeed, wristMaxSpeed, 4);
+        wristPIDConfig = new PIDConfiguration(0.05, 0, 0.02, -120, 120, -wristMaxSpeed, wristMaxSpeed, 4);
         //569 c 605
 
         double lowerMaxSpeed = 1.0;
@@ -85,8 +85,8 @@ public enum SecondRowBoatConfig implements IRowBoatConfig {
 
         double upperMaxSpeed = 0.5;
         //upperPot = new TalonMappableAxis(t, 322, 433, -90, 0);
-        upperPot = new TalonSmartAxis((WPI_TalonSRX)t, 1.0 / 86.0 * 90.0, -690);
-        upperPIDConfig = new PIDConfiguration(-0.03, 0, 0.03, -145, 145, -upperMaxSpeed, upperMaxSpeed, 4);
+        upperPot = new TalonSmartAxis((WPI_TalonSRX)t, 0.833, -637 * 0.833);
+        upperPIDConfig = new PIDConfiguration(-0.03, 0, 0.03, -120, 120, -upperMaxSpeed, upperMaxSpeed, 4);
         //659 c 745
 
         innerValve = new Solenoid(0);

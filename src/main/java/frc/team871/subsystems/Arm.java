@@ -140,7 +140,7 @@ public class Arm implements Sendable {
         final double l1 = Math.cos(lowerRads) * lowerSegment.getLength();
         final double l2 = -Math.sin(compoundRads) * upperSegment.getLength();
 
-        goTo(l1 + l2, h1 + h2);
+        goTo(l1 + l2, -(h1 + h2));
     }
 
 
