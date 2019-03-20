@@ -19,8 +19,8 @@ public enum InitialControlScheme implements IControlScheme{
     private ConstantButton unusedButton;
 
     InitialControlScheme(){
-        systemsController = new GenericJoystick<>(0, Arrays.asList(XBoxButtons.values()), Arrays.asList(XBoxAxes.values()));
-        driveController = new GenericJoystick<>(1, Arrays.asList(XBoxButtons.values()), Arrays.asList(XBoxAxes.values()));
+        systemsController = new GenericJoystick<>(2, Arrays.asList(XBoxButtons.values()), Arrays.asList(XBoxAxes.values()));
+        driveController = new GenericJoystick<>(3, Arrays.asList(XBoxButtons.values()), Arrays.asList(XBoxAxes.values()));
         systemsController.getButton(XBoxButtons.Y).setMode(ButtonTypes.TOGGLE);
         systemsController.getButton(XBoxButtons.BACK).setMode(ButtonTypes.RISING);
         systemsController.getButton(XBoxButtons.A).setMode(ButtonTypes.TOGGLE);

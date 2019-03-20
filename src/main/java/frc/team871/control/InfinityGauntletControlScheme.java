@@ -23,8 +23,8 @@ public enum InfinityGauntletControlScheme implements IControlScheme{
         infinitySystem = new GenericJoystick<>(1, Arrays.asList(GauntletButtons.values()), Arrays.asList(GauntletAxes.values()));
         infinitySystem.getButton(GauntletButtons.Z).setMode(ButtonTypes.RISING);
         infinitySystem.getButton(GauntletButtons.C).setMode(ButtonTypes.RISING);
-        infinitySystem.getAxis(GauntletAxes.LOWER_ARM).setOutputRange(-75 - 40, 110);
-        infinitySystem.getAxis(GauntletAxes.UPPER_ARM).setOutputRange(-0, 180);
+        infinitySystem.getAxis(GauntletAxes.LOWER_ARM).setOutputRange(80, -75 - 40);
+        infinitySystem.getAxis(GauntletAxes.UPPER_ARM).setOutputRange(-0, 110);
         infinitySystem.getAxis(GauntletAxes.Y).setDeadband(0.1);
         saitekDrive.getButton(SaitekButtons.B).setMode(ButtonTypes.MOMENTARY);
         saitekDrive.getButton(SaitekButtons.C).setMode(ButtonTypes.RISING);

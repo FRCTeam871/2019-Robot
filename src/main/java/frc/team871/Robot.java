@@ -41,7 +41,7 @@ public class Robot extends TimedRobot {
     private ArmSegment upperSegment;
     private ArmSegment lowerSegment;
 
-    private boolean manualDriveMode = true;
+    private boolean manualDriveMode = false;
     private boolean driveTrainEnabled = true;
     private boolean testBoard = false;
     private long lastPrint = System.currentTimeMillis();
@@ -112,10 +112,12 @@ public class Robot extends TimedRobot {
         if(!testBoard) {
             //set the default PID setpoints as the current position so it doesn't freak out instantly
             if (!manualDriveMode) {
-                upperSegment.setAngle(upperSegment.getAngle());
-                lowerSegment.setAngle(lowerSegment.getAngle());
-                wrist.setOrientation(wrist.getAngle());
+//                upperSegment.setAngle(upperSegment.getAngle());
+//                lowerSegment.setAngle(lowerSegment.getAngle());
+//                wrist.setOrientation(wrist.getAngle());
 
+//                upperSegment.setAngle(0);
+//                lowerSegment.setAngle(0);
                 upperSegment.enablePID();
                 lowerSegment.enablePID();
                 wrist.enablePID();
@@ -136,8 +138,8 @@ public class Robot extends TimedRobot {
         if(!manualDriveMode) {
             arm.handleArmAxes(controlScheme.getUpperArmAxis(), controlScheme.getLowerArmAxis(), controlScheme.getArmTargetXAxis(), controlScheme.getArmTargetYAxis());
             arm.handleInverseKinematicsMode(controlScheme.getInverseKinematicsToggleButton());
-
-            wrist.handleInputs(controlScheme.getWristAxis(), controlScheme.getWristToggleButton());
+            wrist.setOrientation((-lowerSegment.getAngle() - upperSegment.getAngle()) + controlScheme.getWristAxis().getValue() * 90-20);
+//            wrist.handleInputs(controlScheme.getWristAxis(), controlScheme.getWristToggleButton());
         } else {
             lowerSegment.rotate(controlScheme.getLowerArmAxis().getValue());
             upperSegment.rotate(controlScheme.getUpperArmAxis().getValue());
