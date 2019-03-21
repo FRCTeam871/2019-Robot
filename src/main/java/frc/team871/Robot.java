@@ -135,8 +135,8 @@ public class Robot extends TimedRobot {
 
         vacuum.handleInputs(controlScheme.getInnerSuctionButton(), controlScheme.getOuterSuctionButton());
 
-        if(!manualDriveMode) {
-            arm.handleArmAxes(controlScheme.getUpperArmAxis(), controlScheme.getLowerArmAxis(), controlScheme.getArmTargetXAxis(), controlScheme.getArmTargetYAxis());
+        if(!manualDriveMode){
+            arm.handleArmAxes(controlScheme.getUpperArmAxis(), controlScheme.getLowerArmAxis(), controlScheme.getArmTargetXAxis(), controlScheme.getArmTargetYAxis(), controlScheme.getArmSetpointAxis(), controlScheme.getArmSetpointUpButton(), controlScheme.getArmSetpointDownButton());
             arm.handleInverseKinematicsMode(controlScheme.getInverseKinematicsToggleButton());
             wrist.setOrientation((-lowerSegment.getAngle() - upperSegment.getAngle()) + controlScheme.getWristAxis().getValue() * 90-20);
 //            wrist.handleInputs(controlScheme.getWristAxis(), controlScheme.getWristToggleButton());

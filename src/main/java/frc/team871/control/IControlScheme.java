@@ -36,4 +36,10 @@ public interface IControlScheme {
     IAxis getArmTargetYAxis();
 
     IButton getAutoDockButton();
+    IAxis getArmSetpointAxis();
+
+    IButton getArmSetpointUpButton();
+
+    IButton getArmSetpointDownButton();
+
 }

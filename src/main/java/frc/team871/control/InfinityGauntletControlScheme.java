@@ -30,6 +30,8 @@ public enum InfinityGauntletControlScheme implements IControlScheme{
         saitekDrive.getButton(SaitekButtons.C).setMode(ButtonTypes.RISING);
         saitekDrive.getButton(SaitekButtons.A).setMode(ButtonTypes.RISING);
         saitekDrive.getButton(SaitekButtons.TRIGGER_1).setMode(ButtonTypes.TOGGLE);
+        saitekDrive.getButton(SaitekButtons.HAT_DOWN).setMode(ButtonTypes.RISING);
+        saitekDrive.getButton(SaitekButtons.HAT_UP).setMode(ButtonTypes.RISING);
 
         unusedAxis = new ConstantAxis(0);
         unusedButton = new ConstantButton(false);
@@ -117,5 +119,20 @@ public enum InfinityGauntletControlScheme implements IControlScheme{
     @Override
     public IButton getAutoDockButton() {
         return unusedButton;
+    }
+
+    @Override
+    public IAxis getArmSetpointAxis() {
+        return saitekDrive.getAxis(SaitekAxes.THROTTLE);
+    }
+
+    @Override
+    public IButton getArmSetpointUpButton() {
+        return saitekDrive.getButton(SaitekButtons.HAT_UP);
+    }
+
+    @Override
+    public IButton getArmSetpointDownButton() {
+        return saitekDrive.getButton(SaitekButtons.HAT_DOWN);
     }
 }

@@ -6,6 +6,9 @@ import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 
+import java.util.Arrays;
+import java.util.stream.Stream;
+
 public class Arm implements Sendable {
 
     private static final double MAX_EXTENT = 30 + 15; // 30 inch extents + 15 inches from center to edge of frame
@@ -21,9 +24,30 @@ public class Arm implements Sendable {
     private final double lowerSq;
     private final double upperSq;
 
+    // the height of the origin of the arm off of the floor
+    public static final double FLOOR_OFS = 46; //TODO: actually measure this
+
+    public static final double HEIGHT_ROCKET_HATCH_LOW = 19;
+    public static final double HEIGHT_ROCKET_HATCH_MID = 47;
+    public static final double HEIGHT_ROCKET_HATCH_HIGH = 75;
+    public static final double HEIGHT_ROCKET_PORT_LOW = 27.5;
+    public static final double HEIGHT_ROCKET_PORT_MID = 55.5;
+    public static final double HEIGHT_ROCKET_PORT_HIGH = 83.5;
+    public static final double HEIGHT_CARGO_SHIP = 19; // this height is unused because its the same as HEIGHT_ROCKET_HATCH_LOW
+
+    private static final double[] SETPOINT_HEIGHTS = new double[] {HEIGHT_ROCKET_HATCH_LOW, HEIGHT_ROCKET_PORT_LOW, HEIGHT_ROCKET_HATCH_MID, HEIGHT_ROCKET_PORT_MID, HEIGHT_ROCKET_HATCH_HIGH, HEIGHT_ROCKET_PORT_HIGH};
+    private static final double HEIGHT_MIN = Arrays.stream(SETPOINT_HEIGHTS).min().getAsDouble();
+    private static final double HEIGHT_MAX = Arrays.stream(SETPOINT_HEIGHTS).max().getAsDouble();
+    private static final boolean SETPOINT_AXIS_EVENLY_SPACED = false;
+    private int currentSetpointIndex = 0;
+
+    private boolean setpointUseAxis = true;
+    private double lastSetpointAxis = 0;
+
     private enum ArmMode {
         DIRECT,
-        INVERSE_KINEMATICS
+        INVERSE_KINEMATICS,
+        SETPOINT
     }
 
     public Arm(ArmSegment upperSegment, ArmSegment lowerSegment, Wrist wrist){
@@ -114,9 +138,57 @@ public class Arm implements Sendable {
      * @param xAxis used in INVERSE_KINEMATICS control to set the x-position of the target
      * @param yAxis used in INVERSE_KINEMATICS control to set the y-position of the target
      */
-    public void handleArmAxes(IAxis upperAxis, IAxis lowerAxis, IAxis xAxis, IAxis yAxis){
+    public void handleArmAxes(IAxis upperAxis, IAxis lowerAxis, IAxis xAxis, IAxis yAxis, IAxis setpointAxis, IButton setpointUpButton, IButton setpointDownButton){
         if(currentArmMode == ArmMode.INVERSE_KINEMATICS) {
             goToRelative((xAxis.getValue() + 1) / 2, yAxis.getValue());
+        } else if(currentArmMode == ArmMode.SETPOINT) {
+
+            double ax = (setpointAxis.getValue() + 1) / 2.0; // [-1,1] -> [0,1]
+            boolean up = setpointUpButton.getValue();
+            boolean down = setpointDownButton.getValue();
+            // detect whether to use the axis or buttons
+            if(ax != lastSetpointAxis) setpointUseAxis = true;
+            if(up || down) setpointUseAxis = false;
+
+            if(setpointUseAxis){
+                if(SETPOINT_AXIS_EVENLY_SPACED){
+                    currentSetpointIndex = (int)(ax * SETPOINT_HEIGHTS.length);
+                }else{
+                    double minDist = (HEIGHT_MAX - HEIGHT_MIN) * 2; // arbitrary large number
+                    int newSetpoint = currentSetpointIndex;
+                    for(int i = 0; i < SETPOINT_HEIGHTS.length; i++){
+                        double axisHeight = ax * (HEIGHT_MAX - HEIGHT_MIN) + HEIGHT_MIN;
+                        double dist = Math.abs(SETPOINT_HEIGHTS[i] - axisHeight);
+                        if(dist < minDist){
+                            minDist = dist;
+                            newSetpoint = i;
+                        }
+                    }
+                    currentSetpointIndex = newSetpoint;
+                }
+            }else{
+                if(up){
+                    currentSetpointIndex++;
+                }else if(down){
+                    currentSetpointIndex--;
+                }
+            }
+
+            currentSetpointIndex = Math.max(0, Math.min(currentSetpointIndex, SETPOINT_HEIGHTS.length - 1));
+
+            // see https://www.desmos.com/calculator/ziitcgyynj
+
+            double rawY = SETPOINT_HEIGHTS[currentSetpointIndex] - FLOOR_OFS;
+
+            double r = getRadius();
+
+            // as far out as possible at that height
+            // sin(acos(x)) also equals sqrt(1-x^2)
+            double projectedX = Math.sin(Math.acos(rawY / r));
+            double projectedY = rawY;
+
+            goTo(projectedX, projectedY);
+
         } else {
             calcTarget(lowerAxis.getValue(), upperAxis.getValue());
         }

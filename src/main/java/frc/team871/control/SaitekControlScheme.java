@@ -27,6 +27,8 @@ public enum SaitekControlScheme implements IControlScheme{
         saitekStickJoy.getButton(SaitekButtons.C).setMode(ButtonTypes.RISING);
         saitekStickJoy.getButton(SaitekButtons.B).setMode(ButtonTypes.MOMENTARY);
         saitekStickJoy.getButton(SaitekButtons.A).setMode(ButtonTypes.RISING);
+        saitekStickJoy.getButton(SaitekButtons.HAT_DOWN).setMode(ButtonTypes.RISING);
+        saitekStickJoy.getButton(SaitekButtons.HAT_UP).setMode(ButtonTypes.RISING);
 
         saitekStickJoy.getButton(SaitekButtons.FIRE).setMode(ButtonTypes.RISING);
         saitekStickJoy.getButton(SaitekButtons.E).setMode(ButtonTypes.RISING);
@@ -118,5 +120,20 @@ public enum SaitekControlScheme implements IControlScheme{
     @Override
     public IButton getAutoDockButton() {
         return unusedButton;
+    }
+
+    @Override
+    public IAxis getArmSetpointAxis() {
+        return saitekStickJoy.getAxis(SaitekAxes.THROTTLE);
+    }
+
+    @Override
+    public IButton getArmSetpointUpButton() {
+        return saitekStickJoy.getButton(SaitekButtons.HAT_UP);
+    }
+
+    @Override
+    public IButton getArmSetpointDownButton() {
+        return saitekStickJoy.getButton(SaitekButtons.HAT_DOWN);
     }
 }
