@@ -22,7 +22,6 @@ import frc.team871.subsystems.DriveTrain;
 import frc.team871.subsystems.Vacuum;
 import frc.team871.subsystems.Wrist;
 import frc.team871.subsystems.peripheral.LEDStripMode;
-import frc.team871.subsystems.peripheral.LEDStripSettings;
 import frc.team871.subsystems.peripheral.Teensy;
 
 /**
@@ -66,7 +65,7 @@ public class Robot extends TimedRobot {
         this.arm = new Arm(upperSegment, lowerSegment, wrist);
 
         this.teensyWeensy = new Teensy(new SerialCommunicationInterface(), EndPoint.NULL_ENDPOINT);
-        teensyWeensy.write(0, LEDStripMode.bounce(4, 0xff0000, 0x00ff00, 0x0000ff, 0xff00ff));
+        teensyWeensy.writeLED(0, LEDStripMode.bounce(4, 0xff0000, 0x00ff00, 0x0000ff, 0xff00ff));
 
         LiveWindow.add(arm);
 

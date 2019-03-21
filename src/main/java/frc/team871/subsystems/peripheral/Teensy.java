@@ -7,12 +7,17 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 /**
- * Supports PeripheralController version 1.X
+ * Supports PeripheralController version 2.X
+ * Last updated for PeripheralController version 2.3.0
  */
 public class Teensy {
+    public static final String LED_PREFIX = "L";
+    public static final String SOUND_PREFIX = "S";
     public static final String DELIMITER = ";";
     public static final String ALL_PREFIX = "A";
     public static final int MAX_MSG_LENGTH = 200;
+    public static final int RAINBOW = -1;
+    public static final int BINARY_COUNT = -1;
 
     private ICommunicationsInterface comms;
     private Deque<String> queue = new ArrayDeque<>();
@@ -23,12 +28,16 @@ public class Teensy {
         this.endpoint = endpoint;
     }
 
-    public void writeAll(TeensyPacket packet){
-        writeRaw(ALL_PREFIX + DELIMITER + packet);
+    public void writeAllLED(TeensyPacket packet){
+        writeRaw(LED_PREFIX + ALL_PREFIX + DELIMITER + packet);
     }
 
-    public void write(int strip, TeensyPacket packet){
-        writeRaw(strip + DELIMITER + packet);
+    public void writeLED(int strip, TeensyPacket packet){
+        writeRaw(LED_PREFIX + strip + DELIMITER + packet);
+    }
+
+    public void writeSound(TeensyPacket packet){
+        writeRaw(SOUND_PREFIX + DELIMITER + packet);
     }
 
     public void writeRaw(String str) {

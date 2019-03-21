@@ -55,4 +55,44 @@ public class LEDStripMode {
         return new TeensyPacket("FADE" + Teensy.DELIMITER + Teensy.hex(color1) + Teensy.DELIMITER + Teensy.hex(color2) + Teensy.DELIMITER + period + Teensy.DELIMITER + offset);
     }
 
+    //LEDStripModeFire
+
+    /**
+     * @param hueRotate The hue to rotate the color of the fire by (orange-red is 0). You can also use the Teensy.RAINBOW constant for the fire to continually change color
+     */
+    public static TeensyPacket fire(int hueRotate){
+        return new TeensyPacket("FIRE" + Teensy.DELIMITER + (hueRotate == -1 ? "R" : hueRotate));
+    }
+
+    //LEDStripModeRainbow
+
+    /**
+     * @param period The period of the animation in ms.
+     */
+    public static TeensyPacket rainbow(int period){
+        return new TeensyPacket("RAINBOW" + Teensy.DELIMITER + period);
+    }
+
+    //LEDStripModeRainbowChase
+
+    /**
+     * @param period The period of the animation in ms.
+     * @param offset How many ms each pixel is offset.
+     */
+    public static TeensyPacket rainbowChase(int period, int offset){
+        return new TeensyPacket("RAINBOWCHASE" + Teensy.DELIMITER + period + Teensy.DELIMITER + offset);
+    }
+
+    //LEDStripModeBinary
+
+    /**
+     * @param num The number to display. You can also use Teensy.BINARY_COUNT to make it automatically count up.
+     * @param color1 The "on" color
+     * @param color2 The "of" color
+     * @param countDelay The delay, in ms, when auto counting using Teensy.BINARY_COUNT as the num parameter (if not using auto count this is ignored)
+     */
+    public static TeensyPacket binary(int num, int color1, int color2, int countDelay){
+        return new TeensyPacket("BINARY" + Teensy.DELIMITER + num + Teensy.DELIMITER + Teensy.hex(color1) + Teensy.DELIMITER + Teensy.hex(color2) + Teensy.DELIMITER + countDelay);
+    }
+
 }
