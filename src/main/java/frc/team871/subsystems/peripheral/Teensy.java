@@ -6,6 +6,9 @@ import com.team871.io.peripheral.StringPacket;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+/**
+ * Supports PeripheralController version 1.X
+ */
 public class Teensy {
     public static final String DELIMITER = ";";
     public static final String ALL_PREFIX = "A";
