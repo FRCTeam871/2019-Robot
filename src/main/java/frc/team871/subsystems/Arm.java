@@ -25,7 +25,7 @@ public class Arm implements Sendable {
     private final double upperSq;
 
     // the height of the origin of the arm off of the floor
-    public static final double FLOOR_OFS = 46; //TODO: actually measure this
+    public static final double FLOOR_OFS = 44; //TODO: actually measure this
 
     public static final double HEIGHT_ROCKET_HATCH_LOW = 19;
     public static final double HEIGHT_ROCKET_HATCH_MID = 47;
@@ -44,7 +44,7 @@ public class Arm implements Sendable {
     private boolean setpointUseAxis = true;
     private double lastSetpointAxis = 0;
 
-    private enum ArmMode {
+    public enum ArmMode {
         DIRECT,
         INVERSE_KINEMATICS,
         SETPOINT
@@ -88,6 +88,10 @@ public class Arm implements Sendable {
         return Math.toDegrees(a - Math.acos(ac));
     }
 
+    public void setMode(ArmMode mode){
+        this.currentArmMode = mode;
+    }
+
     public void setAngles(double upperAngle, double lowerAngle){
         this.upperAngle = upperAngle;
         this.lowerAngle = lowerAngle;
@@ -99,6 +103,8 @@ public class Arm implements Sendable {
         if(x + wrist.getLength() > MAX_EXTENT) {
             x = MAX_EXTENT - wrist.getLength();
         }
+
+        if(y > 0 && x < 12) x = 12;
 
         this.x = x;
         this.y = y;
@@ -147,7 +153,7 @@ public class Arm implements Sendable {
             boolean up = setpointUpButton.getValue();
             boolean down = setpointDownButton.getValue();
             // detect whether to use the axis or buttons
-            if(ax != lastSetpointAxis) setpointUseAxis = true;
+            if(Math.abs(ax - lastSetpointAxis) > 0.1) setpointUseAxis = true;
             if(up || down) setpointUseAxis = false;
 
             if(setpointUseAxis){
@@ -184,10 +190,12 @@ public class Arm implements Sendable {
 
             // as far out as possible at that height
             // sin(acos(x)) also equals sqrt(1-x^2)
-            double projectedX = Math.sin(Math.acos(rawY / r));
-            double projectedY = rawY;
+            double projectedX = Math.sin(Math.acos(rawY / r)) * r;
+            double projectedY = -rawY;
 
             goTo(projectedX, projectedY);
+
+            System.out.println(currentSetpointIndex + " " + SETPOINT_HEIGHTS[currentSetpointIndex] + " " + rawY);
 
         } else {
             calcTarget(lowerAxis.getValue(), upperAxis.getValue());
