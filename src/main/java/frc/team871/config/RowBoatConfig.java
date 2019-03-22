@@ -75,7 +75,7 @@ public enum RowBoatConfig implements IRowBoatConfig {
         double wristMaxSpeed = 1.0;
         //wristPot = new TalonMappableAxis((TalonSRX)wristMotor, 301, 377, 90, -90);
         wristPot = new TalonSmartAxis((WPI_TalonSRX)wristMotor, 2.432, -832);
-        wristPIDConfig = new PIDConfiguration(-0.05, 0, 0.02, -100, 100, -wristMaxSpeed, wristMaxSpeed, 4);
+        wristPIDConfig = new PIDConfiguration(-0.05, 0, 0.02, -120, 120, -wristMaxSpeed, wristMaxSpeed, 4);
 
         double lowerMaxSpeed = 1.0;
         //lowerPot = new TalonMappableAxis((TalonSRX)lowerArmMotor, 342, 568, 0, -90);
@@ -85,7 +85,7 @@ public enum RowBoatConfig implements IRowBoatConfig {
         double upperMaxSpeed = 0.5;
         //upperPot = new TalonMappableAxis(t, 322, 433, -90, 0);
         upperPot = new TalonSmartAxis((WPI_TalonSRX)t, 0.85, -347 * 0.85 + 5);
-        upperPIDConfig = new PIDConfiguration(-0.025, 0, 0.03, -145, 145, -upperMaxSpeed, upperMaxSpeed, 4);
+        upperPIDConfig = new PIDConfiguration(-0.025, 0, 0.03, -110, 80, -upperMaxSpeed, upperMaxSpeed, 4);
 
         // 347 453
 

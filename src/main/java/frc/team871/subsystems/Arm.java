@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 public class Arm implements Sendable {
 
-    private static final double MAX_EXTENT = 30 + 15; // 30 inch extents + 15 inches from center to edge of frame
+    private static final double MAX_EXTENT = 30 + 15 - 6; // 30 inch extents + 15 inches from center to edge of frame
     private ArmSegment upperSegment;
     private ArmSegment lowerSegment;
     private Wrist wrist;

@@ -44,10 +44,11 @@ public class Robot extends TimedRobot {
     private ArmSegment lowerSegment;
 
     private boolean manualDriveMode = false;
-    private boolean driveTrainEnabled = false;
+    private boolean driveTrainEnabled = true;
     private boolean testBoard = false;
     private long lastPrint = System.currentTimeMillis();
 
+    long t = System.currentTimeMillis();
 
     /**
       * This function is run when the robot is first started up and should be used
@@ -106,7 +107,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-
+        vacuum.setSideOpen(Vacuum.VacuumSide.INNER);
     }
 
     @Override
@@ -131,6 +132,7 @@ public class Robot extends TimedRobot {
                 wrist.enablePID();
             }
         }
+
     }
 
     @Override
@@ -144,9 +146,15 @@ public class Robot extends TimedRobot {
         vacuum.handleInputs(controlScheme.getInnerSuctionButton(), controlScheme.getOuterSuctionButton());
 
         if(!manualDriveMode){
-            arm.handleArmAxes(controlScheme.getUpperArmAxis(), controlScheme.getLowerArmAxis(), controlScheme.getArmTargetXAxis(), controlScheme.getArmTargetYAxis(), controlScheme.getArmSetpointAxis(), controlScheme.getArmSetpointUpButton(), controlScheme.getArmSetpointDownButton());
-            arm.handleInverseKinematicsMode(controlScheme.getInverseKinematicsToggleButton());
-            wrist.setOrientation((-lowerSegment.getAngle() - upperSegment.getAngle()) + controlScheme.getWristAxis().getValue() * 90-20);
+//            if(System.currentTimeMillis() - t > 2000) {
+                arm.handleArmAxes(controlScheme.getUpperArmAxis(), controlScheme.getLowerArmAxis(), controlScheme.getArmTargetXAxis(), controlScheme.getArmTargetYAxis(), controlScheme.getArmSetpointAxis(), controlScheme.getArmSetpointUpButton(), controlScheme.getArmSetpointDownButton());
+                arm.handleInverseKinematicsMode(controlScheme.getInverseKinematicsToggleButton());
+                double delta = controlScheme.getWristAxis().getValue() * 100;
+                if (controlScheme.getWristAxis().getValue() > 0.5) {
+//                delta = 90;
+                }
+                wrist.setOrientation((-lowerSegment.getAngle() - upperSegment.getAngle()) + delta);
+//            }
 //            wrist.handleInputs(controlScheme.getWristAxis(), controlScheme.getWristToggleButton());
         } else {
             lowerSegment.rotate(controlScheme.getLowerArmAxis().getValue());
