@@ -43,7 +43,7 @@ public class Robot extends TimedRobot {
     private ArmSegment upperSegment;
     private ArmSegment lowerSegment;
 
-    private boolean manualDriveMode = true;
+    private boolean manualDriveMode = false;
     private boolean driveTrainEnabled = false;
     private boolean testBoard = false;
     private long lastPrint = System.currentTimeMillis();
@@ -123,8 +123,9 @@ public class Robot extends TimedRobot {
 //                lowerSegment.setAngle(lowerSegment.getAngle());
 //                wrist.setOrientation(wrist.getAngle());
 
-                upperSegment.setAngle(0);
-                lowerSegment.setAngle(0);
+//                upperSegment.setAngle(0);
+//                lowerSegment.setAngle(0);
+//                wrist.setOrientation(0);
                 upperSegment.enablePID();
                 lowerSegment.enablePID();
                 wrist.enablePID();
@@ -143,7 +144,7 @@ public class Robot extends TimedRobot {
         vacuum.handleInputs(controlScheme.getInnerSuctionButton(), controlScheme.getOuterSuctionButton());
 
         if(!manualDriveMode){
-//            arm.handleArmAxes(controlScheme.getUpperArmAxis(), controlScheme.getLowerArmAxis(), controlScheme.getArmTargetXAxis(), controlScheme.getArmTargetYAxis(), controlScheme.getArmSetpointAxis(), controlScheme.getArmSetpointUpButton(), controlScheme.getArmSetpointDownButton());
+            arm.handleArmAxes(controlScheme.getUpperArmAxis(), controlScheme.getLowerArmAxis(), controlScheme.getArmTargetXAxis(), controlScheme.getArmTargetYAxis(), controlScheme.getArmSetpointAxis(), controlScheme.getArmSetpointUpButton(), controlScheme.getArmSetpointDownButton());
             arm.handleInverseKinematicsMode(controlScheme.getInverseKinematicsToggleButton());
             wrist.setOrientation((-lowerSegment.getAngle() - upperSegment.getAngle()) + controlScheme.getWristAxis().getValue() * 90-20);
 //            wrist.handleInputs(controlScheme.getWristAxis(), controlScheme.getWristToggleButton());
