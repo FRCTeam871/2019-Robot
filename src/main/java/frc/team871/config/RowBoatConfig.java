@@ -84,8 +84,10 @@ public enum RowBoatConfig implements IRowBoatConfig {
 
         double upperMaxSpeed = 0.5;
         //upperPot = new TalonMappableAxis(t, 322, 433, -90, 0);
-        upperPot = new TalonSmartAxis((WPI_TalonSRX)t, 0.918, -236 - 180);
+        upperPot = new TalonSmartAxis((WPI_TalonSRX)t, 1.76, -383 * 1.76);
         upperPIDConfig = new PIDConfiguration(-0.025, 0, 0.03, -145, 145, -upperMaxSpeed, upperMaxSpeed, 4);
+
+        // 344 458
 
         innerValve = new Solenoid(0);
         outerValve = new Solenoid(1);
@@ -93,7 +95,9 @@ public enum RowBoatConfig implements IRowBoatConfig {
         this.lineCam = CameraServer.getInstance().startAutomaticCapture(0);
         UsbCamera targetCam = CameraServer.getInstance().startAutomaticCapture(1);
 
-        targetCam.setExposureManual(20);
+        targetCam.setExposureAuto();
+        lineCam.setExposureAuto();
+//        targetCam.setExposureManual(20);
 
         final int camWidth = 320/2;
         final int camHeight = 240/2;
@@ -104,7 +108,7 @@ public enum RowBoatConfig implements IRowBoatConfig {
         targetCam.setPixelFormat(VideoMode.PixelFormat.kMJPEG);
         //this.lineCam.setExposureAuto();
 
-        targetProvider = new RobotUSBTargetProvider(this.lineCam, targetCam, camWidth, camHeight, camWidth, camHeight);
+//        targetProvider = new RobotUSBTargetProvider(this.lineCam, targetCam, camWidth, camHeight, camWidth, camHeight);
     }
 
     @Override

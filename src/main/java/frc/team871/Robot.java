@@ -11,6 +11,7 @@ package frc.team871;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import frc.team871.config.IRowBoatConfig;
+import frc.team871.config.RowBoatConfig;
 import frc.team871.config.SecondRowBoatConfig;
 import frc.team871.control.IControlScheme;
 import frc.team871.control.InfinityGauntletControlScheme;
@@ -43,7 +44,7 @@ public class Robot extends TimedRobot {
     private ArmSegment lowerSegment;
 
     private boolean manualDriveMode = true;
-    private boolean driveTrainEnabled = true;
+    private boolean driveTrainEnabled = false;
     private boolean testBoard = false;
     private long lastPrint = System.currentTimeMillis();
 
@@ -54,7 +55,7 @@ public class Robot extends TimedRobot {
       */
     @Override
     public void robotInit() {
-        this.config = SecondRowBoatConfig.DEFAULT;
+        this.config = RowBoatConfig.DEFAULT;
         this.controlScheme = manualDriveMode ? InitialControlScheme.DEFAULT : InfinityGauntletControlScheme.DEFAULT;
 //        this.controlScheme = SaitekControlScheme.DEFAULT;
         this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro(), config.getHeadingPIDConfig(), config.getAutoDockXPIDConfig());
@@ -122,8 +123,8 @@ public class Robot extends TimedRobot {
 //                lowerSegment.setAngle(lowerSegment.getAngle());
 //                wrist.setOrientation(wrist.getAngle());
 
-//                upperSegment.setAngle(0);
-//                lowerSegment.setAngle(0);
+                upperSegment.setAngle(0);
+                lowerSegment.setAngle(0);
                 upperSegment.enablePID();
                 lowerSegment.enablePID();
                 wrist.enablePID();
@@ -142,7 +143,7 @@ public class Robot extends TimedRobot {
         vacuum.handleInputs(controlScheme.getInnerSuctionButton(), controlScheme.getOuterSuctionButton());
 
         if(!manualDriveMode){
-            arm.handleArmAxes(controlScheme.getUpperArmAxis(), controlScheme.getLowerArmAxis(), controlScheme.getArmTargetXAxis(), controlScheme.getArmTargetYAxis(), controlScheme.getArmSetpointAxis(), controlScheme.getArmSetpointUpButton(), controlScheme.getArmSetpointDownButton());
+//            arm.handleArmAxes(controlScheme.getUpperArmAxis(), controlScheme.getLowerArmAxis(), controlScheme.getArmTargetXAxis(), controlScheme.getArmTargetYAxis(), controlScheme.getArmSetpointAxis(), controlScheme.getArmSetpointUpButton(), controlScheme.getArmSetpointDownButton());
             arm.handleInverseKinematicsMode(controlScheme.getInverseKinematicsToggleButton());
             wrist.setOrientation((-lowerSegment.getAngle() - upperSegment.getAngle()) + controlScheme.getWristAxis().getValue() * 90-20);
 //            wrist.handleInputs(controlScheme.getWristAxis(), controlScheme.getWristToggleButton());
