@@ -8,6 +8,9 @@
 package frc.team871;
 
 
+import com.team871.hid.GenericJoystick;
+import com.team871.hid.joystick.SaitekAxes;
+import com.team871.hid.joystick.SaitekButtons;
 import com.team871.io.peripheral.EndPoint;
 import com.team871.io.peripheral.SerialCommunicationInterface;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -25,6 +28,7 @@ import frc.team871.subsystems.ArmSegment;
 import frc.team871.subsystems.DriveTrain;
 import frc.team871.subsystems.Vacuum;
 import frc.team871.subsystems.Wrist;
+import frc.team871.subsystems.peripheral.Audio;
 import frc.team871.subsystems.peripheral.LEDStripMode;
 import frc.team871.subsystems.peripheral.LEDStripSettings;
 import frc.team871.subsystems.peripheral.Teensy;
@@ -85,6 +89,8 @@ public class Robot extends TimedRobot {
 
 
         this.teensyWeensy = new Teensy(new SerialCommunicationInterface(), EndPoint.NULL_ENDPOINT);
+        teensyWeensy.writeSound(Audio.setVolume(100));
+//        teensyWeensy.writeSound(Audio.play("ut/spider.wav"));
         teensyWeensy.writeLED(1, LEDStripMode.rainbowChase(5000, 100));
         teensyWeensy.writeLED(2, LEDStripMode.rainbowChase(5000, 100));
         teensyWeensy.writeLED(1, LEDStripSettings.brightness(100));
@@ -100,9 +106,11 @@ public class Robot extends TimedRobot {
             }
         }
 
-        if(manualDriveMode || !driveTrainEnabled || goHome || controlScheme.getEmergencyModeButton().getRaw()){
-            teensyWeensy.writeLED(1, LEDStripMode.chase(0,500, 250,0x000000, 0xff0000));
-            teensyWeensy.writeLED(2, LEDStripMode.chase(0,500, 250,0x000000, 0xff0000));
+        if(DriverStation.getInstance().isDSAttached()) {
+            if (manualDriveMode || !driveTrainEnabled || goHome || controlScheme.getEmergencyModeButton().getRaw()) {
+                teensyWeensy.writeLED(1, LEDStripMode.chase(0, 500, 250, 0x000000, 0xff0000));
+                teensyWeensy.writeLED(2, LEDStripMode.chase(0, 500, 250, 0x000000, 0xff0000));
+            }
         }
 
     }
@@ -111,6 +119,23 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         teensyWeensy.update();
 
+        if(controlScheme instanceof InfinityGauntletControlScheme){
+            InfinityGauntletControlScheme c = (InfinityGauntletControlScheme) controlScheme;
+            GenericJoystick<SaitekButtons, SaitekAxes> saitek = c.getSaitek();
+            if(saitek.getButton(SaitekButtons.SOUND_L_UP).getValue()){
+                teensyWeensy.writeSound(Audio.play("sandfull.wav"));
+            }else if(saitek.getButton(SaitekButtons.SOUND_L_DOWN).getValue()){
+                teensyWeensy.writeSound(Audio.play("ut/megalo.wav"));
+            }else if(saitek.getButton(SaitekButtons.SOUND_M_UP).getValue()){
+                teensyWeensy.writeSound(Audio.play("ut/spider.wav"));
+            }else if(saitek.getButton(SaitekButtons.SOUND_M_DOWN).getValue()){
+                teensyWeensy.writeSound(Audio.play("ut/datingfi.wav"));
+            }else if(saitek.getButton(SaitekButtons.SOUND_R_UP).getValue()){
+                teensyWeensy.writeSound(Audio.play("ut/songthat.wav"));
+            }else if(saitek.getButton(SaitekButtons.SOUND_R_DOWN).getValue()){
+                teensyWeensy.writeSound(Audio.play("ut/asgorefu.wav"));
+            }
+        }
 
     }
 

@@ -9,6 +9,8 @@ import com.team871.hid.IAxis;
 import com.team871.hid.IButton;
 import com.team871.hid.joystick.SaitekAxes;
 import com.team871.hid.joystick.SaitekButtons;
+import com.team871.hid.joystick.XBoxAxes;
+import com.team871.hid.joystick.XBoxButtons;
 import java.util.Arrays;
 
 public enum InfinityGauntletControlScheme implements IControlScheme{
@@ -16,13 +18,17 @@ public enum InfinityGauntletControlScheme implements IControlScheme{
 
     private GenericJoystick<SaitekButtons, SaitekAxes> saitekDrive;
     private GenericJoystick<GauntletButtons, GauntletAxes> infinitySystem;
+    private GenericJoystick<XBoxButtons, XBoxAxes> xboxOverride;
     private ConstantAxis unusedAxis;
     private ConstantButton unusedButton;
     private IButton emergency;
 
+    boolean xboxDrive = false;
+
     InfinityGauntletControlScheme(){
         saitekDrive = new GenericJoystick<>(0, Arrays.asList(SaitekButtons.values()), Arrays.asList(SaitekAxes.values()));
         infinitySystem = new GenericJoystick<>(1, Arrays.asList(GauntletButtons.values()), Arrays.asList(GauntletAxes.values()));
+        xboxOverride = new GenericJoystick<>(2, Arrays.asList(XBoxButtons.values()), Arrays.asList(XBoxAxes.values()));
         infinitySystem.getButton(GauntletButtons.Z).setMode(ButtonTypes.RISING);
         infinitySystem.getButton(GauntletButtons.C).setMode(ButtonTypes.RISING);
         infinitySystem.getAxis(GauntletAxes.LOWER_ARM).setOutputRange(80, -75 - 40);
@@ -35,11 +41,20 @@ public enum InfinityGauntletControlScheme implements IControlScheme{
         saitekDrive.getButton(SaitekButtons.HAT_DOWN).setMode(ButtonTypes.RISING);
         saitekDrive.getButton(SaitekButtons.HAT_UP).setMode(ButtonTypes.RISING);
 
+        saitekDrive.getButton(SaitekButtons.SOUND_L_UP).setMode(ButtonTypes.RISING);
+        saitekDrive.getButton(SaitekButtons.SOUND_L_DOWN).setMode(ButtonTypes.RISING);
+        saitekDrive.getButton(SaitekButtons.SOUND_M_UP).setMode(ButtonTypes.RISING);
+        saitekDrive.getButton(SaitekButtons.SOUND_M_DOWN).setMode(ButtonTypes.RISING);
+        saitekDrive.getButton(SaitekButtons.SOUND_R_UP).setMode(ButtonTypes.RISING);
+        saitekDrive.getButton(SaitekButtons.SOUND_R_DOWN).setMode(ButtonTypes.RISING);
+
         emergency = new AxisButton(saitekDrive.getAxis(SaitekAxes.THROTTLE), 0.2f, true);
         emergency.setMode(ButtonTypes.MOMENTARY);
 
         unusedAxis = new ConstantAxis(0);
         unusedButton = new ConstantButton(false);
+
+        xboxOverride.getButton(XBoxButtons.START).setMode(ButtonTypes.TOGGLE);
 
     }
 
@@ -97,17 +112,20 @@ public enum InfinityGauntletControlScheme implements IControlScheme{
 
     @Override
     public IAxis getMecDriveXAxis() {
-        return saitekDrive.getAxis(SaitekAxes.X_AXIS);
+
+        xboxDrive = xboxOverride.getButton(XBoxButtons.START).getValue();
+
+        return xboxDrive ? xboxOverride.getAxis(XBoxAxes.LEFTX) : saitekDrive.getAxis(SaitekAxes.X_AXIS);
     }
 
     @Override
     public IAxis getMecDriveYAxis() {
-        return saitekDrive.getAxis(SaitekAxes.Y_AXIS);
+        return xboxDrive ? xboxOverride.getAxis(XBoxAxes.LEFTY) :saitekDrive.getAxis(SaitekAxes.Y_AXIS);
     }
 
     @Override
     public IAxis getMecDriveRotationAxis() {
-        return saitekDrive.getAxis(SaitekAxes.ROTATION);
+        return xboxDrive ? xboxOverride.getAxis(XBoxAxes.RIGHTX) :saitekDrive.getAxis(SaitekAxes.ROTATION);
     }
 
     @Override
@@ -146,4 +164,9 @@ public enum InfinityGauntletControlScheme implements IControlScheme{
     public IButton getEmergencyModeButton() {
         return emergency;
     }
+
+    public GenericJoystick<SaitekButtons, SaitekAxes> getSaitek(){
+        return saitekDrive;
+    }
+
 }

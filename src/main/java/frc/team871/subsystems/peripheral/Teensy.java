@@ -42,14 +42,14 @@ public class Teensy {
     }
 
     public void writeSound(TeensyPacket packet){
-        writeRaw(SOUND_PREFIX + DELIMITER + packet.getPayload());
+        writeRaw(SOUND_PREFIX + packet.getPayload());
     }
 
     public void writeRaw(String str) {
         if(str.length() > MAX_MSG_LENGTH) {
             System.err.println("[Teensy] Message exceeds max length! (" + str.length() + "/" + MAX_MSG_LENGTH + "): " + str);
         }else {
-//            System.out.println("write \"" + str + "\n\"");
+            System.out.println("write \"" + str + "\n\"");
             p.writeString(str + "\n");
             p.flush();
 //            i.writeBulk((str + "\n").getBytes());
@@ -85,9 +85,9 @@ public class Teensy {
 //                lastFlush = now;
 //            }
 //        }
-//        if(p.getBytesReceived() > 0){
-//            System.out.println(p.readString());
-//        }
+        if(p.getBytesReceived() > 0){
+            System.out.print(p.readString());
+        }
     }
 
     public static int color(int r, int g, int b){
