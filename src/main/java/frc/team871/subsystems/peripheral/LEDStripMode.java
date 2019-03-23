@@ -19,7 +19,7 @@ public class LEDStripMode {
     public static TeensyPacket bounce(int num, int... colors){
         String build = "BOUNCE" + Teensy.DELIMITER + num;
         for(int i = 0; i < colors.length; i++){
-            build += Teensy.DELIMITER + String.format("#%06X", 0xFFFFFF & colors[i]);
+            build += Teensy.DELIMITER + String.format("0x%06X", 0xFFFFFF & colors[i]);
         }
         return new TeensyPacket(build);
     }

@@ -195,7 +195,7 @@ public class Arm implements Sendable {
 
             goTo(projectedX, projectedY);
 
-            System.out.println(currentSetpointIndex + " " + SETPOINT_HEIGHTS[currentSetpointIndex] + " " + rawY);
+            //System.out.println(currentSetpointIndex + " " + SETPOINT_HEIGHTS[currentSetpointIndex] + " " + rawY);
 
         } else {
             calcTarget(lowerAxis.getValue(), upperAxis.getValue());

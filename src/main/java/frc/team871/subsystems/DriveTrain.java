@@ -160,7 +160,7 @@ public class DriveTrain extends MecanumDrive implements IDriveTrain, PIDOutput, 
     public void driveRobotOriented(double x, double y, double r) {
         lastXInput = x;
         lastYInput = y;
-        System.out.println(x + " " + y);
+        //System.out.println(x + " " + y);
         super.driveCartesian(x, -y, r + (headingPID.isEnabled() ? pidRotation : 0));
     }
 

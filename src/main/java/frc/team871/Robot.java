@@ -10,6 +10,7 @@ package frc.team871;
 
 import com.team871.io.peripheral.EndPoint;
 import com.team871.io.peripheral.SerialCommunicationInterface;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import frc.team871.config.IRowBoatConfig;
@@ -57,6 +58,11 @@ public class Robot extends TimedRobot {
     long t = System.currentTimeMillis();
     boolean wasEmergency = false;
 
+    long lastTeamCheck = System.currentTimeMillis();
+    DriverStation.Alliance lastAlliance = DriverStation.Alliance.Invalid;
+
+    boolean wasStrong = false;
+
 
     /**
       * This function is run when the robot is first started up and should be used
@@ -83,9 +89,9 @@ public class Robot extends TimedRobot {
         teensyWeensy.writeLED(2, LEDStripMode.rainbowChase(5000, 100));
         teensyWeensy.writeLED(1, LEDStripSettings.brightness(100));
         teensyWeensy.writeLED(2, LEDStripSettings.brightness(100));
+        teensyWeensy.writeLED(0, LEDStripMode.chase((int)(500 / 24.0 * 2),500, 250,0x0000ff, 0xff0000));
+//        teensyWeensy.writeLED(0, LEDStripMode.fade(0x0000ff, 0xff0000,500, (int)(500 / 24.0 * 2)));
 
-        teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0xff0000, 2000, 0));
-        teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0xff0000, 2000, 0));
 
         LiveWindow.add(arm);
 
@@ -94,7 +100,7 @@ public class Robot extends TimedRobot {
             }
         }
 
-        if(manualDriveMode || !driveTrainEnabled || goHome){
+        if(manualDriveMode || !driveTrainEnabled || goHome || controlScheme.getEmergencyModeButton().getRaw()){
             teensyWeensy.writeLED(1, LEDStripMode.chase(0,500, 250,0x000000, 0xff0000));
             teensyWeensy.writeLED(2, LEDStripMode.chase(0,500, 250,0x000000, 0xff0000));
         }
@@ -104,6 +110,8 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         teensyWeensy.update();
+
+
     }
 
     @Override
@@ -122,6 +130,8 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         if(!testBoard) {
+            teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0xff0000, 500, 20));
+            teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0xff0000, 500, 20));
             //set the default PID setpoints as the current position so it doesn't freak out instantly
             if (!manualDriveMode) {
 //                upperSegment.setAngle(upperSegment.getAngle());
@@ -137,9 +147,12 @@ public class Robot extends TimedRobot {
             }
 
             if(manualDriveMode && goHome){
-                upperSegment.setAngle(-122.0);
+//                upperSegment.setAngle(0);
+//                lowerSegment.setAngle(0);
+//                wrist.setOrientation(0);
+                upperSegment.setAngle(-112.0);
                 lowerSegment.setAngle(74.7);
-                wrist.setOrientation(-112.1);
+                wrist.setOrientation(-114.0);
                 upperSegment.enablePID();
                 lowerSegment.enablePID();
                 wrist.enablePID();
@@ -156,29 +169,45 @@ public class Robot extends TimedRobot {
         }
 
         if(testBoard) return;
+        if(!manualDriveMode) {
+            Vacuum.VacuumState prev = vacuum.getState();
+            vacuum.handleInputs(controlScheme.getInnerSuctionButton(), controlScheme.getOuterSuctionButton(), controlScheme.getEmergencyModeButton());
+            Vacuum.VacuumState now = vacuum.getState();
 
-        Vacuum.VacuumState prev = vacuum.getState();
-        vacuum.handleInputs(controlScheme.getInnerSuctionButton(), controlScheme.getOuterSuctionButton(), controlScheme.getEmergencyModeButton());
-        Vacuum.VacuumState now = vacuum.getState();
+            boolean nowStrong = controlScheme.getInnerSuctionButton().getRaw();
 
-        if(now != prev || (controlScheme.getEmergencyModeButton().getValue() != wasEmergency)){
-            if(controlScheme.getEmergencyModeButton().getValue()){
-                if(now == Vacuum.VacuumState.DISABLED) {
-                    teensyWeensy.writeLED(1, LEDStripMode.wave(0x000000, 0xff0000, 500, 40));
-                    teensyWeensy.writeLED(2, LEDStripMode.wave(0x000000, 0xff0000, 500, 40));
-                }else{
-                    teensyWeensy.writeLED(1, LEDStripMode.wave(0x000000, 0x00ff00, 500, 40));
-                    teensyWeensy.writeLED(2, LEDStripMode.wave(0x000000, 0x00ff00, 500, 40));
-                }
-            }else{
-                if(now == Vacuum.VacuumState.DISABLED) {
-                    teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0xff0000, 500, 20));
-                    teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0xff0000, 500, 20));
-                }else{
-                    teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0x00ff00, 500, 20));
-                    teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0x00ff00, 500, 20));
+//        System.out.println(controlScheme.getEmergencyModeButton().getRaw() + " " + controlScheme.getEmergencyModeButton().getValue());
+            if (now != prev || (controlScheme.getEmergencyModeButton().getRaw() != wasEmergency) || nowStrong != wasStrong) {
+                if (controlScheme.getEmergencyModeButton().getRaw()) {
+                    if (now == Vacuum.VacuumState.DISABLED) {
+                        teensyWeensy.writeLED(1, LEDStripMode.chase(40, 300, 150, 0x000000, 0xff0000));
+                        teensyWeensy.writeLED(2, LEDStripMode.chase(40, 300, 150, 0x000000, 0xff0000));
+                    } else {
+                        teensyWeensy.writeLED(1, LEDStripMode.chase(40, 300, 150, 0x000000, 0x00ff00));
+                        teensyWeensy.writeLED(2, LEDStripMode.chase(40, 300, 150, 0x000000, 0x00ff00));
+                    }
+                } else {
+                    if (controlScheme.getInnerSuctionButton().getRaw()) {
+                        if (now == Vacuum.VacuumState.DISABLED) {
+                            teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0xff0000, 250, 40));
+                            teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0xff0000, 250, 40));
+                        } else {
+                            teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0x00ff00, 250, 40));
+                            teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0x00ff00, 250, 40));
+                        }
+                    } else {
+                        if (now == Vacuum.VacuumState.DISABLED) {
+                            teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0xff0000, 500, 20));
+                            teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0xff0000, 500, 20));
+                        } else {
+                            teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0x00ff00, 500, 20));
+                            teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0x00ff00, 500, 20));
+                        }
+                    }
                 }
             }
+            wasStrong = nowStrong;
+            wasEmergency = controlScheme.getEmergencyModeButton().getRaw();
         }
 
         if(!manualDriveMode){
@@ -209,5 +238,53 @@ public class Robot extends TimedRobot {
     @Override
     public void testPeriodic() {
 //        teleopPeriodic();
+    }
+
+    @Override
+    public void disabledInit() {
+        if(!manualDriveMode) {
+            if (!DriverStation.getInstance().isFMSAttached() && !controlScheme.getEmergencyModeButton().getRaw()) {
+//            teensyWeensy.writeLED(1, LEDStripMode.bounce(4, 0x0000ff, 0xff0000, 0x0000ff, 0xff0000));
+//            teensyWeensy.writeLED(2, LEDStripMode.bounce(4, 0x0000ff, 0xff0000, 0x0000ff, 0xff0000));
+                teensyWeensy.writeLED(1, LEDStripMode.fire(Teensy.RAINBOW));
+                teensyWeensy.writeLED(2, LEDStripMode.fire(Teensy.RAINBOW));
+            }
+        }
+    }
+
+    @Override
+    public void disabledPeriodic() {
+        if(DriverStation.getInstance().isFMSAttached()) {
+            if(System.currentTimeMillis() - lastTeamCheck > 1000) {
+                lastTeamCheck = System.currentTimeMillis();
+                DriverStation.Alliance nowAlliance = DriverStation.getInstance().getAlliance();
+
+                if (nowAlliance != lastAlliance) {
+                    if (nowAlliance == DriverStation.Alliance.Red) {
+                        teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0xff0000, 2000, 0));
+                        teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0xff0000, 2000, 0));
+                    } else if (nowAlliance == DriverStation.Alliance.Blue) {
+                        teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0x0000ff, 2000, 0));
+                        teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0x0000ff, 2000, 0));
+                    } else {
+                        teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0x888888, 2000, 0));
+                        teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0x888888, 2000, 0));
+                    }
+                }
+                lastAlliance = nowAlliance;
+            }
+        }else{
+            if(System.currentTimeMillis() - lastTeamCheck > 5000) {
+                lastTeamCheck = System.currentTimeMillis();
+                switch((int)(Math.random() * 2)){
+                    case 0:
+
+                        break;
+                    case 1:
+
+                        break;
+                }
+            }
+        }
     }
 }

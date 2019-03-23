@@ -144,6 +144,6 @@ public enum InfinityGauntletControlScheme implements IControlScheme{
 
     @Override
     public IButton getEmergencyModeButton() {
-        return null;
+        return emergency;
     }
 }

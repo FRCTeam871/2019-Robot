@@ -19,6 +19,7 @@ public class Vacuum implements Sendable {
     private String subsystem;
 
     boolean stronge = false;
+    boolean emergency = false;
 
     public enum VacuumSide {
         NONE(false, false),
@@ -47,6 +48,14 @@ public class Vacuum implements Sendable {
     }
 
     public void handleInputs(IButton innerButton, IButton outerButton, IButton emergencyButton) {
+        this.emergency = emergencyButton.getRaw();
+        if(emergency){
+            if(innerButton.getValue()) {
+//            setSideOpen(side == VacuumSide.INNER ? VacuumSide.BOTH : VacuumSide.INNER);
+            } else if(outerButton.getValue()) {
+                setSideOpen(side == VacuumSide.BOTH || side == VacuumSide.OUTER ? VacuumSide.NONE : VacuumSide.BOTH);
+            }
+        }
         if(innerButton.getValue()) {
 //            setSideOpen(side == VacuumSide.INNER ? VacuumSide.BOTH : VacuumSide.INNER);
         } else if(outerButton.getValue()) {
@@ -54,7 +63,7 @@ public class Vacuum implements Sendable {
         }
 
         if(getState() == VacuumState.ENABLED){
-            pump.set(stronge ? 0.6 : 0.35);
+            if(!emergency) pump.set(stronge ? 0.6 : 0.35);
         }
 
         stronge = innerButton.getRaw();
@@ -64,12 +73,15 @@ public class Vacuum implements Sendable {
     private void setState(VacuumState newState) {
         switch (newState) {
             case ENABLED:
-                pump.set(stronge ? 0.6 : 0.35);
+                if(!emergency) pump.set(stronge ? 0.6 : 0.35);
                 break;
             case DISABLED:
-                pump.set(0.);
+                if(!emergency) pump.set(0.);
 //                setSideOpen(VacuumSide.BOTH);
                 break;
+        }
+        if(emergency){
+            pump.set(0);
         }
         state = newState;
     }
@@ -79,7 +91,12 @@ public class Vacuum implements Sendable {
         valve1.set(side.s1);
         valve2.set(side.s2);
 
-        setState(side == VacuumSide.NONE || side == VacuumSide.BOTH ? VacuumState.DISABLED : VacuumState.ENABLED);
+        if(emergency){
+            setState(side == VacuumSide.BOTH ? VacuumState.DISABLED : VacuumState.ENABLED);
+        }else{
+            setState(side == VacuumSide.NONE || side == VacuumSide.BOTH ? VacuumState.DISABLED : VacuumState.ENABLED);
+        }
+
     }
 
     public VacuumState getState(){
