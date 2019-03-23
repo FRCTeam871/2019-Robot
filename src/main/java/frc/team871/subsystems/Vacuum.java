@@ -46,7 +46,7 @@ public class Vacuum implements Sendable {
         this.valve2 = valve2;
     }
 
-    public void handleInputs(IButton innerButton, IButton outerButton) {
+    public void handleInputs(IButton innerButton, IButton outerButton, IButton emergencyButton) {
         if(innerButton.getValue()) {
 //            setSideOpen(side == VacuumSide.INNER ? VacuumSide.BOTH : VacuumSide.INNER);
         } else if(outerButton.getValue()) {
@@ -109,9 +109,9 @@ public class Vacuum implements Sendable {
     @Override
     public void initSendable(SendableBuilder builder) {
         //LiveWindow.addChild(this, grabSensor);
-        builder.addStringProperty("State", state::toString, (m) -> {
-        });
-        builder.addStringProperty("ValveState", side::toString, (m) -> {
-        });
+//        builder.addStringProperty("State", state::toString, (m) -> {
+//        });
+//        builder.addStringProperty("ValveState", side::toString, (m) -> {
+//        });
     }
 }

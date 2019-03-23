@@ -57,6 +57,7 @@ public class Robot extends TimedRobot {
     long t = System.currentTimeMillis();
     boolean wasEmergency = false;
 
+
     /**
       * This function is run when the robot is first started up and should be used
       * for any initialization code.
@@ -92,6 +93,12 @@ public class Robot extends TimedRobot {
                 arm.setMode(Arm.ArmMode.SETPOINT);
             }
         }
+
+        if(manualDriveMode || !driveTrainEnabled || goHome){
+            teensyWeensy.writeLED(1, LEDStripMode.chase(0,500, 250,0x000000, 0xff0000));
+            teensyWeensy.writeLED(2, LEDStripMode.chase(0,500, 250,0x000000, 0xff0000));
+        }
+
     }
 
     @Override
@@ -151,7 +158,7 @@ public class Robot extends TimedRobot {
         if(testBoard) return;
 
         Vacuum.VacuumState prev = vacuum.getState();
-        vacuum.handleInputs(controlScheme.getInnerSuctionButton(), controlScheme.getOuterSuctionButton());
+        vacuum.handleInputs(controlScheme.getInnerSuctionButton(), controlScheme.getOuterSuctionButton(), controlScheme.getEmergencyModeButton());
         Vacuum.VacuumState now = vacuum.getState();
 
         if(now != prev || (controlScheme.getEmergencyModeButton().getValue() != wasEmergency)){

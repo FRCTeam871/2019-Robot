@@ -35,7 +35,7 @@ public enum InfinityGauntletControlScheme implements IControlScheme{
         saitekDrive.getButton(SaitekButtons.HAT_DOWN).setMode(ButtonTypes.RISING);
         saitekDrive.getButton(SaitekButtons.HAT_UP).setMode(ButtonTypes.RISING);
 
-        emergency = new AxisButtonInv(saitekDrive.getAxis(SaitekAxes.THROTTLE), 0.2f);
+        emergency = new AxisButton(saitekDrive.getAxis(SaitekAxes.THROTTLE), 0.2f, true);
         emergency.setMode(ButtonTypes.MOMENTARY);
 
         unusedAxis = new ConstantAxis(0);
