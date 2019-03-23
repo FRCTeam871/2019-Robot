@@ -136,4 +136,9 @@ public enum SaitekControlScheme implements IControlScheme{
     public IButton getArmSetpointDownButton() {
         return saitekStickJoy.getButton(SaitekButtons.HAT_DOWN);
     }
+
+    @Override
+    public IButton getEmergencyModeButton() {
+        return unusedButton;
+    }
 }

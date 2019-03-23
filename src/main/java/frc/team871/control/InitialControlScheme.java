@@ -134,6 +134,11 @@ public enum InitialControlScheme implements IControlScheme{
     }
 
     @Override
+    public IButton getEmergencyModeButton() {
+        return unusedButton;
+    }
+
+    @Override
     public IButton getAutoDockButton() {
         return driveController.getButton(XBoxButtons.B);
     }

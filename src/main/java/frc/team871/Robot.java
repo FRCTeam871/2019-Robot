@@ -55,6 +55,7 @@ public class Robot extends TimedRobot {
     private long lastPrint = System.currentTimeMillis();
 
     long t = System.currentTimeMillis();
+    boolean wasEmergency = false;
 
     /**
       * This function is run when the robot is first started up and should be used
@@ -153,16 +154,25 @@ public class Robot extends TimedRobot {
         vacuum.handleInputs(controlScheme.getInnerSuctionButton(), controlScheme.getOuterSuctionButton());
         Vacuum.VacuumState now = vacuum.getState();
 
-        if(now != prev){
-            if(now == Vacuum.VacuumState.DISABLED) {
-                teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0xff0000, 500, 20));
-                teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0xff0000, 500, 20));
+        if(now != prev || (controlScheme.getEmergencyModeButton().getValue() != wasEmergency)){
+            if(controlScheme.getEmergencyModeButton().getValue()){
+                if(now == Vacuum.VacuumState.DISABLED) {
+                    teensyWeensy.writeLED(1, LEDStripMode.wave(0x000000, 0xff0000, 500, 40));
+                    teensyWeensy.writeLED(2, LEDStripMode.wave(0x000000, 0xff0000, 500, 40));
+                }else{
+                    teensyWeensy.writeLED(1, LEDStripMode.wave(0x000000, 0x00ff00, 500, 40));
+                    teensyWeensy.writeLED(2, LEDStripMode.wave(0x000000, 0x00ff00, 500, 40));
+                }
             }else{
-                teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0x00ff00, 500, 20));
-                teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0x00ff00, 500, 20));
+                if(now == Vacuum.VacuumState.DISABLED) {
+                    teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0xff0000, 500, 20));
+                    teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0xff0000, 500, 20));
+                }else{
+                    teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0x00ff00, 500, 20));
+                    teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0x00ff00, 500, 20));
+                }
             }
         }
-
 
         if(!manualDriveMode){
 //            if(System.currentTimeMillis() - t > 2000) {

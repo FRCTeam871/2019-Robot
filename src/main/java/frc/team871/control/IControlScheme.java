@@ -42,4 +42,6 @@ public interface IControlScheme {
 
     IButton getArmSetpointDownButton();
 
+    IButton getEmergencyModeButton();
+
 }

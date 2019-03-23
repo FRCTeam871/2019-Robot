@@ -1,5 +1,6 @@
 package frc.team871.control;
 
+import com.team871.hid.AxisButton;
 import com.team871.hid.ButtonTypes;
 import com.team871.hid.ConstantAxis;
 import com.team871.hid.ConstantButton;
@@ -17,6 +18,7 @@ public enum InfinityGauntletControlScheme implements IControlScheme{
     private GenericJoystick<GauntletButtons, GauntletAxes> infinitySystem;
     private ConstantAxis unusedAxis;
     private ConstantButton unusedButton;
+    private IButton emergency;
 
     InfinityGauntletControlScheme(){
         saitekDrive = new GenericJoystick<>(0, Arrays.asList(SaitekButtons.values()), Arrays.asList(SaitekAxes.values()));
@@ -33,8 +35,12 @@ public enum InfinityGauntletControlScheme implements IControlScheme{
         saitekDrive.getButton(SaitekButtons.HAT_DOWN).setMode(ButtonTypes.RISING);
         saitekDrive.getButton(SaitekButtons.HAT_UP).setMode(ButtonTypes.RISING);
 
+        emergency = new AxisButtonInv(saitekDrive.getAxis(SaitekAxes.THROTTLE), 0.2f);
+        emergency.setMode(ButtonTypes.MOMENTARY);
+
         unusedAxis = new ConstantAxis(0);
         unusedButton = new ConstantButton(false);
+
     }
 
     @Override
@@ -134,5 +140,10 @@ public enum InfinityGauntletControlScheme implements IControlScheme{
     @Override
     public IButton getArmSetpointDownButton() {
         return saitekDrive.getButton(SaitekButtons.HAT_DOWN);
+    }
+
+    @Override
+    public IButton getEmergencyModeButton() {
+        return null;
     }
 }
