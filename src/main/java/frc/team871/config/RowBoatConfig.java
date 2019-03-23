@@ -85,27 +85,29 @@ public enum RowBoatConfig implements IRowBoatConfig {
         double upperMaxSpeed = 0.5;
         //upperPot = new TalonMappableAxis(t, 322, 433, -90, 0);
         upperPot = new TalonSmartAxis((WPI_TalonSRX)t, 0.85, -347 * 0.85 + 5);
-        upperPIDConfig = new PIDConfiguration(-0.025, 0, 0.03, -110, 80, -upperMaxSpeed, upperMaxSpeed, 4);
+        upperPIDConfig = new PIDConfiguration(-0.025, 0, 0.03, -124, 80, -upperMaxSpeed, upperMaxSpeed, 4);
 
         // 347 453
 
         innerValve = new Solenoid(0);
         outerValve = new Solenoid(1);
 
-        this.lineCam = CameraServer.getInstance().startAutomaticCapture(0);
-        UsbCamera targetCam = CameraServer.getInstance().startAutomaticCapture(1);
+//        new UsbCamera("cam0");
+//        this.lineCam = CameraServer.getInstance().startAutomaticCapture(0);
+//        UsbCamera targetCam = CameraServer.getInstance().startAutomaticCapture(1);
 
-        targetCam.setExposureAuto();
-        lineCam.setExposureAuto();
-//        targetCam.setExposureManual(20);
+//        targetCam.setExposureAuto();
+//        lineCam.setExposureAuto();
+//        targetCam.setExposureManual(40);
+//        lineCam.setExposureManual(40);
 
-        final int camWidth = 320/2;
-        final int camHeight = 240/2;
+//        final int camWidth = 320/2;
+//        final int camHeight = 240/2;
 
-        this.lineCam.setResolution(camWidth, camHeight);
-        this.lineCam.setPixelFormat(VideoMode.PixelFormat.kMJPEG);
-        targetCam.setResolution(camWidth, camHeight);
-        targetCam.setPixelFormat(VideoMode.PixelFormat.kMJPEG);
+//        this.lineCam.setResolution(camWidth, camHeight);
+//        this.lineCam.setPixelFormat(VideoMode.PixelFormat.kMJPEG);
+//        targetCam.setResolution(camWidth, camHeight);
+//        targetCam.setPixelFormat(VideoMode.PixelFormat.kMJPEG);
         //this.lineCam.setExposureAuto();
 
 //        targetProvider = new RobotUSBTargetProvider(this.lineCam, targetCam, camWidth, camHeight, camWidth, camHeight);

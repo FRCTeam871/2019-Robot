@@ -8,6 +8,8 @@
 package frc.team871;
 
 
+import com.team871.io.peripheral.EndPoint;
+import com.team871.io.peripheral.SerialCommunicationInterface;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import frc.team871.config.IRowBoatConfig;
@@ -22,7 +24,9 @@ import frc.team871.subsystems.ArmSegment;
 import frc.team871.subsystems.DriveTrain;
 import frc.team871.subsystems.Vacuum;
 import frc.team871.subsystems.Wrist;
-import java.text.DecimalFormat;
+import frc.team871.subsystems.peripheral.LEDStripMode;
+import frc.team871.subsystems.peripheral.LEDStripSettings;
+import frc.team871.subsystems.peripheral.Teensy;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -42,9 +46,11 @@ public class Robot extends TimedRobot {
 
     private ArmSegment upperSegment;
     private ArmSegment lowerSegment;
+    private Teensy teensyWeensy;
 
     private boolean manualDriveMode = false;
     private boolean driveTrainEnabled = true;
+    private boolean goHome = false;
     private boolean testBoard = false;
     private long lastPrint = System.currentTimeMillis();
 
@@ -69,7 +75,17 @@ public class Robot extends TimedRobot {
             this.wrist = new Wrist(config.getWristMotor(), config.getWristPotAxis(), config.getWristPIDConfig(), 10);
             this.arm = new Arm(upperSegment, lowerSegment, wrist);
 
-            LiveWindow.add(arm);
+
+        this.teensyWeensy = new Teensy(new SerialCommunicationInterface(), EndPoint.NULL_ENDPOINT);
+        teensyWeensy.writeLED(1, LEDStripMode.rainbowChase(5000, 100));
+        teensyWeensy.writeLED(2, LEDStripMode.rainbowChase(5000, 100));
+        teensyWeensy.writeLED(1, LEDStripSettings.brightness(100));
+        teensyWeensy.writeLED(2, LEDStripSettings.brightness(100));
+
+        teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0xff0000, 2000, 0));
+        teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0xff0000, 2000, 0));
+
+        LiveWindow.add(arm);
 
             if(this.controlScheme instanceof SaitekControlScheme){
                 arm.setMode(Arm.ArmMode.SETPOINT);
@@ -79,35 +95,15 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-        //TODO: network tables
-        boolean printLineStatus = false;
-        if(printLineStatus && System.currentTimeMillis() - lastPrint > 500) {
-            lastPrint = System.currentTimeMillis();
-            if (config.getTargetProvider().getLineSensor().doesTargetExist()) {
-                DecimalFormat d = new DecimalFormat("0.0");
-                System.out.println(d.format(config.getTargetProvider().getLineSensor().getCenterX()) + "\t" + d.format(config.getTargetProvider().getLineSensor().getLineAngle()));
-            } else {
-                System.out.println("No line");
-            }
-        }
-
-        boolean printTargetStatus = false;
-        if(printTargetStatus && System.currentTimeMillis() - lastPrint > 500) {
-            lastPrint = System.currentTimeMillis();
-            if (config.getTargetProvider().getTarget().doesTargetExist()) {
-                DecimalFormat d = new DecimalFormat("0.0");
-                System.out.println(d.format(config.getTargetProvider().getTarget().getCenterX()) + "\t" + d.format(config.getTargetProvider().getTarget().getCenterY()) + "\t" + d.format(config.getTargetProvider().getTarget().getLengthX()) + "\t" + d.format(config.getTargetProvider().getTarget().getLengthY()));
-            } else {
-                System.out.println("No target");
-            }
-        }
-
-//        System.out.println(controlScheme.getArmTargetYAxis().getRaw() + " " + controlScheme.getArmTargetXAxis().getRaw() + " -> " + controlScheme.getArmTargetXAxis().getValue());
+        teensyWeensy.update();
     }
 
     @Override
     public void autonomousInit() {
-        vacuum.setSideOpen(Vacuum.VacuumSide.INNER);
+        vacuum.setSideOpen(Vacuum.VacuumSide.OUTER);
+        teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0x00ff00, 500, 20));
+        teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0x00ff00, 500, 20));
+        teleopInit();
     }
 
     @Override
@@ -131,6 +127,16 @@ public class Robot extends TimedRobot {
                 lowerSegment.enablePID();
                 wrist.enablePID();
             }
+
+            if(manualDriveMode && goHome){
+                upperSegment.setAngle(-122.0);
+                lowerSegment.setAngle(74.7);
+                wrist.setOrientation(-112.1);
+                upperSegment.enablePID();
+                lowerSegment.enablePID();
+                wrist.enablePID();
+            }
+
         }
 
     }
@@ -143,23 +149,48 @@ public class Robot extends TimedRobot {
 
         if(testBoard) return;
 
+        Vacuum.VacuumState prev = vacuum.getState();
         vacuum.handleInputs(controlScheme.getInnerSuctionButton(), controlScheme.getOuterSuctionButton());
+        Vacuum.VacuumState now = vacuum.getState();
+
+        if(now != prev){
+            if(now == Vacuum.VacuumState.DISABLED) {
+                teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0xff0000, 500, 20));
+                teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0xff0000, 500, 20));
+            }else{
+                teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0x00ff00, 500, 20));
+                teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0x00ff00, 500, 20));
+            }
+        }
+
 
         if(!manualDriveMode){
 //            if(System.currentTimeMillis() - t > 2000) {
                 arm.handleArmAxes(controlScheme.getUpperArmAxis(), controlScheme.getLowerArmAxis(), controlScheme.getArmTargetXAxis(), controlScheme.getArmTargetYAxis(), controlScheme.getArmSetpointAxis(), controlScheme.getArmSetpointUpButton(), controlScheme.getArmSetpointDownButton());
                 arm.handleInverseKinematicsMode(controlScheme.getInverseKinematicsToggleButton());
-                double delta = controlScheme.getWristAxis().getValue() * 100;
+                double delta = controlScheme.getWristAxis().getValue() * 120;
                 if (controlScheme.getWristAxis().getValue() > 0.5) {
 //                delta = 90;
                 }
                 wrist.setOrientation((-lowerSegment.getAngle() - upperSegment.getAngle()) + delta);
 //            }
 //            wrist.handleInputs(controlScheme.getWristAxis(), controlScheme.getWristToggleButton());
-        } else {
-            lowerSegment.rotate(controlScheme.getLowerArmAxis().getValue());
-            upperSegment.rotate(controlScheme.getUpperArmAxis().getValue());
-            wrist.rotate(controlScheme.getWristAxis().getValue());
+        } else if(manualDriveMode){
+            if(!goHome) {
+                lowerSegment.rotate(controlScheme.getLowerArmAxis().getValue());
+                upperSegment.rotate(controlScheme.getUpperArmAxis().getValue());
+                wrist.rotate(controlScheme.getWristAxis().getValue());
+            }
         }
+    }
+
+    @Override
+    public void testInit() {
+
+    }
+
+    @Override
+    public void testPeriodic() {
+//        teleopPeriodic();
     }
 }

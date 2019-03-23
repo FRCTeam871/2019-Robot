@@ -18,6 +18,8 @@ public class Vacuum implements Sendable {
     private String name;
     private String subsystem;
 
+    boolean stronge = false;
+
     public enum VacuumSide {
         NONE(false, false),
         INNER(false, true),
@@ -33,7 +35,7 @@ public class Vacuum implements Sendable {
         }
     }
 
-    private enum VacuumState {
+    public enum VacuumState {
         ENABLED,
         DISABLED
     }
@@ -46,16 +48,23 @@ public class Vacuum implements Sendable {
 
     public void handleInputs(IButton innerButton, IButton outerButton) {
         if(innerButton.getValue()) {
-            setSideOpen(side == VacuumSide.INNER ? VacuumSide.BOTH : VacuumSide.INNER);
+//            setSideOpen(side == VacuumSide.INNER ? VacuumSide.BOTH : VacuumSide.INNER);
         } else if(outerButton.getValue()) {
             setSideOpen(side == VacuumSide.OUTER ? VacuumSide.BOTH : VacuumSide.OUTER);
         }
+
+        if(getState() == VacuumState.ENABLED){
+            pump.set(stronge ? 0.6 : 0.35);
+        }
+
+        stronge = innerButton.getRaw();
+
     }
 
     private void setState(VacuumState newState) {
         switch (newState) {
             case ENABLED:
-                pump.set(0.35);
+                pump.set(stronge ? 0.6 : 0.35);
                 break;
             case DISABLED:
                 pump.set(0.);
@@ -71,6 +80,10 @@ public class Vacuum implements Sendable {
         valve2.set(side.s2);
 
         setState(side == VacuumSide.NONE || side == VacuumSide.BOTH ? VacuumState.DISABLED : VacuumState.ENABLED);
+    }
+
+    public VacuumState getState(){
+        return state;
     }
 
     @Override
