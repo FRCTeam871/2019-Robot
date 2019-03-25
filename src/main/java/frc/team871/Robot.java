@@ -57,6 +57,8 @@ public class Robot extends TimedRobot {
     private boolean driveTrainEnabled = true;
     private boolean goHome = false;
     private boolean testBoard = false;
+    private boolean leds = true;
+    private boolean armEnabled = true;
     private long lastPrint = System.currentTimeMillis();
 
     long t = System.currentTimeMillis();
@@ -89,12 +91,12 @@ public class Robot extends TimedRobot {
 
 
         this.teensyWeensy = new Teensy(new SerialCommunicationInterface(), EndPoint.NULL_ENDPOINT);
-        teensyWeensy.writeSound(Audio.setVolume(100));
+//        teensyWeensy.writeSound(Audio.setVolume(100));
 //        teensyWeensy.writeSound(Audio.play("ut/spider.wav"));
-        teensyWeensy.writeLED(1, LEDStripMode.rainbowChase(5000, 100));
-        teensyWeensy.writeLED(2, LEDStripMode.rainbowChase(5000, 100));
-        teensyWeensy.writeLED(1, LEDStripSettings.brightness(100));
-        teensyWeensy.writeLED(2, LEDStripSettings.brightness(100));
+        for(int i = 1; i <= 2; i++) teensyWeensy.writeLED(i, LEDStripMode.rainbowChase(5000, 100));
+        for(int i = 0; i <= 2; i++) teensyWeensy.writeLED(i, LEDStripSettings.brightness(leds ? 100 : 0));
+
+//            for(int i = 3; i <= 2; i++) teensyWeensy.writeLED(i, LEDStripSettings.reverse(true));
         teensyWeensy.writeLED(0, LEDStripMode.chase((int)(500 / 24.0 * 2),500, 250,0x0000ff, 0xff0000));
 //        teensyWeensy.writeLED(0, LEDStripMode.fade(0x0000ff, 0xff0000,500, (int)(500 / 24.0 * 2)));
 
@@ -106,12 +108,10 @@ public class Robot extends TimedRobot {
             }
         }
 
-        if(DriverStation.getInstance().isDSAttached()) {
-            if (manualDriveMode || !driveTrainEnabled || goHome || controlScheme.getEmergencyModeButton().getRaw()) {
-                teensyWeensy.writeLED(1, LEDStripMode.chase(0, 500, 250, 0x000000, 0xff0000));
-                teensyWeensy.writeLED(2, LEDStripMode.chase(0, 500, 250, 0x000000, 0xff0000));
-            }
+        if (manualDriveMode || !driveTrainEnabled || goHome || (controlScheme.getEmergencyModeButton().getRaw() && DriverStation.getInstance().isDSAttached())) {
+            for(int i = 1; i <= 2; i++) teensyWeensy.writeLED(i, LEDStripMode.chase(0, 500, 250, 0x000000, 0xff0000));
         }
+
 
     }
 
@@ -119,31 +119,30 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         teensyWeensy.update();
 
-        if(controlScheme instanceof InfinityGauntletControlScheme){
-            InfinityGauntletControlScheme c = (InfinityGauntletControlScheme) controlScheme;
-            GenericJoystick<SaitekButtons, SaitekAxes> saitek = c.getSaitek();
-            if(saitek.getButton(SaitekButtons.SOUND_L_UP).getValue()){
-                teensyWeensy.writeSound(Audio.play("sandfull.wav"));
-            }else if(saitek.getButton(SaitekButtons.SOUND_L_DOWN).getValue()){
-                teensyWeensy.writeSound(Audio.play("ut/megalo.wav"));
-            }else if(saitek.getButton(SaitekButtons.SOUND_M_UP).getValue()){
-                teensyWeensy.writeSound(Audio.play("ut/spider.wav"));
-            }else if(saitek.getButton(SaitekButtons.SOUND_M_DOWN).getValue()){
-                teensyWeensy.writeSound(Audio.play("ut/datingfi.wav"));
-            }else if(saitek.getButton(SaitekButtons.SOUND_R_UP).getValue()){
-                teensyWeensy.writeSound(Audio.play("ut/songthat.wav"));
-            }else if(saitek.getButton(SaitekButtons.SOUND_R_DOWN).getValue()){
-                teensyWeensy.writeSound(Audio.play("ut/asgorefu.wav"));
-            }
-        }
+//        if(controlScheme instanceof InfinityGauntletControlScheme){
+//            InfinityGauntletControlScheme c = (InfinityGauntletControlScheme) controlScheme;
+//            GenericJoystick<SaitekButtons, SaitekAxes> saitek = c.getSaitek();
+//            if(saitek.getButton(SaitekButtons.SOUND_L_UP).getValue()){
+//                teensyWeensy.writeSound(Audio.play("sandfull.wav"));
+//            }else if(saitek.getButton(SaitekButtons.SOUND_L_DOWN).getValue()){
+//                teensyWeensy.writeSound(Audio.play("ut/megalo.wav"));
+//            }else if(saitek.getButton(SaitekButtons.SOUND_M_UP).getValue()){
+//                teensyWeensy.writeSound(Audio.play("ut/spider.wav"));
+//            }else if(saitek.getButton(SaitekButtons.SOUND_M_DOWN).getValue()){
+//                teensyWeensy.writeSound(Audio.play("ut/datingfi.wav"));
+//            }else if(saitek.getButton(SaitekButtons.SOUND_R_UP).getValue()){
+//                teensyWeensy.writeSound(Audio.play("ut/songthat.wav"));
+//            }else if(saitek.getButton(SaitekButtons.SOUND_R_DOWN).getValue()){
+//                teensyWeensy.writeSound(Audio.play("ut/asgorefu.wav"));
+//            }
+//        }
 
     }
 
     @Override
     public void autonomousInit() {
         vacuum.setSideOpen(Vacuum.VacuumSide.OUTER);
-        teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0x00ff00, 500, 20));
-        teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0x00ff00, 500, 20));
+        for(int i = 1; i <= 2; i++) teensyWeensy.writeLED(i, LEDStripMode.fade(0x000000, 0x00ff00, 500, 20));
         teleopInit();
     }
 
@@ -155,8 +154,7 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         if(!testBoard) {
-            teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0xff0000, 500, 20));
-            teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0xff0000, 500, 20));
+            for(int i = 1; i <= 2; i++) teensyWeensy.writeLED(i, LEDStripMode.fade(0x000000, 0xff0000, 500, 20));
             //set the default PID setpoints as the current position so it doesn't freak out instantly
             if (!manualDriveMode) {
 //                upperSegment.setAngle(upperSegment.getAngle());
@@ -166,16 +164,18 @@ public class Robot extends TimedRobot {
 //                upperSegment.setAngle(0);
 //                lowerSegment.setAngle(0);
 //                wrist.setOrientation(0);
-                upperSegment.enablePID();
-                lowerSegment.enablePID();
-                wrist.enablePID();
+                if(armEnabled) {
+                    upperSegment.enablePID();
+                    lowerSegment.enablePID();
+                    wrist.enablePID();
+                }
             }
 
             if(manualDriveMode && goHome){
 //                upperSegment.setAngle(0);
 //                lowerSegment.setAngle(0);
 //                wrist.setOrientation(0);
-                upperSegment.setAngle(-112.0);
+                upperSegment.setAngle(-111.0);
                 lowerSegment.setAngle(74.7);
                 wrist.setOrientation(-114.0);
                 upperSegment.enablePID();
@@ -205,28 +205,22 @@ public class Robot extends TimedRobot {
             if (now != prev || (controlScheme.getEmergencyModeButton().getRaw() != wasEmergency) || nowStrong != wasStrong) {
                 if (controlScheme.getEmergencyModeButton().getRaw()) {
                     if (now == Vacuum.VacuumState.DISABLED) {
-                        teensyWeensy.writeLED(1, LEDStripMode.chase(40, 300, 150, 0x000000, 0xff0000));
-                        teensyWeensy.writeLED(2, LEDStripMode.chase(40, 300, 150, 0x000000, 0xff0000));
+                        for(int i = 1; i <= 2; i++) teensyWeensy.writeLED(i, LEDStripMode.chase(40, 300, 150, 0x000000, 0xff0000));
                     } else {
-                        teensyWeensy.writeLED(1, LEDStripMode.chase(40, 300, 150, 0x000000, 0x00ff00));
-                        teensyWeensy.writeLED(2, LEDStripMode.chase(40, 300, 150, 0x000000, 0x00ff00));
+                        for(int i = 1; i <= 2; i++) teensyWeensy.writeLED(i, LEDStripMode.chase(40, 300, 150, 0x000000, 0x00ff00));
                     }
                 } else {
                     if (controlScheme.getInnerSuctionButton().getRaw()) {
                         if (now == Vacuum.VacuumState.DISABLED) {
-                            teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0xff0000, 250, 40));
-                            teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0xff0000, 250, 40));
+                            for(int i = 1; i <= 2; i++) teensyWeensy.writeLED(i, LEDStripMode.fade(0x000000, 0xff0000, 250, 40));
                         } else {
-                            teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0x00ff00, 250, 40));
-                            teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0x00ff00, 250, 40));
+                            for(int i = 1; i <= 2; i++) teensyWeensy.writeLED(i, LEDStripMode.fade(0x000000, 0x00ff00, 250, 40));
                         }
                     } else {
                         if (now == Vacuum.VacuumState.DISABLED) {
-                            teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0xff0000, 500, 20));
-                            teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0xff0000, 500, 20));
+                            for(int i = 1; i <= 2; i++) teensyWeensy.writeLED(i, LEDStripMode.fade(0x000000, 0xff0000, 500, 20));
                         } else {
-                            teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0x00ff00, 500, 20));
-                            teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0x00ff00, 500, 20));
+                            for(int i = 1; i <= 2; i++) teensyWeensy.writeLED(i, LEDStripMode.fade(0x000000, 0x00ff00, 500, 20));
                         }
                     }
                 }
@@ -237,15 +231,21 @@ public class Robot extends TimedRobot {
 
         if(!manualDriveMode){
 //            if(System.currentTimeMillis() - t > 2000) {
+            if(armEnabled) {
                 arm.handleArmAxes(controlScheme.getUpperArmAxis(), controlScheme.getLowerArmAxis(), controlScheme.getArmTargetXAxis(), controlScheme.getArmTargetYAxis(), controlScheme.getArmSetpointAxis(), controlScheme.getArmSetpointUpButton(), controlScheme.getArmSetpointDownButton());
                 arm.handleInverseKinematicsMode(controlScheme.getInverseKinematicsToggleButton());
-                double delta = controlScheme.getWristAxis().getValue() * 120;
+                double raw = controlScheme.getWristAxis().getValue();
+
+                double v = raw * raw * (raw < 0 ? -1 : 1);
+
+                double delta = v * 120;
                 if (controlScheme.getWristAxis().getValue() > 0.5) {
 //                delta = 90;
                 }
                 wrist.setOrientation((-lowerSegment.getAngle() - upperSegment.getAngle()) + delta);
 //            }
 //            wrist.handleInputs(controlScheme.getWristAxis(), controlScheme.getWristToggleButton());
+            }
         } else if(manualDriveMode){
             if(!goHome) {
                 lowerSegment.rotate(controlScheme.getLowerArmAxis().getValue());
@@ -271,8 +271,8 @@ public class Robot extends TimedRobot {
             if (!DriverStation.getInstance().isFMSAttached() && !controlScheme.getEmergencyModeButton().getRaw()) {
 //            teensyWeensy.writeLED(1, LEDStripMode.bounce(4, 0x0000ff, 0xff0000, 0x0000ff, 0xff0000));
 //            teensyWeensy.writeLED(2, LEDStripMode.bounce(4, 0x0000ff, 0xff0000, 0x0000ff, 0xff0000));
-                teensyWeensy.writeLED(1, LEDStripMode.fire(Teensy.RAINBOW));
-                teensyWeensy.writeLED(2, LEDStripMode.fire(Teensy.RAINBOW));
+                for(int i = 1; i <= 2; i++) teensyWeensy.writeLED(i, LEDStripMode.fire(Teensy.RAINBOW));
+//                for(int i = 3; i <= 2; i++) teensyWeensy.writeLED(i, LEDStripMode.bounce(4, 0x0000ff, 0xff0000, 0x0000ff, 0xff0000));
             }
         }
     }
@@ -286,14 +286,11 @@ public class Robot extends TimedRobot {
 
                 if (nowAlliance != lastAlliance) {
                     if (nowAlliance == DriverStation.Alliance.Red) {
-                        teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0xff0000, 2000, 0));
-                        teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0xff0000, 2000, 0));
+                        for(int i = 1; i <= 2; i++) teensyWeensy.writeLED(i, LEDStripMode.fade(0x000000, 0xff0000, 2000, 0));
                     } else if (nowAlliance == DriverStation.Alliance.Blue) {
-                        teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0x0000ff, 2000, 0));
-                        teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0x0000ff, 2000, 0));
+                        for(int i = 1; i <= 2; i++) teensyWeensy.writeLED(i, LEDStripMode.fade(0x000000, 0x0000ff, 2000, 0));
                     } else {
-                        teensyWeensy.writeLED(1, LEDStripMode.fade(0x000000, 0x888888, 2000, 0));
-                        teensyWeensy.writeLED(2, LEDStripMode.fade(0x000000, 0x888888, 2000, 0));
+                        for(int i = 1; i <= 2; i++) teensyWeensy.writeLED(i, LEDStripMode.fade(0x000000, 0x888888, 2000, 0));
                     }
                 }
                 lastAlliance = nowAlliance;

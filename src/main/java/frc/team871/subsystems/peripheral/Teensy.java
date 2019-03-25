@@ -85,9 +85,9 @@ public class Teensy {
 //                lastFlush = now;
 //            }
 //        }
-        if(p.getBytesReceived() > 0){
-            System.out.print(p.readString());
-        }
+//        if(p.getBytesReceived() > 0){
+//            System.out.print(p.readString());
+//        }
     }
 
     public static int color(int r, int g, int b){
