@@ -23,7 +23,6 @@ public enum SaitekControlScheme implements IControlScheme{
     SaitekControlScheme() {
         saitekStickJoy = new GenericJoystick<>(0, Arrays.asList(SaitekButtons.values()), Arrays.asList(SaitekAxes.values()));
         saitekStickJoy.getButton(SaitekButtons.HAT_LEFT).setMode(ButtonTypes.TOGGLE);
-        saitekStickJoy.getButton(SaitekButtons.I).setMode(ButtonTypes.TOGGLE);
         saitekStickJoy.getButton(SaitekButtons.C).setMode(ButtonTypes.RISING);
         saitekStickJoy.getButton(SaitekButtons.B).setMode(ButtonTypes.MOMENTARY);
         saitekStickJoy.getButton(SaitekButtons.A).setMode(ButtonTypes.RISING);
@@ -31,7 +30,12 @@ public enum SaitekControlScheme implements IControlScheme{
         saitekStickJoy.getButton(SaitekButtons.HAT_UP).setMode(ButtonTypes.RISING);
 
         saitekStickJoy.getButton(SaitekButtons.FIRE).setMode(ButtonTypes.RISING);
-        saitekStickJoy.getButton(SaitekButtons.E).setMode(ButtonTypes.RISING);
+
+        saitekStickJoy.getButton(SaitekButtons.E).setMode(ButtonTypes.TOGGLE);
+        saitekStickJoy.getButton(SaitekButtons.I).setMode(ButtonTypes.TOGGLE);
+        saitekStickJoy.getButton(SaitekButtons.D).setMode(ButtonTypes.RISING);
+        saitekStickJoy.getButton(SaitekButtons.FIRE).setMode(ButtonTypes.RISING);
+        saitekStickJoy.getButton(SaitekButtons.LOW_TRIGGER).setMode(ButtonTypes.RISING);
 
         unusedAxis = new ConstantAxis(0);
         unusedButton = new ConstantButton(false);
@@ -46,7 +50,7 @@ public enum SaitekControlScheme implements IControlScheme{
 
     @Override
     public IButton getInnerSuctionButton() {
-        return saitekStickJoy.getButton(SaitekButtons.E);
+        return unusedButton;
     }
 
     @Override
@@ -56,7 +60,7 @@ public enum SaitekControlScheme implements IControlScheme{
 
     @Override
     public IButton getWristToggleButton() {
-        return saitekStickJoy.getButton(SaitekButtons.I);
+        return unusedButton;
     }
 
     @Override
@@ -135,6 +139,31 @@ public enum SaitekControlScheme implements IControlScheme{
     @Override
     public IButton getArmSetpointDownButton() {
         return saitekStickJoy.getButton(SaitekButtons.HAT_DOWN);
+    }
+
+    @Override
+    public IButton getClimbAdvanceButton() {
+        return saitekStickJoy.getButton(SaitekButtons.D);
+    }
+
+    @Override
+    public IButton getClimbUnAdvanceButton() {
+        return saitekStickJoy.getButton(SaitekButtons.FIRE);
+    }
+
+    @Override
+    public IButton getAutoClimbButton() {
+        return saitekStickJoy.getButton(SaitekButtons.LOW_TRIGGER);
+    }
+
+    @Override
+    public IButton getClimbFrontButton() {
+        return saitekStickJoy.getButton(SaitekButtons.E);
+    }
+
+    @Override
+    public IButton getClimbBackButton() {
+        return saitekStickJoy.getButton(SaitekButtons.I);
     }
 
     @Override

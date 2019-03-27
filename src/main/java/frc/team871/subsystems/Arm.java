@@ -12,6 +12,15 @@ import java.util.stream.Stream;
 public class Arm implements Sendable {
 
     private static final double MAX_EXTENT = 30 + 15 - 6; // 30 inch extents + 15 inches from center to edge of frame
+
+    public static final double UPPER_HOME = -111.0;
+    public static final double LOWER_HOME = 74.7;
+    public static final double WRIST_HOME = -114.0;
+
+    public static final double UPPER_HOME_SAFER = -100.0;
+    public static final double LOWER_HOME_SAFER = 72;
+    public static final double WRIST_HOME_SAFER = -114.0;
+
     private ArmSegment upperSegment;
     private ArmSegment lowerSegment;
     private Wrist wrist;
@@ -43,6 +52,8 @@ public class Arm implements Sendable {
 
     private boolean setpointUseAxis = true;
     private double lastSetpointAxis = 0;
+
+    private boolean goHome = false;
 
     public enum ArmMode {
         DIRECT,
@@ -145,61 +156,85 @@ public class Arm implements Sendable {
      * @param yAxis used in INVERSE_KINEMATICS control to set the y-position of the target
      */
     public void handleArmAxes(IAxis upperAxis, IAxis lowerAxis, IAxis xAxis, IAxis yAxis, IAxis setpointAxis, IButton setpointUpButton, IButton setpointDownButton){
-        if(currentArmMode == ArmMode.INVERSE_KINEMATICS) {
-            goToRelative((xAxis.getValue() + 1) / 2, yAxis.getValue());
-        } else if(currentArmMode == ArmMode.SETPOINT) {
+        if(!goHome) {
+            if (currentArmMode == ArmMode.INVERSE_KINEMATICS) {
+                goToRelative((xAxis.getValue() + 1) / 2, yAxis.getValue());
+            } else if (currentArmMode == ArmMode.SETPOINT) {
 
-            double ax = (setpointAxis.getValue() + 1) / 2.0; // [-1,1] -> [0,1]
-            boolean up = setpointUpButton.getValue();
-            boolean down = setpointDownButton.getValue();
-            // detect whether to use the axis or buttons
-            if(Math.abs(ax - lastSetpointAxis) > 0.1) setpointUseAxis = true;
-            if(up || down) setpointUseAxis = false;
+                double ax = (setpointAxis.getValue() + 1) / 2.0; // [-1,1] -> [0,1]
+                boolean up = setpointUpButton.getValue();
+                boolean down = setpointDownButton.getValue();
+                // detect whether to use the axis or buttons
+                if (Math.abs(ax - lastSetpointAxis) > 0.1) setpointUseAxis = true;
+                if (up || down) setpointUseAxis = false;
 
-            if(setpointUseAxis){
-                if(SETPOINT_AXIS_EVENLY_SPACED){
-                    currentSetpointIndex = (int)(ax * SETPOINT_HEIGHTS.length);
-                }else{
-                    double minDist = (HEIGHT_MAX - HEIGHT_MIN) * 2; // arbitrary large number
-                    int newSetpoint = currentSetpointIndex;
-                    for(int i = 0; i < SETPOINT_HEIGHTS.length; i++){
-                        double axisHeight = ax * (HEIGHT_MAX - HEIGHT_MIN) + HEIGHT_MIN;
-                        double dist = Math.abs(SETPOINT_HEIGHTS[i] - axisHeight);
-                        if(dist < minDist){
-                            minDist = dist;
-                            newSetpoint = i;
+                if (setpointUseAxis) {
+                    if (SETPOINT_AXIS_EVENLY_SPACED) {
+                        currentSetpointIndex = (int) (ax * SETPOINT_HEIGHTS.length);
+                    } else {
+                        double minDist = (HEIGHT_MAX - HEIGHT_MIN) * 2; // arbitrary large number
+                        int newSetpoint = currentSetpointIndex;
+                        for (int i = 0; i < SETPOINT_HEIGHTS.length; i++) {
+                            double axisHeight = ax * (HEIGHT_MAX - HEIGHT_MIN) + HEIGHT_MIN;
+                            double dist = Math.abs(SETPOINT_HEIGHTS[i] - axisHeight);
+                            if (dist < minDist) {
+                                minDist = dist;
+                                newSetpoint = i;
+                            }
                         }
+                        currentSetpointIndex = newSetpoint;
                     }
-                    currentSetpointIndex = newSetpoint;
+                } else {
+                    if (up) {
+                        currentSetpointIndex++;
+                    } else if (down) {
+                        currentSetpointIndex--;
+                    }
                 }
-            }else{
-                if(up){
-                    currentSetpointIndex++;
-                }else if(down){
-                    currentSetpointIndex--;
-                }
+
+                currentSetpointIndex = Math.max(0, Math.min(currentSetpointIndex, SETPOINT_HEIGHTS.length - 1));
+
+                // see https://www.desmos.com/calculator/ziitcgyynj
+
+                double rawY = SETPOINT_HEIGHTS[currentSetpointIndex] - FLOOR_OFS;
+
+                double r = getRadius();
+
+                // as far out as possible at that height
+                // sin(acos(x)) also equals sqrt(1-x^2)
+                double projectedX = Math.sin(Math.acos(rawY / r)) * r;
+                double projectedY = -rawY;
+
+                goTo(projectedX, projectedY);
+
+                //System.out.println(currentSetpointIndex + " " + SETPOINT_HEIGHTS[currentSetpointIndex] + " " + rawY);
+
+            } else {
+                calcTarget(lowerAxis.getValue(), upperAxis.getValue());
             }
-
-            currentSetpointIndex = Math.max(0, Math.min(currentSetpointIndex, SETPOINT_HEIGHTS.length - 1));
-
-            // see https://www.desmos.com/calculator/ziitcgyynj
-
-            double rawY = SETPOINT_HEIGHTS[currentSetpointIndex] - FLOOR_OFS;
-
-            double r = getRadius();
-
-            // as far out as possible at that height
-            // sin(acos(x)) also equals sqrt(1-x^2)
-            double projectedX = Math.sin(Math.acos(rawY / r)) * r;
-            double projectedY = -rawY;
-
-            goTo(projectedX, projectedY);
-
-            //System.out.println(currentSetpointIndex + " " + SETPOINT_HEIGHTS[currentSetpointIndex] + " " + rawY);
-
-        } else {
-            calcTarget(lowerAxis.getValue(), upperAxis.getValue());
+        }else{
+            // no
         }
+    }
+
+    public void goHome(){
+        goHome = true;
+        upperSegment.setAngle(UPPER_HOME);
+        lowerSegment.setAngle(LOWER_HOME);
+        wrist.setOrientation(WRIST_HOME);
+        upperSegment.enablePID();
+        lowerSegment.enablePID();
+        wrist.enablePID();
+    }
+
+    public void goHomeSafer(){
+        goHome = true;
+        upperSegment.setAngle(UPPER_HOME_SAFER);
+        lowerSegment.setAngle(LOWER_HOME_SAFER);
+        wrist.setOrientation(WRIST_HOME_SAFER);
+        upperSegment.enablePID();
+        lowerSegment.enablePID();
+        wrist.enablePID();
     }
 
     /**
@@ -223,6 +258,9 @@ public class Arm implements Sendable {
         goTo(l1 + l2, (h1 + h2));
     }
 
+    public boolean isAtTarget(){
+        return lowerSegment.isAtTarget() && upperSegment.isAtTarget() && wrist.isAtTarget();
+    }
 
     @Override
     public String getName() {

@@ -12,13 +12,17 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
 import frc.team871.auto.ITargetProvider;
 import frc.team871.auto.RobotUSBTargetProvider;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 public enum RowBoatConfig implements IRowBoatConfig {
     DEFAULT;
@@ -48,6 +52,12 @@ public enum RowBoatConfig implements IRowBoatConfig {
     Solenoid outerValve;
 
     RobotUSBTargetProvider targetProvider;
+
+    HashMap<DoubleSolenoid, DigitalInput> frontClimb;
+    HashMap<DoubleSolenoid, DigitalInput> backClimb;
+
+    DigitalInput frontClimbSense;
+    DigitalInput backClimbSense;
 
     RowBoatConfig(){
         this.frontLeftMotor = new WPI_VictorSPX(3);
@@ -111,6 +121,13 @@ public enum RowBoatConfig implements IRowBoatConfig {
         //this.lineCam.setExposureAuto();
 
 //        targetProvider = new RobotUSBTargetProvider(this.lineCam, targetCam, camWidth, camHeight, camWidth, camHeight);
+        frontClimb = new HashMap<>();
+        frontClimb.put(new DoubleSolenoid(2, 3), new DigitalInput(0));
+        backClimb = new HashMap<>();
+        backClimb.put(new DoubleSolenoid(4, 5), new DigitalInput(1));
+
+        frontClimbSense = new DigitalInput(0);
+        backClimbSense = new DigitalInput(1);
     }
 
     @Override
@@ -212,6 +229,26 @@ public enum RowBoatConfig implements IRowBoatConfig {
     @Override
     public Solenoid getVacuumOuterValve() {
         return outerValve;
+    }
+
+    @Override
+    public HashMap<DoubleSolenoid, DigitalInput> getFrontClimbPistons() {
+        return frontClimb;
+    }
+
+    @Override
+    public HashMap<DoubleSolenoid, DigitalInput> getBackClimbPistons() {
+        return backClimb;
+    }
+
+    @Override
+    public DigitalInput getFrontClimbSensor() {
+        return frontClimbSense;
+    }
+
+    @Override
+    public DigitalInput getBackClimbSensor() {
+        return backClimbSense;
     }
 
     @Override

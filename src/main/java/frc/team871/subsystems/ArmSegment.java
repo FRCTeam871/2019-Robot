@@ -60,6 +60,10 @@ public class ArmSegment implements Sendable {
         return length;
     }
 
+    public boolean isAtTarget(){
+        return Math.abs(pid.getError()) < 5;
+    }
+
     @Override
     public String getName() {
         return sendableName;

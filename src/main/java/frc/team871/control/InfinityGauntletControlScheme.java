@@ -48,6 +48,12 @@ public enum InfinityGauntletControlScheme implements IControlScheme{
         saitekDrive.getButton(SaitekButtons.SOUND_R_UP).setMode(ButtonTypes.RISING);
         saitekDrive.getButton(SaitekButtons.SOUND_R_DOWN).setMode(ButtonTypes.RISING);
 
+        saitekDrive.getButton(SaitekButtons.E).setMode(ButtonTypes.TOGGLE);
+        saitekDrive.getButton(SaitekButtons.I).setMode(ButtonTypes.TOGGLE);
+        saitekDrive.getButton(SaitekButtons.D).setMode(ButtonTypes.RISING);
+        saitekDrive.getButton(SaitekButtons.FIRE).setMode(ButtonTypes.RISING);
+        saitekDrive.getButton(SaitekButtons.LOW_TRIGGER).setMode(ButtonTypes.MOMENTARY);
+
         emergency = new AxisButton(saitekDrive.getAxis(SaitekAxes.THROTTLE), 0.2f, true);
         emergency.setMode(ButtonTypes.MOMENTARY);
 
@@ -163,6 +169,31 @@ public enum InfinityGauntletControlScheme implements IControlScheme{
     @Override
     public IButton getEmergencyModeButton() {
         return emergency;
+    }
+
+    @Override
+    public IButton getClimbAdvanceButton() {
+        return saitekDrive.getButton(SaitekButtons.D);
+    }
+
+    @Override
+    public IButton getClimbUnAdvanceButton() {
+        return saitekDrive.getButton(SaitekButtons.FIRE);
+    }
+
+    @Override
+    public IButton getAutoClimbButton() {
+        return saitekDrive.getButton(SaitekButtons.LOW_TRIGGER);
+    }
+
+    @Override
+    public IButton getClimbFrontButton() {
+        return saitekDrive.getButton(SaitekButtons.E);
+    }
+
+    @Override
+    public IButton getClimbBackButton() {
+        return saitekDrive.getButton(SaitekButtons.I);
     }
 
     public GenericJoystick<SaitekButtons, SaitekAxes> getSaitek(){

@@ -44,4 +44,14 @@ public interface IControlScheme {
 
     IButton getEmergencyModeButton();
 
+    IButton getClimbAdvanceButton();
+
+    IButton getClimbUnAdvanceButton();
+
+    IButton getAutoClimbButton();
+
+    IButton getClimbFrontButton();
+
+    IButton getClimbBackButton();
+
 }

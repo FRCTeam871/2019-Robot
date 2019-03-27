@@ -64,6 +64,10 @@ public class Wrist implements Sendable {
         return pot.getValue();
     }
 
+    public boolean isAtTarget(){
+        return Math.abs(pid.getError()) < 5;
+    }
+
     public void rotate(double speed){
         motor.set(speed);
     }

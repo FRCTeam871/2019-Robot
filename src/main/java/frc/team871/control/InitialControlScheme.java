@@ -1,5 +1,6 @@
 package frc.team871.control;
 
+import com.team871.hid.AxisButton;
 import com.team871.hid.ButtonTypes;
 import com.team871.hid.ConstantAxis;
 import com.team871.hid.ConstantButton;
@@ -18,6 +19,8 @@ public enum InitialControlScheme implements IControlScheme{
     private ConstantAxis unusedAxis;
     private ConstantButton unusedButton;
 
+    private AxisButton autoClimb;
+
     InitialControlScheme(){
         systemsController = new GenericJoystick<>(2, Arrays.asList(XBoxButtons.values()), Arrays.asList(XBoxAxes.values()));
         driveController = new GenericJoystick<>(3, Arrays.asList(XBoxButtons.values()), Arrays.asList(XBoxAxes.values()));
@@ -33,15 +36,24 @@ public enum InitialControlScheme implements IControlScheme{
         systemsController.getAxis(XBoxAxes.RIGHTY).setDeadband(0.2);
         systemsController.getButton(XBoxButtons.START).setMode(ButtonTypes.TOGGLE);
         systemsController.getAxis(XBoxAxes.RIGHTX).setDeadband(0.2);
+
         driveController.getButton(XBoxButtons.LBUMPER).setMode(ButtonTypes.MOMENTARY);
         driveController.getButton(XBoxButtons.START).setMode(ButtonTypes.RISING);
         driveController.getButton(XBoxButtons.BACK).setMode(ButtonTypes.TOGGLE);
         driveController.getAxis(XBoxAxes.LEFTX).setDeadband(0.2);
         driveController.getAxis(XBoxAxes.LEFTY).setDeadband(0.2);
         driveController.getAxis(XBoxAxes.RIGHTX).setDeadband(0.2);
+//        driveController.getButton(XBoxButtons.B).setMode(ButtonTypes.RISING);
+
+        driveController.getButton(XBoxButtons.RIGHTSTICK).setMode(ButtonTypes.TOGGLE);
+        driveController.getButton(XBoxButtons.LEFTSTICK).setMode(ButtonTypes.TOGGLE);
+        driveController.getButton(XBoxButtons.A).setMode(ButtonTypes.RISING);
         driveController.getButton(XBoxButtons.B).setMode(ButtonTypes.RISING);
 
+        autoClimb = new AxisButton(driveController.getAxis(XBoxAxes.RTRIGGER), 0.5f, false);
+
         unusedAxis = new ConstantAxis(0);
+        unusedButton = new ConstantButton(false);
     }
 
     @Override
@@ -139,8 +151,34 @@ public enum InitialControlScheme implements IControlScheme{
     }
 
     @Override
-    public IButton getAutoDockButton() {
+    public IButton getClimbAdvanceButton() {
+        return driveController.getButton(XBoxButtons.A);
+    }
+
+    @Override
+    public IButton getClimbUnAdvanceButton() {
         return driveController.getButton(XBoxButtons.B);
+    }
+
+    @Override
+    public IButton getAutoClimbButton() {
+        return autoClimb;
+    }
+
+    @Override
+    public IButton getClimbFrontButton() {
+        return driveController.getButton(XBoxButtons.RIGHTSTICK);
+    }
+
+    @Override
+    public IButton getClimbBackButton() {
+        return driveController.getButton(XBoxButtons.LEFTSTICK);
+    }
+
+    @Override
+    public IButton getAutoDockButton() {
+        return unusedButton;
+//        return driveController.getButton(XBoxButtons.B);
     }
 
 }

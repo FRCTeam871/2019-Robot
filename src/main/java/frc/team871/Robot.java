@@ -8,16 +8,12 @@
 package frc.team871;
 
 
-import com.team871.hid.GenericJoystick;
-import com.team871.hid.joystick.SaitekAxes;
-import com.team871.hid.joystick.SaitekButtons;
 import com.team871.io.peripheral.EndPoint;
 import com.team871.io.peripheral.SerialCommunicationInterface;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import frc.team871.config.IRowBoatConfig;
-import frc.team871.config.RowBoatConfig;
 import frc.team871.config.SecondRowBoatConfig;
 import frc.team871.control.IControlScheme;
 import frc.team871.control.InfinityGauntletControlScheme;
@@ -25,10 +21,10 @@ import frc.team871.control.InitialControlScheme;
 import frc.team871.control.SaitekControlScheme;
 import frc.team871.subsystems.Arm;
 import frc.team871.subsystems.ArmSegment;
+import frc.team871.subsystems.Climb;
 import frc.team871.subsystems.DriveTrain;
 import frc.team871.subsystems.Vacuum;
 import frc.team871.subsystems.Wrist;
-import frc.team871.subsystems.peripheral.Audio;
 import frc.team871.subsystems.peripheral.LEDStripMode;
 import frc.team871.subsystems.peripheral.LEDStripSettings;
 import frc.team871.subsystems.peripheral.Teensy;
@@ -48,6 +44,7 @@ public class Robot extends TimedRobot {
     private Vacuum vacuum;
     private Arm arm;
     private Wrist wrist;
+    private Climb climb;
 
     private ArmSegment upperSegment;
     private ArmSegment lowerSegment;
@@ -58,7 +55,7 @@ public class Robot extends TimedRobot {
     private boolean goHome = false;
     private boolean testBoard = false;
     private boolean leds = true;
-    private boolean armEnabled = true;
+    private boolean armEnabled = false;
     private long lastPrint = System.currentTimeMillis();
 
     long t = System.currentTimeMillis();
@@ -69,6 +66,8 @@ public class Robot extends TimedRobot {
 
     boolean wasStrong = false;
 
+    boolean unfold = true;
+    long unfoldStart;
 
     /**
       * This function is run when the robot is first started up and should be used
@@ -76,9 +75,9 @@ public class Robot extends TimedRobot {
       */
     @Override
     public void robotInit() {
-        this.config = RowBoatConfig.DEFAULT;
+        this.config = SecondRowBoatConfig.DEFAULT;
         this.controlScheme = manualDriveMode ? InitialControlScheme.DEFAULT : InfinityGauntletControlScheme.DEFAULT;
-//        this.controlScheme = SaitekControlScheme.DEFAULT;
+        this.controlScheme = InitialControlScheme.DEFAULT;
         this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro(), config.getHeadingPIDConfig(), config.getAutoDockXPIDConfig());
 
         if(!testBoard) {
@@ -90,25 +89,27 @@ public class Robot extends TimedRobot {
             this.arm = new Arm(upperSegment, lowerSegment, wrist);
 
 
-        this.teensyWeensy = new Teensy(new SerialCommunicationInterface(), EndPoint.NULL_ENDPOINT);
-//        teensyWeensy.writeSound(Audio.setVolume(100));
-//        teensyWeensy.writeSound(Audio.play("ut/spider.wav"));
-        for(int i = 1; i <= 2; i++) teensyWeensy.writeLED(i, LEDStripMode.rainbowChase(5000, 100));
-        for(int i = 0; i <= 2; i++) teensyWeensy.writeLED(i, LEDStripSettings.brightness(leds ? 100 : 0));
+            this.teensyWeensy = new Teensy(new SerialCommunicationInterface(), EndPoint.NULL_ENDPOINT);
+//            teensyWeensy.writeSound(Audio.setVolume(100));
+//            teensyWeensy.writeSound(Audio.play("ut/spider.wav"));
+            for(int i = 1; i <= 2; i++) teensyWeensy.writeLED(i, LEDStripMode.rainbowChase(5000, 100));
+            for(int i = 0; i <= 2; i++) teensyWeensy.writeLED(i, LEDStripSettings.brightness(leds ? 100 : 0));
 
 //            for(int i = 3; i <= 2; i++) teensyWeensy.writeLED(i, LEDStripSettings.reverse(true));
-        teensyWeensy.writeLED(0, LEDStripMode.chase((int)(500 / 24.0 * 2),500, 250,0x0000ff, 0xff0000));
-//        teensyWeensy.writeLED(0, LEDStripMode.fade(0x0000ff, 0xff0000,500, (int)(500 / 24.0 * 2)));
+            teensyWeensy.writeLED(0, LEDStripMode.chase((int)(500 / 24.0 * 2),500, 250,0x0000ff, 0xff0000));
+//            teensyWeensy.writeLED(0, LEDStripMode.fade(0x0000ff, 0xff0000,500, (int)(500 / 24.0 * 2)));
 
 
-        LiveWindow.add(arm);
+            LiveWindow.add(arm);
 
             if(this.controlScheme instanceof SaitekControlScheme){
                 arm.setMode(Arm.ArmMode.SETPOINT);
             }
+
+            climb = new Climb(arm, driveTrain, config.getFrontClimbPistons(), config.getBackClimbPistons());
         }
 
-        if (manualDriveMode || !driveTrainEnabled || goHome || (controlScheme.getEmergencyModeButton().getRaw() && DriverStation.getInstance().isDSAttached())) {
+        if (manualDriveMode || !driveTrainEnabled || goHome || !armEnabled || (controlScheme.getEmergencyModeButton().getRaw() && DriverStation.getInstance().isDSAttached())) {
             for(int i = 1; i <= 2; i++) teensyWeensy.writeLED(i, LEDStripMode.chase(0, 500, 250, 0x000000, 0xff0000));
         }
 
@@ -165,6 +166,14 @@ public class Robot extends TimedRobot {
 //                lowerSegment.setAngle(0);
 //                wrist.setOrientation(0);
                 if(armEnabled) {
+
+                    if(unfold){
+                        unfoldStart = System.currentTimeMillis();
+                        upperSegment.setAngle(0.0);
+                        lowerSegment.setAngle(-70);
+                        wrist.setOrientation(0);
+                    }
+
                     upperSegment.enablePID();
                     lowerSegment.enablePID();
                     wrist.enablePID();
@@ -194,6 +203,7 @@ public class Robot extends TimedRobot {
         }
 
         if(testBoard) return;
+
         if(!manualDriveMode) {
             Vacuum.VacuumState prev = vacuum.getState();
             vacuum.handleInputs(controlScheme.getInnerSuctionButton(), controlScheme.getOuterSuctionButton(), controlScheme.getEmergencyModeButton());
@@ -232,7 +242,14 @@ public class Robot extends TimedRobot {
         if(!manualDriveMode){
 //            if(System.currentTimeMillis() - t > 2000) {
             if(armEnabled) {
-                arm.handleArmAxes(controlScheme.getUpperArmAxis(), controlScheme.getLowerArmAxis(), controlScheme.getArmTargetXAxis(), controlScheme.getArmTargetYAxis(), controlScheme.getArmSetpointAxis(), controlScheme.getArmSetpointUpButton(), controlScheme.getArmSetpointDownButton());
+                if(unfold){
+                    if(arm.isAtTarget() || System.currentTimeMillis() - unfoldStart > 5000){
+                        unfold = false;
+                        upperSegment.enablePID();
+                    }
+                }
+
+                if(!unfold) arm.handleArmAxes(controlScheme.getUpperArmAxis(), controlScheme.getLowerArmAxis(), controlScheme.getArmTargetXAxis(), controlScheme.getArmTargetYAxis(), controlScheme.getArmSetpointAxis(), controlScheme.getArmSetpointUpButton(), controlScheme.getArmSetpointDownButton());
                 arm.handleInverseKinematicsMode(controlScheme.getInverseKinematicsToggleButton());
                 double raw = controlScheme.getWristAxis().getValue();
 
@@ -253,6 +270,9 @@ public class Robot extends TimedRobot {
                 wrist.rotate(controlScheme.getWristAxis().getValue());
             }
         }
+
+        climb.update(controlScheme.getClimbAdvanceButton(), controlScheme.getClimbUnAdvanceButton(), controlScheme.getClimbFrontButton(), controlScheme.getClimbBackButton());
+
     }
 
     @Override

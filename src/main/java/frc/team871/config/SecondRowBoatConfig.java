@@ -9,13 +9,14 @@ import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoMode;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
 import frc.team871.auto.ITargetProvider;
 import frc.team871.auto.RobotUSBTargetProvider;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public enum SecondRowBoatConfig implements IRowBoatConfig {
     DEFAULT;
@@ -45,6 +46,12 @@ public enum SecondRowBoatConfig implements IRowBoatConfig {
     Solenoid outerValve;
 
     RobotUSBTargetProvider targetProvider;
+
+    HashMap<DoubleSolenoid, DigitalInput> frontClimb;
+    HashMap<DoubleSolenoid, DigitalInput> backClimb;
+
+    DigitalInput frontClimbSense;
+    DigitalInput backClimbSense;
 
     SecondRowBoatConfig(){
         this.frontLeftMotor = new WPI_VictorSPX(3);
@@ -93,7 +100,7 @@ public enum SecondRowBoatConfig implements IRowBoatConfig {
         innerValve = new Solenoid(0);
         outerValve = new Solenoid(1);
 
-        boolean initCams = true;
+        boolean initCams = false;
 
         if(initCams) {
             this.lineCam = CameraServer.getInstance().startAutomaticCapture(0);
@@ -112,6 +119,13 @@ public enum SecondRowBoatConfig implements IRowBoatConfig {
 
 //        targetProvider = new RobotUSBTargetProvider(this.lineCam, targetCam, camWidth, camHeight, camWidth, camHeight);
         }
+        frontClimb = new HashMap<>();
+        frontClimb.put(new DoubleSolenoid(2, 3), null);
+        backClimb = new HashMap<>();
+        backClimb.put(new DoubleSolenoid(4, 5), null);
+
+        frontClimbSense = new DigitalInput(0);
+        backClimbSense = new DigitalInput(1);
     }
 
     @Override
@@ -223,4 +237,25 @@ public enum SecondRowBoatConfig implements IRowBoatConfig {
     public UsbCamera getLineCam() {
         return lineCam;
     }
+
+    @Override
+    public HashMap<DoubleSolenoid, DigitalInput> getFrontClimbPistons() {
+        return frontClimb;
+    }
+
+    @Override
+    public HashMap<DoubleSolenoid, DigitalInput> getBackClimbPistons() {
+        return backClimb;
+    }
+
+    @Override
+    public DigitalInput getFrontClimbSensor() {
+        return frontClimbSense;
+    }
+
+    @Override
+    public DigitalInput getBackClimbSensor() {
+        return backClimbSense;
+    }
+
 }
