@@ -1,16 +1,21 @@
-package frc.team871.auto;
+package frc.team871.auto.detection.robot;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.vision.VisionThread;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import frc.team871.auto.GripPipelineTwo;
+import frc.team871.auto.ILineSensor;
+import frc.team871.auto.ITarget;
+import frc.team871.auto.ITargetProvider;
 import org.opencv.core.CvType;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.RotatedRect;
 import org.opencv.imgproc.Imgproc;
 
-public class RobotUSBTargetProvider implements ITargetProvider{
+public class RobotUSBTargetProvider implements ITargetProvider {
 
     private RobotUSBLineSensor ls;
 

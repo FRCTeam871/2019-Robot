@@ -1,31 +1,28 @@
 package frc.team871.config;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 import com.team871.hid.IAxis;
 import com.team871.io.actuator.CombinedSpeedController;
 import edu.wpi.cscore.UsbCamera;
-import edu.wpi.cscore.VideoMode;
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
 import frc.team871.auto.ITargetProvider;
-import frc.team871.auto.RobotUSBTargetProvider;
-import java.util.ArrayList;
+import frc.team871.auto.detection.coprocessor.CoProcessorNetworkTargetProvider;
+import frc.team871.config.network.DeepSpaceNetConfig;
+
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 public enum RowBoatConfig implements IRowBoatConfig {
     DEFAULT;
+
+    DeepSpaceNetConfig netConfig;
 
     SpeedController frontLeftMotor;
     SpeedController rearLeftMotor;
@@ -51,7 +48,7 @@ public enum RowBoatConfig implements IRowBoatConfig {
     Solenoid innerValve;
     Solenoid outerValve;
 
-    RobotUSBTargetProvider targetProvider;
+    ITargetProvider targetProvider;
 
     HashMap<DoubleSolenoid, DigitalInput> frontClimb;
     HashMap<DoubleSolenoid, DigitalInput> backClimb;
@@ -60,6 +57,8 @@ public enum RowBoatConfig implements IRowBoatConfig {
     DigitalInput backClimbSense;
 
     RowBoatConfig(){
+        netConfig = new DeepSpaceNetConfig(false, NetworkTableInstance.getDefault());
+
         this.frontLeftMotor = new WPI_VictorSPX(3);
         this.rearLeftMotor = new WPI_VictorSPX(2);
         this.frontRightMotor = new WPI_VictorSPX(0);
@@ -102,15 +101,12 @@ public enum RowBoatConfig implements IRowBoatConfig {
         innerValve = new Solenoid(0);
         outerValve = new Solenoid(1);
 
-//        new UsbCamera("cam0");
+
 //        this.lineCam = CameraServer.getInstance().startAutomaticCapture(0);
 //        UsbCamera targetCam = CameraServer.getInstance().startAutomaticCapture(1);
-
-//        targetCam.setExposureAuto();
-//        lineCam.setExposureAuto();
-//        targetCam.setExposureManual(40);
-//        lineCam.setExposureManual(40);
-
+//
+//        targetCam.setExposureManual(20);
+//
 //        final int camWidth = 320/2;
 //        final int camHeight = 240/2;
 
@@ -118,9 +114,12 @@ public enum RowBoatConfig implements IRowBoatConfig {
 //        this.lineCam.setPixelFormat(VideoMode.PixelFormat.kMJPEG);
 //        targetCam.setResolution(camWidth, camHeight);
 //        targetCam.setPixelFormat(VideoMode.PixelFormat.kMJPEG);
-        //this.lineCam.setExposureAuto();
+//        //this.lineCam.setExposureAuto();
 
-//        targetProvider = new RobotUSBTargetProvider(this.lineCam, targetCam, camWidth, camHeight, camWidth, camHeight);
+        //All that commented out code above ^ replaced by this one line...
+        targetProvider = new CoProcessorNetworkTargetProvider(getNetworkConfiguration().gripTable);
+
+
         frontClimb = new HashMap<>();
         frontClimb.put(new DoubleSolenoid(2, 3), new DigitalInput(0));
         backClimb = new HashMap<>();
@@ -128,6 +127,11 @@ public enum RowBoatConfig implements IRowBoatConfig {
 
         frontClimbSense = new DigitalInput(0);
         backClimbSense = new DigitalInput(1);
+    }
+
+    @Override
+    public DeepSpaceNetConfig getNetworkConfiguration() {
+        return netConfig;
     }
 
     @Override

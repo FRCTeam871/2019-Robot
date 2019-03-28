@@ -7,6 +7,7 @@ import com.team871.io.actuator.CombinedSpeedController;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoMode;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -15,12 +16,16 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Talon;
 import frc.team871.auto.ITargetProvider;
-import frc.team871.auto.RobotUSBTargetProvider;
+import frc.team871.auto.detection.robot.RobotUSBTargetProvider;
+import frc.team871.config.network.DeepSpaceNetConfig;
+
 import java.util.Arrays;
 import java.util.HashMap;
 
 public enum FrisbroConfig implements IRowBoatConfig {
     DEFAULT;
+
+    DeepSpaceNetConfig netConfig;
 
     SpeedController frontLeftMotor;
     SpeedController rearLeftMotor;
@@ -46,7 +51,7 @@ public enum FrisbroConfig implements IRowBoatConfig {
     Solenoid innerValve;
     Solenoid outerValve;
 
-    RobotUSBTargetProvider targetProvider;
+    ITargetProvider targetProvider;
 
     HashMap<DoubleSolenoid, DigitalInput> frontClimb;
     HashMap<DoubleSolenoid, DigitalInput> backClimb;
@@ -56,6 +61,8 @@ public enum FrisbroConfig implements IRowBoatConfig {
 
     FrisbroConfig(){
         new Compressor(0).stop();
+
+        this.netConfig = new DeepSpaceNetConfig(false, NetworkTableInstance.getDefault());
 
         this.frontLeftMotor = new Talon(0);
         this.frontRightMotor = new Talon(1);
@@ -119,6 +126,11 @@ public enum FrisbroConfig implements IRowBoatConfig {
 
         frontClimbSense = new DigitalInput(0);
         backClimbSense = new DigitalInput(1);
+    }
+
+    @Override
+    public DeepSpaceNetConfig getNetworkConfiguration() {
+        return netConfig;
     }
 
     @Override

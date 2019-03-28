@@ -8,18 +8,24 @@ import com.team871.io.actuator.CombinedSpeedController;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoMode;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
 import frc.team871.auto.ITargetProvider;
-import frc.team871.auto.RobotUSBTargetProvider;
+import frc.team871.auto.detection.coprocessor.CoProcessorNetworkTargetProvider;
+import frc.team871.auto.detection.robot.RobotUSBTargetProvider;
+import frc.team871.config.network.DeepSpaceNetConfig;
+
 import java.util.Arrays;
 import java.util.HashMap;
 
 public enum SecondRowBoatConfig implements IRowBoatConfig {
     DEFAULT;
+
+    DeepSpaceNetConfig netConfig;
 
     SpeedController frontLeftMotor;
     SpeedController rearLeftMotor;
@@ -45,7 +51,7 @@ public enum SecondRowBoatConfig implements IRowBoatConfig {
     Solenoid innerValve;
     Solenoid outerValve;
 
-    RobotUSBTargetProvider targetProvider;
+    ITargetProvider targetProvider;
 
     HashMap<DoubleSolenoid, DigitalInput> frontClimb;
     HashMap<DoubleSolenoid, DigitalInput> backClimb;
@@ -54,6 +60,9 @@ public enum SecondRowBoatConfig implements IRowBoatConfig {
     DigitalInput backClimbSense;
 
     SecondRowBoatConfig(){
+
+        netConfig = new DeepSpaceNetConfig(false, NetworkTableInstance.getDefault());
+
         this.frontLeftMotor = new WPI_VictorSPX(3);
         this.rearLeftMotor = new WPI_VictorSPX(2);
         this.frontRightMotor = new WPI_VictorSPX(0);
@@ -100,25 +109,28 @@ public enum SecondRowBoatConfig implements IRowBoatConfig {
         innerValve = new Solenoid(0);
         outerValve = new Solenoid(1);
 
-        boolean initCams = false;
+//        boolean initCams = false;
+//
+//        if(initCams) {
+//            this.lineCam = CameraServer.getInstance().startAutomaticCapture(0);
+//            UsbCamera targetCam = CameraServer.getInstance().startAutomaticCapture(1);
+//
+//            targetCam.setExposureManual(50);
+//
+//            final int camWidth = 320;
+//            final int camHeight = 240;
+//
+//            this.lineCam.setResolution(camWidth, camHeight);
+//            this.lineCam.setPixelFormat(VideoMode.PixelFormat.kMJPEG);
+//            targetCam.setResolution(camWidth, camHeight);
+//            targetCam.setPixelFormat(VideoMode.PixelFormat.kMJPEG);
+//            //this.lineCam.setExposureAuto();
+//
+////        targetProvider = new RobotUSBTargetProvider(this.lineCam, targetCam, camWidth, camHeight, camWidth, camHeight);
+//        }
 
-        if(initCams) {
-            this.lineCam = CameraServer.getInstance().startAutomaticCapture(0);
-            UsbCamera targetCam = CameraServer.getInstance().startAutomaticCapture(1);
+        targetProvider = new CoProcessorNetworkTargetProvider(getNetworkConfiguration().gripTable);
 
-            targetCam.setExposureManual(50);
-
-            final int camWidth = 320;
-            final int camHeight = 240;
-
-            this.lineCam.setResolution(camWidth, camHeight);
-            this.lineCam.setPixelFormat(VideoMode.PixelFormat.kMJPEG);
-            targetCam.setResolution(camWidth, camHeight);
-            targetCam.setPixelFormat(VideoMode.PixelFormat.kMJPEG);
-            //this.lineCam.setExposureAuto();
-
-//        targetProvider = new RobotUSBTargetProvider(this.lineCam, targetCam, camWidth, camHeight, camWidth, camHeight);
-        }
         frontClimb = new HashMap<>();
         frontClimb.put(new DoubleSolenoid(2, 3), null);
         backClimb = new HashMap<>();
@@ -126,6 +138,11 @@ public enum SecondRowBoatConfig implements IRowBoatConfig {
 
         frontClimbSense = new DigitalInput(0);
         backClimbSense = new DigitalInput(1);
+    }
+
+    @Override
+    public DeepSpaceNetConfig getNetworkConfiguration() {
+        return netConfig;
     }
 
     @Override
