@@ -5,6 +5,7 @@ import com.team871.hid.IButton;
 import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
+import frc.team871.config.network.tables.ArmNetTable;
 
 import java.util.Arrays;
 import java.util.stream.Stream;
@@ -55,13 +56,16 @@ public class Arm implements Sendable {
 
     private boolean goHome = false;
 
+    private ArmNetTable armNetTable;
+
     public enum ArmMode {
         DIRECT,
         INVERSE_KINEMATICS,
         SETPOINT
     }
 
-    public Arm(ArmSegment upperSegment, ArmSegment lowerSegment, Wrist wrist){
+    public Arm(ArmSegment upperSegment, ArmSegment lowerSegment, Wrist wrist, ArmNetTable netTable){
+        this.armNetTable  = netTable;
         this.upperSegment = upperSegment;
         this.lowerSegment = lowerSegment;
         this.wrist = wrist;
@@ -289,6 +293,12 @@ public class Arm implements Sendable {
         builder.addDoubleProperty("LastY", () -> y, (v) -> {});
         builder.addDoubleProperty("LastLowerAngle", () -> lowerAngle, (v) -> {});
         builder.addDoubleProperty("LastUpperAngle", () -> upperAngle, (v) -> {});
+    }
+
+    public void updateNetworkVars(){
+        armNetTable.getUpperArmAngleEntry().setNumber(upperSegment.getAngle());
+        armNetTable.getLowerArmAngleEntry().setNumber(lowerSegment.getAngle());
+        armNetTable.getWristAngleEntry().setNumber(wrist.getAngle());
     }
 
 }

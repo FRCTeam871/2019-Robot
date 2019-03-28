@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import frc.team871.config.IRowBoatConfig;
 import frc.team871.config.SecondRowBoatConfig;
+import frc.team871.config.network.DeepSpaceNetConfig;
 import frc.team871.control.IControlScheme;
 import frc.team871.control.InfinityGauntletControlScheme;
 import frc.team871.control.InitialControlScheme;
@@ -40,6 +41,7 @@ public class Robot extends TimedRobot {
 
     private IControlScheme controlScheme;
     private IRowBoatConfig config;
+    private DeepSpaceNetConfig netConfig;
     private DriveTrain driveTrain;
     private Vacuum vacuum;
     private Arm arm;
@@ -76,6 +78,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         this.config = SecondRowBoatConfig.DEFAULT;
+        this.netConfig = config.getNetworkConfiguration();
         this.controlScheme = manualDriveMode ? InitialControlScheme.DEFAULT : InfinityGauntletControlScheme.DEFAULT;
         this.controlScheme = InitialControlScheme.DEFAULT;
         this.driveTrain = new DriveTrain(config.getFrontLeftMotor(), config.getRearLeftMotor(), config.getFrontRightMotor(), config.getRearRightMotor(), config.getGyro(), config.getHeadingPIDConfig(), config.getAutoDockXPIDConfig());
@@ -86,7 +89,7 @@ public class Robot extends TimedRobot {
             upperSegment = new ArmSegment(config.getUpperArmMotor(), config.getUpperArmPot(), config.getUpperArmPIDConfig(), 20.5);
             lowerSegment = new ArmSegment(config.getLowerArmMotor(), config.getLowerArmPot(), config.getLowerArmPIDConfig(),22);
             this.wrist = new Wrist(config.getWristMotor(), config.getWristPotAxis(), config.getWristPIDConfig(), 10);
-            this.arm = new Arm(upperSegment, lowerSegment, wrist);
+            this.arm = new Arm(upperSegment, lowerSegment, wrist, netConfig.armTable);
 
 
             this.teensyWeensy = new Teensy(new SerialCommunicationInterface(), EndPoint.NULL_ENDPOINT);
@@ -119,6 +122,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         teensyWeensy.update();
+        updateNetworkVariables();
 
 //        if(controlScheme instanceof InfinityGauntletControlScheme){
 //            InfinityGauntletControlScheme c = (InfinityGauntletControlScheme) controlScheme;
@@ -193,7 +197,6 @@ public class Robot extends TimedRobot {
             }
 
         }
-
     }
 
     @Override
@@ -272,7 +275,6 @@ public class Robot extends TimedRobot {
         }
 
         climb.update(controlScheme.getClimbAdvanceButton(), controlScheme.getClimbUnAdvanceButton(), controlScheme.getClimbFrontButton(), controlScheme.getClimbBackButton());
-
     }
 
     @Override
@@ -328,5 +330,9 @@ public class Robot extends TimedRobot {
                 }
             }
         }
+    }
+
+    private void updateNetworkVariables(){
+        arm.updateNetworkVars();
     }
 }
